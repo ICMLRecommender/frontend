@@ -1,2 +1,2 @@
 # frontend
-Frontend project repository
+Frontend project repository.
