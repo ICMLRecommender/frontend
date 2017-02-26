@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="generator" content="Polymer Starter Kit">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>My App</title>
+    <title>ICML 2017</title>
     <meta name="description" content="My App description">
 
     <link rel="icon" href="/images/favicon.ico">
@@ -46,6 +46,90 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
     <meta name="msapplication-TileColor" content="#3f51b5">
     <meta name="msapplication-tap-highlight" content="no">
+
+    <link rel="import" href="/src/ml4u-app.html" async>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        line-height: 1.5;
+        min-height: 100vh;
+        background-color: #fafafa;
+      }
+
+      /* styling for render while resources are loading */
+      #splashscreen {
+        display: block;
+        min-height: 101vh;
+        line-height: 68px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        color: #202020;
+        padding: 0 16px;
+        overflow: visible;
+      }
+      /*loader styling*/
+
+        /*- Loader css */
+        .loader {
+          left: 50%;
+          top: 50%;
+          position: fixed;
+          -webkit-transform: translate(-50%, -50%);
+                  transform: translate(-50%, -50%); }
+          .loader #spinner {
+            box-sizing: border-box;
+            stroke: #673AB7;
+            stroke-width: 3px;
+            -webkit-transform-origin: 50%;
+                    transform-origin: 50%;
+            -webkit-animation: line 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite, rotate 1.6s linear infinite;
+                    animation: line 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite, rotate 1.6s linear infinite; }
+
+        @-webkit-keyframes rotate {
+          from {
+            -webkit-transform: rotate(0);
+                    transform: rotate(0); }
+          to {
+            -webkit-transform: rotate(450deg);
+                    transform: rotate(450deg); } }
+
+        @keyframes rotate {
+          from {
+            -webkit-transform: rotate(0);
+                    transform: rotate(0); }
+          to {
+            -webkit-transform: rotate(450deg);
+                    transform: rotate(450deg); } }
+
+        @-webkit-keyframes line {
+          0% {
+            stroke-dasharray: 2, 85.964;
+            -webkit-transform: rotate(0);
+                    transform: rotate(0); }
+          50% {
+            stroke-dasharray: 65.973, 21.9911;
+            stroke-dashoffset: 0; }
+          100% {
+            stroke-dasharray: 2, 85.964;
+            stroke-dashoffset: -65.973;
+            -webkit-transform: rotate(90deg);
+                    transform: rotate(90deg); } }
+    </style>
+  </head>
+  <body>
+    <ml4u-app id="ml4u_app_element" hidden></ml4u-app>
+    <div id="splashscreen">
+      ICML 2017
+      <div class="loader">
+        <svg viewBox="0 0 32 32" width="32" height="32">
+          <circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle>
+        </svg>
+      </div>
+    </div>
 
     <script>
       // Setup Polymer options
@@ -93,21 +177,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       }
     </script>
-
-    <link rel="import" href="/src/ml4u-app.html">
-
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Roboto', 'Noto', sans-serif;
-        line-height: 1.5;
-        min-height: 100vh;
-        background-color: #eeeeee;
-      }
-    </style>
-  </head>
-  <body>
-    <ml4u-app></ml4u-app>
-    <!-- Built with love using Polymer Starter Kit -->
   </body>
 </html>

@@ -25,6 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
+<link rel="import" href="ml4u-dbschedule-downloader.html">
 <link rel="import" href="ml4u-user-profile.html">
 
 <dom-module id="ml4u-app">
@@ -63,6 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    <ml4u-dbschedule-downloader></ml4u-dbschedule-downloader>
     <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}>
     </ml4u-user-profile>
 
@@ -73,7 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
-    <app-drawer-layout fullbleed>
+    <app-drawer-layout id="drawer_layout" fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer">
         <app-toolbar>Menu</app-toolbar>
@@ -90,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-drawer>
 
       <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+      <app-header-layout id="header_layout" has-scrolling-region>
 
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
@@ -173,6 +175,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u = window.ml4u || {};
         window.ml4u.sharedElements = window.ml4u.sharedElements || {};
         window.ml4u.sharedElements.papertoast = this.$.papertoast;
+
+        window.ml4u = window.ml4u || {};
+        window.ml4u.helpervars = window.ml4u.helpervars || {};
+        window.ml4u.helpervars.ml4uappcreated = true;
+        if(window.ml4u.helpervars.dbschedulesynced) {
+            console.log("removing hidden from ml4u-app:ready()");
+            removeLoadscreen();
+        }
+        window.ml4u.helpervars.drawer_layout = this.$.drawer_layout;
+        window.ml4u.helpervars.header_layout = this.$.header_layout;
+        window.ml4u.helpervars.ml4u_app_element = this;
+      },
+
+      removeLoadscreen: function() {
+        this.removeAttribute('hidden');
+        document.getElementById("splashscreen").setAttribute("hidden", "true");
+
+        this.async(function() {
+          this.$.drawer_layout.resetLayout();
+          this.$.header_layout.resetLayout();
+        }, 1);
       }
     });
   </script>
