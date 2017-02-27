@@ -1,0 +1,202 @@
+ <!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="ml4u-icons.html">
+
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
+<link rel="import" href="ml4u-dbschedule-downloader.html">
+<link rel="import" href="ml4u-user-profile.html">
+
+<dom-module id="ml4u-app">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+
+        display: block;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+    </style>
+
+    <ml4u-dbschedule-downloader></ml4u-dbschedule-downloader>
+    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}>
+    </ml4u-user-profile>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <app-drawer-layout id="drawer_layout" fullbleed>
+      <!-- Drawer content -->
+      <app-drawer id="drawer">
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="home" href="/home">Home</a>
+          <a name="schedule" href="/schedule">Schedule</a>
+          <template is="dom-if" if="{{!loggedIn}}">
+            <a name="login" href="/login">Login</a>
+          </template>
+        </iron-selector>
+        <div hidden$="[[!loggedIn]]">
+          <button id="logoutbutton" type="button" on-tap="_logout">Logout</button>
+        </div>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout id="header_layout" has-scrolling-region>
+
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="ml4u-icons:menu" drawer-toggle></paper-icon-button>
+            <div main-title>ICML 2017</div>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            fallback-selection="view404"
+            role="main">
+          <ml4u-page-home username="{{username}}" name="home"></ml4u-page-home>
+          <ml4u-page-schedule username="{{username}}" profile-data="{{profileData}}" name="schedule"></ml4u-page-schedule>
+          <ml4u-page-login username="{{username}}" route="{{route}}" name="login"></ml4u-page-login>
+          <ml4u-view404 name="view404"></ml4u-view404>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+
+    <paper-toast id="papertoast" text=""></paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ml4u-app',
+
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged',
+        },
+        username: {
+          type: String,
+          notify: true,
+          value: null
+        },
+
+        loggedIn: {
+          type: Boolean,
+          computed: '__computeLoggedIn(username)'
+        }
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)',
+      ],
+
+      __computeLoggedIn: function(username) {
+        return this.username != null;
+      },
+
+      _routePageChanged: function(page) {
+        this.page = page || 'home';
+
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      },
+
+      _pageChanged: function(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('ml4u-page-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function() {
+        this.page = 'view404';
+      },
+
+      _logout: function() {
+        if(!this.loggedIn)
+          return;
+        this.$.userProfileElement.logout();
+      },
+
+      ready: function() {
+        window.ml4u = window.ml4u || {};
+        window.ml4u.sharedElements = window.ml4u.sharedElements || {};
+        window.ml4u.sharedElements.papertoast = this.$.papertoast;
+
+        window.ml4u = window.ml4u || {};
+        window.ml4u.helpervars = window.ml4u.helpervars || {};
+        window.ml4u.helpervars.ml4uappcreated = true;
+        if(window.ml4u.helpervars.dbschedulesynced) {
+            console.log("removing hidden from ml4u-app:ready()");
+            removeLoadscreen();
+        }
+        window.ml4u.helpervars.drawer_layout = this.$.drawer_layout;
+        window.ml4u.helpervars.header_layout = this.$.header_layout;
+        window.ml4u.helpervars.ml4u_app_element = this;
+      },
+
+      removeLoadscreen: function() {
+        this.removeAttribute('hidden');
+        document.getElementById("splashscreen").setAttribute("hidden", "true");
+
+        this.async(function() {
+          this.$.drawer_layout.resetLayout();
+          this.$.header_layout.resetLayout();
+        }, 1);
+      }
+    });
+  </script>
+</dom-module>

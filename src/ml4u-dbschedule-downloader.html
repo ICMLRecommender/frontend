@@ -1,0 +1,40 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
+
+<dom-module id="ml4u-dbschedule-downloader">
+  <script>
+    Polymer({
+      is: 'ml4u-dbschedule-downloader',
+      created: function() {
+        window.ml4u = window.ml4u || {};
+        window.ml4u.schedDB_local = new PouchDB('schedule');
+        window.ml4u.shedDB_remote = new PouchDB('URL-REPLACE-WITH-RELEVANT-URL');
+
+        window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
+          window.ml4u.helpervars = window.ml4u.helpervars || {};
+          window.ml4u.helpervars.dbschedulesynced = true;
+          if(window.ml4u.helpervars.ml4uappcreated) {
+              window.ml4u.helpervars.ml4u_app_element.removeLoadscreen();
+          }
+          window.ml4u.schedDB_local.close();
+          window.ml4u.shedDB_remote.close();
+        }.bind(this)).on('error', function (err) {
+          // boo, something went wrong!
+        });
+
+        //window.db = new PouchDB('http://@52.178.198.66:5984/auth', {skipSetup: true});
+        /*
+        db.login('jan', 'apple', function (err, response) {
+          if (err) {
+            if (err.name === 'unauthorized') {
+              console.log("name or pass incorrect");
+            } else {
+              console.log("something went wrong during authentication");
+            }
+          }
+
+        });*/
+      }
+    });
+  </script>
+</dom-module>

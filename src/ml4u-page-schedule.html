@@ -1,0 +1,134 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="ml4u-page-schedule">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+
+      paper-icon-button.favourite {
+        color: GoldenRod;
+        --paper-icon-button-ink-color: var(GoldenRod);
+      }
+    </style>
+
+    <div class="card">
+      <h1>Papers</h1>
+      <h2>Document1</h2>
+      <p>1Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec.</p>
+      <paper-icon-button icon="bookmark" noink on-tap="b1t" title="add to bookmark" class$="{{fav1}}"></paper-icon-button>
+      <hr>
+      <h2>Document2</h2>
+      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis</p>
+      <paper-icon-button icon="bookmark" noink on-tap="b2t" title="add to bookmark" class$="{{fav2}}"></paper-icon-button>
+      <hr>
+      <h2>Document3</h2>
+      <p>Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules.</p>
+      <paper-icon-button icon="bookmark" noink on-tap="b3t" title="add to bookmark" class$="{{fav3}}"></paper-icon-button>
+    </div>
+
+    <!--<paper-toast id="toast0" text="This toast auto-closes after 3 seconds"></paper-toast>-->
+
+
+  </template>
+
+  <script>
+  Polymer({
+    is: 'ml4u-page-schedule',
+    properties: {
+      username: {
+        type: String,
+        notify: true
+      },
+      profileData: {
+        type: Object,
+        notify: true,
+        observer: 'profileDataChanged'
+      },
+      fav1: {
+        type: String,
+        value: ""
+      },
+      fav2: {
+        type: String,
+        value: ""
+      },
+      fav3: {
+        type: String,
+        value: ""
+      }
+    },
+    observers: [
+      'favChanged(profileData.bookmarks.*)'
+    ],
+
+    b1t: function() {this.buttonPressed(1);},
+    b2t: function() {this.buttonPressed(2);},
+    b3t: function() {this.buttonPressed(3);},
+
+    buttonPressed: function(itemId) {
+      console.log("buttonPressed called. profileData=");
+      console.log(this.profileData);
+      if(this.username == null) {
+        window.ml4u.sharedElements.papertoast.text = "Please login first.";
+        window.ml4u.sharedElements.papertoast.open();
+        return;
+      }
+
+      this.profileData.bookmarks = this.profileData.bookmarks || {};
+
+      if(this.profileData.bookmarks['item'+itemId]) {
+        this.set(['profileData.bookmarks','item'+ itemId], false);
+      }
+      else {
+        this.set(['profileData.bookmarks','item'+ itemId], true);
+      }
+      console.log(this.profileData.bookmarks);
+    },
+
+    favChanged: function(e) {
+      console.log("favChanged called with the following e:");
+      console.log(e);
+      if(e.base == undefined) {
+        this.fav1 = this.fav2 = this.fav3 = "";
+        return;
+      }
+
+      //TODO: Rework this to use the e object, which provides info
+      //on which propery has been changed
+
+      this.profileData.bookmarks = this.profileData.bookmarks || {};
+
+      if(this.profileData.bookmarks.item1) {
+        this.fav1 = "favourite";
+      }
+      else {
+        this.fav1 = "";
+      }
+      if(this.profileData.bookmarks.item2) {
+        this.fav2 = "favourite";
+      }
+      else {
+        this.fav2 = "";
+      }
+      if(this.profileData.bookmarks.item3) {
+        this.fav3 = "favourite";
+      }
+      else {
+        this.fav3 = "";
+      }
+    },
+    profileDataChanged: function(e) {
+      console.log("%%%%%%%%%%%%%%%%profileDataChanged called");
+      console.log(e);
+    }
+
+  });
+
+  </script>
+</dom-module>

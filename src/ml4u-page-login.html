@@ -1,0 +1,89 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu-shared-styles.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu-icons.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="ml4u-page-login">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      #loginErrorDiv {
+        font-weight: bold;
+        color: red;
+      }
+    </style>
+
+    <div class="card">
+      <h1>Login</h1>
+
+      <!--<paper-input id="username" label="Your username"></paper-input>
+      <div id="loginErrorDiv"></div>-->
+      <paper-dropdown-menu id="logindropdown" label="Select your slack name">
+        <paper-listbox class="dropdown-content">
+          <paper-item>lv</paper-item>
+          <paper-item>danield</paper-item>
+          <paper-item>hptruong93</paper-item>
+          <paper-item>lcharlin</paper-item>
+          <paper-item>mliakata</paper-item>
+          <paper-item>ravenscroftj</paper-item>
+          <paper-item>taimur</paper-item>
+          <paper-item>valerio</paper-item>
+          <paper-item>yeewhye</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <div id="loginErrorDiv"></div>
+      <br/>
+      <br/>
+      <paper-button id="submitButton" raised noink on-tap="_submit">Login</paper-button>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ml4u-page-login',
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        },
+        username: {
+          type: String,
+          notify: true
+        }
+      }
+      ,
+      _submit: function(e) {
+        var logindropdown = this.$.logindropdown;
+        var selectedItem = logindropdown.selectedItem;
+
+        if(selectedItem == null) {
+          this.$.loginErrorDiv.innerHTML = "Please select your slack name.";
+          return;
+        }
+        this.username = selectedItem.innerHTML.trim();
+        console.log("username = ." + this.username + ".");
+        this.set('route.path', '/home/');
+      }
+    });
+  </script>
+</dom-module>

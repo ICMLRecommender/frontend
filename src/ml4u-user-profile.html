@@ -1,0 +1,55 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-sync.html">
+<link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-document.html">
+<link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
+
+<dom-module id="ml4u-user-profile">
+  <template>
+    <ml4u-pouchdb-sync
+        id="sync1"
+        source="URL-REPLACE-WITH-RELEVANT-URL"
+        target="users"
+        bidirectional>
+    </ml4u-pouchdb-sync>
+    <app-pouchdb-conflict-resolution
+      strategy="lastWriteWins">
+    </app-pouchdb-conflict-resolution>
+    <ml4u-pouchdb-document
+      id="ml4upouchdbdoc1"
+      db-name="users"
+      doc-id="{{username}}"
+      data="{{profileData}}">
+    </ml4u-pouchdb-document>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ml4u-user-profile',
+      properties: {
+        username : {
+          type: String,
+          notify: true,
+          observer: '_usernameChanged'
+        },
+        profileData: {
+          type: Object,
+          notify: true,
+          observer: '_dataChanged'
+        }
+      },
+      _usernameChanged: function() {
+        console.log("_usernameChanged called");
+        console.log(this.username);
+      }
+      ,
+      _dataChanged: function() {
+        //console.log("_dataChanged called");
+        //console.log(this.profileData);
+      },
+      logout: function() {
+        this.username = null;
+        //this.$.sync1.cancelSync();
+      }
+    });
+  </script>
+</dom-module>
