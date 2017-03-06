@@ -19,6 +19,10 @@
         scheduleData: {
           type: Object,
           notify: true
+        },
+        isReady: {
+          type: Boolean,
+          notify: true
         }
       },
       observers: [
@@ -44,16 +48,17 @@
       created: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.schedDB_local = new PouchDB('schedule');
-        window.ml4u.shedDB_remote = new PouchDB('INSERT_YOUR_URL_HERE');
+        window.ml4u.shedDB_remote = new PouchDB('url');
 
         window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};
           window.ml4u.helpervars.dbschedulesynced = true;
           if(window.ml4u.helpervars.ml4uappcreated) {
-              window.ml4u.helpervars.ml4u_app_element.removeLoadscreen();
+              //window.ml4u.helpervars.ml4u_app_element.removeLoadscreen();
           }
           window.ml4u.schedDB_local.close();
           window.ml4u.shedDB_remote.close();
+          this.isReady = true;
         }.bind(this)).on('error', function (err) {
           // boo, something went wrong!
         });

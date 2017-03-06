@@ -1,0 +1,136 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+
+<dom-module id="ml4u-list-item">
+  <template>
+    <style>
+    paper-item {
+      border-left-style: solid;
+      border-left-width: 7px;
+    }
+    paper-item.child {
+      border-left-width: 17px;
+    }
+    paper-item.break {
+      border-left-color: floralwhite;
+    }
+    paper-item.tutorial {
+      border-left-color: #f3d4db;
+    }
+    paper-item.session {
+      border-left-color: black;
+    }
+    paper-item.poster {
+      border-left-color: #00CC99;
+    }
+    paper-item.invited.talk {
+      border-left-color: #b8cefe;
+    }
+    paper-item.oral {
+      border-left-color: #fcb168;
+    }
+    paper-item.spotlight {
+      border-left-color: #df8095;
+    }
+    paper-item.demonstration {
+      border-left-color: #b7b2ed;
+    }
+    paper-item.symposium {
+      border-left-color: #60F0F0;
+    }
+    paper-item.workshop {
+      border-left-colorr: #fd9edf;
+    }
+    iron-icon {
+      color:black;
+    }
+    iron-icon.favourite {
+      color:GoldenRod;
+    }
+    /*.author {
+      width: 2px;
+      background-color:pink;
+    }*/
+    iron-icon.author {
+      width:100%;
+      height:100%;
+    }
+    </style>
+
+      <template is="dom-if" if="{{isAuthor}}">
+        <paper-icon-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
+          <!--<div class="avatar blue" item-icon></div>
+          <div icon="icons:account-circle" item-icon></div>-->
+          <iron-icon icon="icons:account-circle" class$="{{listItem.type}}" item-icon></iron-icon>
+          <paper-item-body three-line>
+            <div secondary>
+              <span style="float:right">{{listItem.type}}</span>
+            </div>
+            <div><a href="/person?id=[[listItem.id]]">{{listItem.name}}</a></div>
+            <div secondary>{{listItem.authorsString}}</div>
+          </paper-item-body>
+        </paper-icon-item>
+      </template>
+      <template is="dom-if" if="{{!isAuthor}}">
+        <paper-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
+          <paper-item-body three-line>
+            <div secondary>
+              <span>{{listItem.timeAndLocationString}}<span>
+              <iron-icon icon="icons:star" class$="{{favouriteClass}}"></iron-icon>
+              <span style="float:right">{{listItem.type}}</span><br/>
+            </div>
+            <div>{{listItem.title}}</div>
+            <div secondary>{{listItem.authorsString}}</div>
+          </paper-item-body>
+        </paper-item>
+      </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'ml4u-list-item',
+      properties: {
+        listItem: Object,
+        isChild: Boolean,
+        additionalClasses : {
+          type: String,
+          computed: '_computeAdditionalClasses(listItem, isChild)'
+        },
+        selectedItem: {
+          type: String,
+          notify: true
+        },
+        favouriteClass: String,
+        profile: {
+          type: Object,
+          notify: true
+        },
+        isAuthor: Boolean
+      },
+        ready: function() {
+          this.isAuthor = this.listItem.type == "author";
+          //if(this.listItem.itemId in this.profile.favourites) {
+          //  this.favouriteClass = "favourite";
+          //}
+        //console.log("the following item used:1");
+        //console.log(this.listItem);
+      },
+      _computeAdditionalClasses : function(listItem, isChild) {
+        return isChild ? "child" : "";
+      },
+      //This is used once the favourite state is changed, not when this element is created.
+      setFavourite(isFavourite) {
+        this.favouriteClass = isFavourite ? "favourite" : "";
+      },
+      _changeSelectedItem: function(event, d, s) {
+        if(this.listItem.itemId == undefined)
+          return;
+        this.selectedItem = this.listItem.itemId;
+        console.log("new selected item:");
+        console.log(this.selectedItem);
+      }
+});
+
+  </script>
+</dom-module>
