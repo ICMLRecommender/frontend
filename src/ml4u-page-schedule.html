@@ -1,7 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="ml4u-nav.html">
 
 <dom-module id="ml4u-page-schedule">
   <template>
@@ -16,7 +18,8 @@
         --paper-icon-button-ink-color: var(GoldenRod);
       }
     </style>
-
+    <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
+    <ml4u-nav selected-index="{{selectedDay}}" tabs="[[_tabs]]" ></ml4u-nav>
     <div class="card">
       <h1>Papers</h1>
       <h2>Document1</h2>
@@ -49,6 +52,17 @@
         type: Object,
         notify: true,
         observer: 'profileDataChanged'
+      },
+      scheduleData: {
+        type: Object
+      },
+      selectedDay: {
+        type: Number,
+        value: 0
+      },
+      _tabs: {
+        type: Array,
+        value: ["hi", "ya"]
       },
       fav1: {
         type: String,
@@ -89,6 +103,19 @@
         this.set(['profileData.bookmarks','item'+ itemId], true);
       }
       console.log(this.profileData.bookmarks);
+    },
+
+    _onScheduleDataChanged: function(e) {
+      console.log("onScheduleDataChanged called");
+      console.log(window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(0));
+      //this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getDaysArray();
+    },
+
+    ready: function() {
+      //console.log("ready called in ml4u-page-schedule");
+      //console.log(window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(0));
+      //if(this._tabs.length==0)
+      //  this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getDaysArray();
     },
 
     favChanged: function(e) {

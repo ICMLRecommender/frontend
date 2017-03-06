@@ -103,13 +103,11 @@ PouchDB document:
       _docIdChanged: function(newVal, oldVal) {
         if(newVal != oldVal && newVal == null)
           this.reset();
-        console.log("_docIdChanged called. oldval = "  + oldVal, " newVal=" + newVal);
         this.docIdChanged = true;
       },
 
       /** @override */
       get isNew() {
-        console.log("-----isNew called");
         if(this.docIdChanged && this.docId != null) {
           this.docIdChanged = false;
           return false;
@@ -184,12 +182,8 @@ PouchDB document:
 
       __docChanged: function(db, doc, docId) {
         this._log('Doc / ID changed', doc, docId);
-        console.log("!!!!!!!__docChanged called1");
-        console.log(doc);
-        console.log(docId);
         //if (db && doc != null && docId != null && doc._id != docId) {
         if (db && doc != null && doc._id != docId) {
-          console.log("!!!!!!!__docChanged called2");
           doc._id = docId;
           this._initializeStoredValue();
         }
