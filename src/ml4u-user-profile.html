@@ -7,7 +7,7 @@
   <template>
     <ml4u-pouchdb-sync
         id="sync1"
-        source="URL-REPLACE-WITH-RELEVANT-URL"
+        source="YOUR_URL_HERE"
         target="users"
         bidirectional>
     </ml4u-pouchdb-sync>
@@ -38,13 +38,9 @@
         }
       },
       _usernameChanged: function() {
-        console.log("_usernameChanged called");
-        console.log(this.username);
       }
       ,
       _dataChanged: function() {
-        //console.log("_dataChanged called");
-        //console.log(this.profileData);
       },
       logout: function() {
         this.username = null;

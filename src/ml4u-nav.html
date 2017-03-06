@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+
+<dom-module id="ml4u-nav">
+  <template>
+    <style>
+      paper-tabs {
+        --paper-tabs : {background-color: aliceblue	;};
+      }
+      .link {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        text-decoration: none;
+        color: inherit;
+      }
+    </style>
+    <paper-tabs selected="{{selectedIndex}}" attr-for-selected="name">
+      <template is="dom-repeat" items="{{tabs}}">
+        <paper-tab noink link  name="{{index}}">
+          <a href="#{{index}}" class="link tab" tabindex="-1">{{item}}</a>
+        </paper-tab>
+      </template>
+    </paper-tabs>
+    {{selectedIndex}}
+  </template>
+
+  <script>
+  Polymer({
+    is: 'ml4u-nav',
+    properties: {
+      selectedIndex: {
+        type:Number,
+        notify: true
+      },
+      tabs: Array,
+    },
+
+    ready: function() {
+      console.log("ml4u-nav is ready");
+    }
+  });
+  </script>
+</dom-module>
