@@ -16,11 +16,18 @@
     </style>
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
     <ml4u-nav selected-index="{{selectedDay}}" tabs="[[_tabs]]" ></ml4u-nav>
-    <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
-      selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
-      profile={{profile}} id-prefix="sched">
-    </ml4u-list>
-
+    <template is="dom-if" if="{{!showPosters}}">
+      <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
+        selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
+        profile={{profile}} id-prefix="sched">
+      </ml4u-list>
+    </template>
+    <template is="dom-if" if="{{showPosters}}">
+      <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
+        selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
+        profile={{profile}} id-prefix="posters" display-sub-sessions>
+      </ml4u-list>
+    </template>
   </template>
 
   <script>
@@ -28,7 +35,10 @@
     is: 'ml4u-page-schedule',
     properties: {
       route: Object,
-      ironRouteHash: String,
+      ironRouteHash: {
+        type: String,
+        observer: '_onIronRouteHashChanged'
+      },
       username: {
         type: String,
         notify: true
@@ -54,29 +64,53 @@
       _items: {
         type: Array,
         value: []
+      },
+      showPosters: {
+        type: Boolean,
+        value: false
       }
     },
     observers: [
       'favChanged(profileData.bookmarks.*)'
     ],
-    _onSelectedDayChanged: function(e) {
-      this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
+
+    _onIronRouteHashChanged: function(newVal) {
+      console.log("_onIronRouteHashChanged" + newVal);
+      console.log("_onIronRouteHashChanged" + typeof(newVal));
+      this.selectedDay = newVal == undefined ? 0 : Number(newVal);
+    },
+
+    _onSelectedDayChanged: function(newVal, oldVal) {
+      console.log("_onSelectedDayChanged " + newVal + " " + oldVal);
+      if(newVal == oldVal)
+        return;
+      if(!this.showPosters)
+        this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
+      else
+        this._items = window.ml4u.sharedElements.scheduleDataProvider.getPostersSchedule(this.selectedDay);
     },
 
     _onScheduleDataChanged: function(e) {
-      this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getDaysArray();
-      this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
+      if(!this.showPosters) {
+        this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
+        this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
+      }
+      else {
+        this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getPostersDaysArray();
+        this._items = window.ml4u.sharedElements.scheduleDataProvider.getPostersSchedule(this.selectedDay);
+      }
     },
     ready: function() {
-      this.selectedDay = this.ironRouteHash || '0';
-      if(this.route !== undefined && this.route.__queryParams.itemid !== undefined)
-        this.selectedItem = this.route.__queryParams.itemid;
+      //this.selectedDay = this.ironRouteHash || '0';
+      //if(this.route !== undefined && this.route.__queryParams.itemid !== undefined)
+      //  this.selectedItem = this.route.__queryParams.itemid;
 
-      if(this._tabs.length==0)
-        this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getDaysArray();
-      //should be called when the selected day is called above
-      //if(this._items.length==0)
-        //this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
+      if(this._tabs.length==0) {
+        if(!this.showPosters)
+          this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
+        else
+          this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getPostersDaysArray();
+      }
     },
 
     favChanged: function(e) {

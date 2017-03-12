@@ -1,0 +1,169 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="ml4u-item-user-review.html">
+<link rel="import" href="ml4u-item-review.html">
+<dom-module id="ml4u-item-view">
+
+<style is="custom-style">
+  :host {
+    padding: 0 0 !important;
+  }
+
+  .container {
+    margin-top : 5px;
+    clear: right;
+  }
+  .container > ml4u-user-view, ml4u-user-review {
+        padding: 5px;
+        margin: 10px;
+        background-color: white;
+        min-height: 20px;
+        min-width: 200px;
+        max-width: 250px;
+        float:left;
+  }
+  paper-icon-button.favourite {
+    color:GoldenRod;
+  }
+  a {
+    color:inherit;
+    text-decoration: none;
+  }
+
+  .cardBlock {
+    display: block;
+    border-bottom: 1px solid #e0e0e0 !important;
+    padding: 0px 24px 24px 24px;
+  }
+
+  section.itemViewHeader {
+    background-color: #F2D7D5;
+    padding: 5px;
+  }
+
+  paper-button.writeReview {
+    /*float: right;*/
+  }
+  .itemViewUserReview {
+    background-color: #f5f5f5;
+  }
+</style>
+<template>
+  <section class="itemViewHeader">
+    <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
+    <paper-icon-button icon="icons:star" id="favouriteIcon" on-click='_toggleFavourite'></paper-icon-button>
+  </section>
+  <section class="itemViewDescription">
+    <div class="cardBlock">
+      <h1>[[itemObject.title]]</h1>
+      <div>[[itemObject.description]]</div>
+      <div class="container">
+        <template is="dom-repeat" items="{{itemObject.authors}}">
+            <a dialog-confirm href="/person?id=[[item.id]]"><iron-icon icon="icons:account-circle"></iron-icon>[[item.name]]</a>
+        </template>
+      </div>
+    </div>
+  </section>
+  <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
+  <section class="itemViewUserReview" hidden="{{displayRateItemButton}}">
+    <div class="cardBlock">
+      <ml4u-item-review  display-rate-item-button="{{displayRateItemButton}}" ></ml4u-item-review>
+    </div>
+  </section>
+  <section class="itemViewReviews">
+    <h1>Ratings</h1>
+      <ml4u-user-review author-name="Author Name1" author-institution="Author Institution1" review="Item review1"></ml4u-user-review>
+      <ml4u-user-review author-name="Author Name2" author-institution="Author Institution2" review="Item review2"></ml4u-user-review>
+        <!--
+          <template is="dom-repeat" items="{{articleObject.reviews}}">
+          <ml4u-user-review author-name="[[item.authorName]]" author-institution="[[item.institution]]" review="[[item.review]]"></ml4u-user-view>
+          </template>
+        -->
+
+  </section>
+</template>
+
+<script>
+  Polymer({
+    is: 'ml4u-item-view',
+    properties: {
+      itemId : {
+        type: Object,
+        observer: '_onItemIdChanged'
+      },
+      itemObject: {
+        type: Object,
+        observer: '_onItemChanged'
+      },
+      profile: {
+        type: Object,
+        notify: true
+      },
+      displayRateItemButton: {
+        type: Boolean,
+        value: true
+      }
+    },
+    _onItemIdChanged: function() {
+      this.updateItem();
+    },
+    updateItem: function() {
+      if(this.itemId == undefined)
+        return;
+
+      this.async(function() {
+        var itemId = this.itemId;
+        if(itemId === undefined)
+          return {};
+        item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
+        console.log("computed the following itemObj for itemId " + itemId);
+        console.log(item);
+        this.itemObject = item;
+      });
+    },
+    _onItemChanged: function(newItemValue) {
+      if(newItemValue === undefined)
+        return;
+      this._updateStars();
+    },
+    _toggleFavourite: function() {
+      console.log("loggin this.profile from _toggleFavourite");
+      console.log(this.profile);
+      if(this.articleId in this.profile.favourites) {
+          delete this.profile.favourites[this.articleId];
+          this.notifyPath('profile.favourites.'+this.articleId);
+      }
+      else {
+        this.set('profile.favourites.'+this.articleId, ''+ this.articleId);
+        //this.profile.favourites[this.articleId] = this.articleId;
+      }
+      this._updateStars();
+    },
+
+    //Updates the class of the star in order to make it gold, if the item has been added to favourites
+    _updateStars : function() {
+      //TODO: this is temp solution
+      return {};
+      if(!ML4U.schedule)
+        return {};
+
+      var itemId = this.articleId;
+      var isFavourite = itemId in this.profile.favourites;
+      //console.log("checked if " + itemId + " is in");
+      //console.log(this.profile.favourites);
+      //console.log("result = " + isFavourite);
+      if(isFavourite) {
+        this.$.favouriteIcon.className = "favourite";
+      }
+      else{
+        this.$.favouriteIcon.className = "";
+      }
+    },
+
+    writeReviewTapped: function() {
+      console.log("writeReviewTapped tapped");
+      this.displayRateItemButton = false;
+    }
+  });
+  </script>
+</dom-module>

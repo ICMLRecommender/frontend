@@ -21,7 +21,7 @@
           notify: true
         },
         isReady: {
-          type: Boolean,
+          type: Number,
           notify: true
         }
       },
@@ -31,6 +31,9 @@
       scheduleDataChanged(e) {
         if(this.scheduleData == undefined || this.scheduleData._rev == undefined)
           return;
+        if(!this.isReady) {
+          this.isReady = 1;
+        }
         console.log("signalling that scheduleData has changed");
         console.log(this.scheduleData);
         this.fire('iron-signal', {name: 'schedule', data: null});
@@ -40,15 +43,57 @@
           return [];
         return this.scheduleData.sessions[day];
       },
-      getDaysArray: function() {
+      getPostersSchedule: function(day) {
+        if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
+          return [];
+        var posterSessionsForTheDay = new Array();
+        var posterSessionIds = this.scheduleData.posterSessionsByDay[day].posterSessionsIds;
+        //Note: the number of poster sessons per day is 1 or 2
+        //therefore, the following loop won't execute many times.
+        for(var i=0; i<posterSessionIds.length; i++) {
+          var currentPosterSessionId = posterSessionIds[i];
+          var currentPosterSessionIdMapping = this.scheduleData.sessionIdToIndexMapping[currentPosterSessionId];
+          var currentPosterSession = this.scheduleData.sessions[currentPosterSessionIdMapping.indexInSessionsArray][currentPosterSessionIdMapping.indexInRelevantDaySessionArray];
+          posterSessionsForTheDay.push(currentPosterSession);
+        }
+        return posterSessionsForTheDay;
+      },
+      getItem: function(itemId) {
+        console.log("getItem called with itemId" + itemId);
+        if(this.scheduleData == undefined || this.scheduleData.items == undefined)
+          return {};
+        var orgItem =  this.scheduleData.items[itemId]
+        var item = {};
+        item.title = orgItem.title;
+        item.description = orgItem.description;
+        item.authors = new Array();
+        for(var i in orgItem.authorIds) {
+          var authorId = orgItem.authorIds[i];
+          var person = this.scheduleData.people[authorId];
+          item.authors.push(person);
+        }
+        return item;
+      },
+      getSessionsDaysArray: function() {
         if(this.scheduleData == undefined || this.scheduleData.dayList == undefined)
           return [];
         return this.scheduleData.dayList;
       },
+      getPostersDaysArray: function() {
+        if(this.scheduleData == undefined || this.scheduleData.dayList == undefined)
+          return [];
+        var posterSessionsByDay = this.scheduleData.posterSessionsByDay;
+        var daysCount = posterSessionsByDay.length;
+        var dayList = new Array();
+        for(var i=0; i<daysCount; ++i){
+          dayList.push(posterSessionsByDay[i].dayString);
+        }
+        return dayList;
+      },
       created: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.schedDB_local = new PouchDB('schedule');
-        window.ml4u.shedDB_remote = new PouchDB('url');
+        window.ml4u.shedDB_remote = new PouchDB('https://lazar:letmein123@icml.papro.org.uk/couchdb/schedule');
 
         window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};
@@ -58,7 +103,6 @@
           }
           window.ml4u.schedDB_local.close();
           window.ml4u.shedDB_remote.close();
-          this.isReady = true;
         }.bind(this)).on('error', function (err) {
           // boo, something went wrong!
         });
