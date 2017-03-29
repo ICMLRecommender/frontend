@@ -19,13 +19,13 @@
     <template is="dom-if" if="{{!showPosters}}">
       <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
         selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
-        profile={{profile}} id-prefix="sched">
+        profile-data={{profileData}} id-prefix="sched">
       </ml4u-list>
     </template>
     <template is="dom-if" if="{{showPosters}}">
       <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
         selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
-        profile={{profile}} id-prefix="posters" display-sub-sessions>
+        profile-data={{profileData}} id-prefix="posters" display-sub-sessions>
       </ml4u-list>
     </template>
   </template>
@@ -45,8 +45,7 @@
       },
       profileData: {
         type: Object,
-        notify: true,
-        observer: 'profileDataChanged'
+        notify: true
       },
       selectedItem: {
         type:String,
@@ -70,9 +69,6 @@
         value: false
       }
     },
-    observers: [
-      'favChanged(profileData.bookmarks.*)'
-    ],
 
     _onIronRouteHashChanged: function(newVal) {
       console.log("_onIronRouteHashChanged" + newVal);

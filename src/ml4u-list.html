@@ -53,16 +53,17 @@
           type: Number,
           observer: 'applyFilter'
         },
-        profile: {
+        profileData: {
           type: Object,
-          notify: true
+          notify: true,
+          observer: '_profileDataChanged'
         },
         //needed so that the item ids don't clash
         //^...I think
         idPrefix: String
       },
       observers: [
-        '_userFavouritesChanged(profile.favourites.*)'
+        '_userBookmarksChanged(profileData.bookmarks.*)'
       ],
       itemsChanged: function(newItems, oldItems) {
         this.applyFilter(this.selectedFilterIndex);
@@ -86,7 +87,7 @@
 
         });
       },
-      _userFavouritesChanged: function(changeRecord) {
+      _userBookmarksChanged: function(changeRecord) {
         console.log(">>>>>>>>>>>>>>_userFavouritesChanged called");
         /*console.log("_userFavouritesChanged123 called with the following changeRecord:");
         console.log(changeRecord);
@@ -107,6 +108,9 @@
         listElement.setFavourite(changeRecord.value != null);
         //this.$$("")
         */
+      },
+      _profileDataChanged: function() {
+        console.log(">>>>>>>_profileDataChanged called");
       }
     });
 

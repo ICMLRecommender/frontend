@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
@@ -18,6 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
+
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="ml4u-page-login">
@@ -37,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <h1>Login</h1>
 
       <!--<paper-input id="username" label="Your username"></paper-input>
-      <div id="loginErrorDiv"></div>-->
+      <div id="loginErrorDiv"></div>
       <paper-dropdown-menu id="logindropdown" label="Select your slack name">
         <paper-listbox class="dropdown-content">
           <paper-item>lv</paper-item>
@@ -50,11 +52,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-item>valerio</paper-item>
           <paper-item>yeewhye</paper-item>
         </paper-listbox>
-      </paper-dropdown-menu>
-      <div id="loginErrorDiv"></div>
-      <br/>
-      <br/>
-      <paper-button id="submitButton" raised noink on-tap="_submit">Login</paper-button>
+      </paper-dropdown-menu>-->
+      <form is="iron-form" id="loginForm">
+        <paper-input id="usernameInput" label="username" type="text" required auto-validate></paper-input>
+        <paper-input id="passwordInput" label="password" type="password" required auto-validate></paper-input>
+        <div id="loginErrorDiv"></div>
+        <br/>
+        <br/>
+        <paper-button id="submitButton" raised noink on-tap="_submit">Login</paper-button>
+      </form>
     </div>
   </template>
 
@@ -73,16 +79,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       ,
       _submit: function(e) {
-        var logindropdown = this.$.logindropdown;
+        if(!this.$.loginForm.validate())
+          return;
+        var loginElements = new Object();
+        loginElements.submitButton = this.$.submitButton;
+        loginElements.loginErrorDiv = this.$.loginErrorDiv;
+        loginElements.loginErrorDiv.innerHTML = "";
+        loginElements.submitButton.disabled = true;
+        loginElements.username = this.$.usernameInput.value;
+
+        /*var logindropdown = this.$.logindropdown;
         var selectedItem = logindropdown.selectedItem;
 
         if(selectedItem == null) {
           this.$.loginErrorDiv.innerHTML = "Please select your slack name.";
           return;
-        }
-        this.username = selectedItem.innerHTML.trim();
-        console.log("username = ." + this.username + ".");
-        this.set('route.path', '/home/');
+        }*/
+        //var username = this.$.usernameInput.value;
+        var password = this.$.passwordInput.value;
+        var callbackfunction = function(err, response) {
+          loginElements.submitButton.disabled = false;
+          if(err) {
+            if (err.name === 'unauthorized') {
+              loginElements.loginErrorDiv.innerHTML = "Unauthorized";
+            }
+            else {
+              loginElements.loginErrorDiv.innerHTML = "Unknown error occurred. Try again.";
+            }
+          }
+          else {
+            this.username = loginElements.username;
+            this.set('route.path', '/home/');
+          }
+        }.bind(this);
+
+        window.ml4u.sharedElements.userProfileElement.login(loginElements.username, password, callbackfunction);
+
+        //console.log("username = ." + this.username + ".");
+        //this.set('route.path', '/home/');
       }
     });
   </script>

@@ -120,6 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a name="schedule" href="/schedule">Schedule</a>
           <a name="posters" href="/posters">Posters</a>
           <template is="dom-if" if="{{!loggedIn}}">
+            <a name="register" href="/register">Register</a>
             <a name="login" href="/login">Login</a>
           </template>
         </iron-selector>
@@ -152,6 +153,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="posters" show-posters></ml4u-page-schedule>
+          <ml4u-page-register username="{{username}}" route="{{route}}" name="register"></ml4u-page-register>
           <ml4u-page-login username="{{username}}" route="{{route}}" name="login"></ml4u-page-login>
           <ml4u-view404 name="view404"></ml4u-view404>
         </iron-pages>
@@ -163,7 +165,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!--The dialog needs to be in the main view in order to display properly-->
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable class="scrollable">
-        <ml4u-item-view id="itemView" item-id="[[selectedItem]]" profile="{{profile}}"></ml4u-item-view>
+        <ml4u-item-view id="itemView" item-id="[[selectedItem]]" profile-data="{{profileData}}"></ml4u-item-view>
       </paper-dialog-scrollable>
     </paper-dialog>
 
@@ -309,8 +311,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u.sharedElements = window.ml4u.sharedElements || {};
         window.ml4u.sharedElements.papertoast = this.$.papertoast;
         window.ml4u.sharedElements.scheduleDataProvider = this.$.scheduleDataProvider;
-
-        window.ml4u = window.ml4u || {};
+        window.ml4u.sharedElements.userProfileElement = this.$.userProfileElement;
+        //window.ml4u = window.ml4u || {};
         window.ml4u.helpervars = window.ml4u.helpervars || {};
         window.ml4u.helpervars.ml4uappcreated = true;
         if(window.ml4u.helpervars.dbschedulesynced) {

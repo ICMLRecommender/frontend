@@ -95,7 +95,7 @@
         type: Object,
         observer: '_onItemChanged'
       },
-      profile: {
+      profileData: {
         type: Object,
         notify: true
       },
@@ -127,8 +127,9 @@
       this._updateStars();
     },
     _toggleFavourite: function() {
-      console.log("loggin this.profile from _toggleFavourite");
-      console.log(this.profile);
+      console.log("loggin this.profileData from _toggleFavourite");
+      console.log(this.profileData);
+      this.profileData.bookmarks = this.profileData.bookmarks || {};
       if(this.articleId in this.profile.favourites) {
           delete this.profile.favourites[this.articleId];
           this.notifyPath('profile.favourites.'+this.articleId);

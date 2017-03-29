@@ -10,14 +10,12 @@
         padding: 10px;
       }
     </style>
-    <ml4u-nav tabs="{{_tabs}}" selected-index={{selectedDay}}></ml4u-nav>
     <div class="card">
       <div class="circle">1</div>
       <h1>View One</h1>
       <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
       <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
     </div>
-    <button on-tap="myfn">changeTabs</button>
   </template>
 
   <script>
@@ -33,10 +31,6 @@
           value: 0
         }
       },
-      myfn: function() {
-        this._tabs = ["hi", "ya", "there"];
-        console.log("myfn called1");
-      }
     });
   </script>
 </dom-module>

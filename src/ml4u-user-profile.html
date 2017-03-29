@@ -1,13 +1,17 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<!--TODO: note that the current app-pouchdb element doesn't load the minified version.-->
+<script src="../bower_components/pouchdb/dist/pouchdb.min.js"></script>
+<script src="../bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js"></script>
 <link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-sync.html">
 <link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-document.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
+
 
 <dom-module id="ml4u-user-profile">
   <template>
     <ml4u-pouchdb-sync
         id="sync1"
-        source="https://lazar:letmein123@icml.papro.org.uk/couchdb/users"
+        source="https://icml.papro.org.uk/couchdb/users"
         target="users"
         bidirectional>
     </ml4u-pouchdb-sync>
@@ -35,15 +39,35 @@
           type: Object,
           notify: true,
           observer: '_dataChanged'
-        }
+        },
+        authDatabase: Object
       },
       _usernameChanged: function() {
       }
       ,
       _dataChanged: function() {
       },
+      create: function() {
+        var PouchDB = require("pouchdb");
+        PouchDB.plugin(require('pouchdb-authentication'));
+      },
+      ready: function() {
+        this.authDatabase = new PouchDB('https://icml.papro.org.uk/couchdb/basic', {skipSetup: true});
+      },
+      login: function(username, password, callbackfn) {
+        this.authDatabase.login(username, password, callbackfn);
+      },
       logout: function() {
-        this.username = null;
+        this.authDatabase.logout(function (err, response) {
+          if (err) {
+            console.log("error during logout:");
+            console.log(err);
+            // network error
+            return;
+          }
+          this.username = null;
+        }.bind(this));
+
         //this.$.sync1.cancelSync();
       }
     });
