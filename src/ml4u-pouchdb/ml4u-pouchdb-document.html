@@ -7,6 +7,7 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
+
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-storage/app-storage-behavior.html">
 <link rel="import" href="../../bower_components/app-pouchdb/pouchdb.html">
@@ -69,9 +70,7 @@ PouchDB document:
          */
         docId: {
           type: String,
-          value: null,
-          //ml4u-specific modification
-          observer: '_docIdChanged'
+          value: null
         },
 
         /**
@@ -96,22 +95,20 @@ PouchDB document:
 
       observers: [
         '__docRevChanged(data._rev)',
-        '__docChanged(db, data, docId, _readied)'
+        '__docChanged(db, data, docId, _readied)',
+        '__dbChanged(db)'
       ],
 
-      //ml4u-specific modification
-      _docIdChanged: function(newVal, oldVal) {
-        if(newVal != oldVal && newVal == null)
-          this.reset();
-        this.docIdChanged = true;
+      __dbChanged(db) {
+        if(db==null) {
+          // TODO: ADDED ml4u specific
+            this.data = this.zeroValue;
+        }
       },
 
       /** @override */
       get isNew() {
-        if(this.docIdChanged && this.docId != null) {
-          this.docIdChanged = false;
-          return false;
-        }
+        console.log("isNewCalled");
         return this.docId == null;
       },
 
@@ -156,6 +153,10 @@ PouchDB document:
 
       /** @override */
       getStoredValue: function(storagePath) {
+        console.log("getStoredValue called");
+        if(this.db == undefined || this.db == null)
+          return Promise.resolve();
+
         return this.db.get(this.docId).then(function(doc) {
           return this.get(storagePath, {
             data: doc
@@ -182,11 +183,15 @@ PouchDB document:
 
       __docChanged: function(db, doc, docId) {
         this._log('Doc / ID changed', doc, docId);
-        //if (db && doc != null && docId != null && doc._id != docId) {
-        if (db && doc != null && doc._id != docId) {
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!__docChanged called");
+        if (db && doc != null && docId != null && doc._id != docId) {
+          console.log(docId);
+          console.log("calling _initializeStoredValue");
           doc._id = docId;
-          this._initializeStoredValue();
+          //TODO: Verify there are no consequences of using this instead of _initializeStoredValue()
+          this.initializeStoredValue();
         }
+
       },
 
       __docRevChanged: function() {
@@ -194,6 +199,11 @@ PouchDB document:
       },
 
       __computeChanges: function(db, docId) {
+        console.log("__computeChanges called");
+        if (this.changes) {
+          this.changes.removeAllListeners();
+        }
+
         if (db == null || docId == null) {
           return null;
         }

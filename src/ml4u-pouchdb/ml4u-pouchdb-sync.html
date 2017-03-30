@@ -85,15 +85,20 @@ documentation [here](https://pouchdb.com/guides/replication.html).
       },
 
       __computeSync: function(source, target, bidirectional) {
-        console.log(source + ".");
-        if(target=="defaultusername" || source.includes("defaultusername")) {
+        //console.log(source + ".");
+        //console.log("!!!!!!");
+        //console.log(target);
+        var sourcedbname = source.substring(source.lastIndexOf("/")+1);
+
+        if(target==null || sourcedbname.length == 0) {
           return null;
         }
+
         var options = {
           live: true,
           retry: true
         }
-        console.log(source + ".");
+
         return bidirectional ?
           PouchDB.sync(source, target, options) :
           PouchDB.replicate(source, target, options);

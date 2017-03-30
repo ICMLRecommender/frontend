@@ -11,8 +11,8 @@
   <template>
     <ml4u-pouchdb-sync
         id="sync1"
-        source="https://icml.papro.org.uk/couchdb/users"
-        target="users"
+        source="http://localhost:5985/{{username}}"
+        target="{{username}}"
         bidirectional>
     </ml4u-pouchdb-sync>
     <app-pouchdb-conflict-resolution
@@ -20,8 +20,8 @@
     </app-pouchdb-conflict-resolution>
     <ml4u-pouchdb-document
       id="ml4upouchdbdoc1"
-      db-name="users"
-      doc-id="{{username}}"
+      db-name="{{username}}"
+      doc-id="data"
       data="{{profileData}}">
     </ml4u-pouchdb-document>
   </template>
@@ -43,16 +43,18 @@
         authDatabase: Object
       },
       _usernameChanged: function() {
-      }
-      ,
+      },
       _dataChanged: function() {
+        console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+        console.log("_dataChanged called");
+        console.log(this.profileData);
       },
       create: function() {
         var PouchDB = require("pouchdb");
         PouchDB.plugin(require('pouchdb-authentication'));
       },
       ready: function() {
-        this.authDatabase = new PouchDB('https://icml.papro.org.uk/couchdb/basic', {skipSetup: true});
+        this.authDatabase = new PouchDB('http://localhost:5985/basic', {skipSetup: true});
       },
       login: function(username, password, callbackfn) {
         this.authDatabase.login(username, password, callbackfn);
