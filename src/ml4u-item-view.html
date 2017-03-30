@@ -51,7 +51,7 @@
 <template>
   <section class="itemViewHeader">
     <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-    <div> <!--hidden$="[[!loggedIn]]"-->
+    <span hidden$="[[!loggedIn]]">
       <paper-icon-button hidden$="[[!loggedIn]]" icon="icons:star" id="favouriteIcon" on-click='_toggleFavourite'></paper-icon-button>
     </div>
   </section>
@@ -142,7 +142,7 @@
         window.ml4u.sharedElements.papertoast.open();
         return;
       }
-      
+
       console.log("loggin this.profileData from _toggleFavourite");
       console.log(this.profileData);
       this.profileData.bookmarks = this.profileData.bookmarks || {};
