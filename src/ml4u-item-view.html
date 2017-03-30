@@ -51,7 +51,9 @@
 <template>
   <section class="itemViewHeader">
     <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-    <paper-icon-button icon="icons:star" id="favouriteIcon" on-click='_toggleFavourite'></paper-icon-button>
+    <div> <!--hidden$="[[!loggedIn]]"-->
+      <paper-icon-button hidden$="[[!loggedIn]]" icon="icons:star" id="favouriteIcon" on-click='_toggleFavourite'></paper-icon-button>
+    </div>
   </section>
   <section class="itemViewDescription">
     <div class="cardBlock">
@@ -64,6 +66,7 @@
       </div>
     </div>
   </section>
+  hello [[loggedIn]]
   <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
   <section class="itemViewUserReview" hidden="{{displayRateItemButton}}">
     <div class="cardBlock">
@@ -102,7 +105,14 @@
       displayRateItemButton: {
         type: Boolean,
         value: true
+      },
+      loggedIn: {
+        type: Boolean,
+        computed: '_computeLoggedIn(profileData)'
       }
+    },
+    _computeLoggedIn: function(profileData) {
+      return Object.keys(profileData).length != 0
     },
     _onItemIdChanged: function() {
       this.updateItem();
@@ -127,15 +137,21 @@
       this._updateStars();
     },
     _toggleFavourite: function() {
+      if(this.username == null) {
+        window.ml4u.sharedElements.papertoast.text = "Please login first.";
+        window.ml4u.sharedElements.papertoast.open();
+        return;
+      }
+      
       console.log("loggin this.profileData from _toggleFavourite");
       console.log(this.profileData);
       this.profileData.bookmarks = this.profileData.bookmarks || {};
-      if(this.articleId in this.profile.favourites) {
-          delete this.profile.favourites[this.articleId];
-          this.notifyPath('profile.favourites.'+this.articleId);
+      if(this.articleId in this.profileData.bookmarks) {
+          delete this.profileData.bookmarks[this.itemId];
+          this.notifyPath('profileData.bookmarks.'+this.itemId);
       }
       else {
-        this.set('profile.favourites.'+this.articleId, ''+ this.articleId);
+        this.set('profileData.bookmarks.'+this.itemId, ''+ this.itemId);
         //this.profile.favourites[this.articleId] = this.articleId;
       }
       this._updateStars();
@@ -143,13 +159,11 @@
 
     //Updates the class of the star in order to make it gold, if the item has been added to favourites
     _updateStars : function() {
-      //TODO: this is temp solution
-      return {};
-      if(!ML4U.schedule)
-        return {};
+      console.log("_updateStars called");
+      console.log(this.profileData);
+      var itemId = this.itemId;
 
-      var itemId = this.articleId;
-      var isFavourite = itemId in this.profile.favourites;
+      var isFavourite = this.profileData.bookmarks != undefined && itemId in this.profileData.bookmarks;
       //console.log("checked if " + itemId + " is in");
       //console.log(this.profile.favourites);
       //console.log("result = " + isFavourite);

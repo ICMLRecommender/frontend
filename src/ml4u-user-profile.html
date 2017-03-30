@@ -3,8 +3,8 @@
 <script src="../bower_components/pouchdb/dist/pouchdb.min.js"></script>
 <script src="../bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js"></script>
 <link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-sync.html">
-<link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-document.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
+<link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-document.html">
 
 
 <dom-module id="ml4u-user-profile">
@@ -18,12 +18,21 @@
     <app-pouchdb-conflict-resolution
       strategy="lastWriteWins">
     </app-pouchdb-conflict-resolution>
-    <ml4u-pouchdb-document
+    <!-- <ml4u-pouchdb-document
       id="ml4upouchdbdoc1"
       db-name="{{username}}"
       doc-id="data"
       data="{{profileData}}">
-    </ml4u-pouchdb-document>
+    </ml4u-pouchdb-document> -->
+
+    <template is="dom-repeat" items="{{collectonOfDocumentsToRetrieve}}">
+      <app-pouchdb-document
+        db-name="{{username}}"
+        doc-id="data"
+        data="{{profileData}}">
+      </app-pouchdb-document>
+    </template>
+
   </template>
 
   <script>
@@ -40,9 +49,21 @@
           notify: true,
           observer: '_dataChanged'
         },
-        authDatabase: Object
+        authDatabase: Object,
+
+        collectonOfDocumentsToRetrieve: {
+          type: Object,
+          notify: true,
+          value: []
+        }
       },
       _usernameChanged: function() {
+        if(this.username  != null)
+          this.collectonOfDocumentsToRetrieve = ["data"];
+        else {
+          this.collectonOfDocumentsToRetrieve = [];
+          this.profileData = {};
+        }
       },
       _dataChanged: function() {
         console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
