@@ -183,10 +183,10 @@ PouchDB document:
 
       __docChanged: function(db, doc, docId) {
         this._log('Doc / ID changed', doc, docId);
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!__docChanged called");
+        //console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!__docChanged called");
         if (db && doc != null && docId != null && doc._id != docId) {
-          console.log(docId);
-          console.log("calling _initializeStoredValue");
+          //console.log(docId);
+          //console.log("calling _initializeStoredValue");
           doc._id = docId;
           //TODO: Verify there are no consequences of using this instead of _initializeStoredValue()
           this.initializeStoredValue();

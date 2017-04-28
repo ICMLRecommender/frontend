@@ -2,6 +2,10 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="ml4u-item-user-review.html">
 <link rel="import" href="ml4u-item-review.html">
+<link rel="import" href="ml4u-item-likes.html">
+<link rel="import" href="ml4u-item-comments.html">
+
+
 <dom-module id="ml4u-item-view">
 
 <style is="custom-style">
@@ -73,11 +77,17 @@
       <ml4u-item-review  display-rate-item-button="{{displayRateItemButton}}" ></ml4u-item-review>
     </div>
   </section>
-  <section class="itemViewReviews">
-    <h1>Ratings</h1>
+  <section class="itemViewReviews" hidden="{{!feedbackRetrieved}}">
+    <div>
+      <b>Likes:</b>
+      <ml4u-item-likes likes-array={{feedback.likes}}></ml4u-item-likes>
+    </div>
+    <h3>Comments</h3>
+    <ml4u-item-comments comments-array={{feedback.comments}}></ml4u-item-comments>
+
+      <!--
       <ml4u-user-review author-name="Author Name1" author-institution="Author Institution1" review="Item review1"></ml4u-user-review>
       <ml4u-user-review author-name="Author Name2" author-institution="Author Institution2" review="Item review2"></ml4u-user-review>
-        <!--
           <template is="dom-repeat" items="{{articleObject.reviews}}">
           <ml4u-user-review author-name="[[item.authorName]]" author-institution="[[item.institution]]" review="[[item.review]]"></ml4u-user-view>
           </template>
@@ -109,14 +119,61 @@
       loggedIn: {
         type: Boolean,
         computed: '_computeLoggedIn(profileData)'
+      },
+      feedbackRetrieved: {
+        type: Boolean,
+        value: false
+      },
+      feedback: {
+        type: Object
       }
     },
     _computeLoggedIn: function(profileData) {
       return Object.keys(profileData).length != 0
     },
     _onItemIdChanged: function() {
+      this.feedbackRetrieved = false;
       this.updateItem();
+      this.getFeedback();
     },
+
+    getFeedback: function() {
+      var xhr = new XMLHttpRequest();
+      // xhr.addEventListener('load', rq.onLoad.bind(this));
+      xhr.addEventListener('load', function(e){
+        var madeUpResponse = {
+          comments : [
+            {
+              id: "1",
+              username: "username1",
+              comment: "This paper is actually rather interesting."
+            },
+            {
+              id: "2",
+              username: "myusernamel",
+              comment: "I couldn't understand a single sentence."
+            }
+          ],
+          likes: ["username1", "myusernamela", "myusernamelaz"]
+        };
+        this.feedback = madeUpResponse;
+        this.feedbackRetrieved = true;
+        console.log("!!!!!!!!!!!!!!!!!all is cool!");
+      }.bind(this));
+
+      xhr.addEventListener('error', function(e) {
+        console.log("!!!!!!!!!!!!!!!!!error received!");
+        // for now, no need to do anything
+      }.bind(this));
+
+      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
+      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      // xhr.send(rq.uriEncodedPostData);
+      xhr.send();
+    },
+
+
     updateItem: function() {
       if(this.itemId == undefined)
         return;
@@ -137,7 +194,7 @@
       this._updateStars();
     },
     _toggleFavourite: function() {
-      if(this.username == null) {
+      if(!this.loggedIn) {
         window.ml4u.sharedElements.papertoast.text = "Please login first.";
         window.ml4u.sharedElements.papertoast.open();
         return;
@@ -174,7 +231,6 @@
         this.$.favouriteIcon.className = "";
       }
     },
-
     writeReviewTapped: function() {
       console.log("writeReviewTapped tapped");
       this.displayRateItemButton = false;

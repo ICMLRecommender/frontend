@@ -1,0 +1,61 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="ml4u-item-comments">
+
+<style is="custom-style">
+</style>
+<template>
+  <template is="dom-repeat" items="[[commentsArray]]">
+    <b>[[item.username]]</b><br/>
+    [[item.comment]]
+        <br/>
+  </template>
+  <b>New Comment:</b>
+  <textarea rows="3" cols="50" id="newCommentInput">
+  </textarea>
+  <button type="button" on-tap="_submitNewComment">Add Comment</button>
+</template>
+
+  <script>
+  Polymer({
+    is: 'ml4u-item-comments',
+    properties: {
+      profileData: {
+        type: Object,
+        notify: true
+      },
+      commentsArray: {
+        type: Array,
+        observer: '_onCommentsArrayChanged'
+      }
+    },
+    _onCommentsArrayChanged: function(newValue) {
+       console.log("!!!!!!!!!!!!!!!!_onCommentsArrayChanged called");
+       console.log(newValue);
+    },
+    _submitNewComment: function(newValue) {
+      newComment = new Object();
+      newComment.id = 3;
+      newComment.username = "MyCurrentUsername";
+      newComment.comment = this.$.newCommentInput.value;
+
+      var xhr = new XMLHttpRequest();
+      // xhr.addEventListener('load', rq.onLoad.bind(this));
+      xhr.addEventListener('load', function(e){
+        this.$.newCommentInput.value = "";
+        this.push('commentsArray', newComment);
+      }.bind(this));
+      xhr.addEventListener('error', function(e) {
+        console.log("!!!!!!!!!!!!!!!!!error received!");
+        // for now, no need to do anything
+      }.bind(this));
+      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
+      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      // xhr.send(rq.uriEncodedPostData);
+      xhr.send();
+      // this.commentsArray.push(newComment);
+    }
+  });
+  </script>
+</dom-module>

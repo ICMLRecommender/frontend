@@ -1,0 +1,39 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="ml4u-item-likes">
+
+<style is="custom-style">
+</style>
+<template>
+  <span>
+    <span hidden="{{!userLiked}}">You, </span><span>{{likesString}}</span>
+  </span>
+</template>
+
+  <script>
+  Polymer({
+    is: 'ml4u-item-likes',
+    properties: {
+      profileData: {
+        type: Object,
+        notify: true
+      },
+      userLiked: {
+        type: Boolean,
+        value: false
+      },
+      likesArray: {
+        type: Array
+      },
+      likesString: {
+        type: String,
+        computed: '_computeLikesString(likesArray)'
+      }
+    },
+    _computeLikesString: function(likesArray) {
+      return likesArray.join(", ");
+      // return "username1, myusername2, whoisthisperson3";
+    }
+  });
+  </script>
+</dom-module>
