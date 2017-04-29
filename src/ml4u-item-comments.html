@@ -3,16 +3,26 @@
 <dom-module id="ml4u-item-comments">
 
 <style is="custom-style">
+.comment {
+  display: block;
+  border-bottom: 1px solid #e0e0e0 !important;
+  padding: 10px 24px 10px 24px;
+}
 </style>
 <template>
   <template is="dom-repeat" items="[[commentsArray]]">
-    <b>[[item.username]]</b><br/>
+    <div class="comment">
+    <b>[[item.username]]</b>
     [[item.comment]]
-        <br/>
+    <div>
   </template>
+
+  <!--
   <b>New Comment:</b>
   <textarea rows="3" cols="50" id="newCommentInput">
   </textarea>
+
+  -->
   <button type="button" on-tap="_submitNewComment">Add Comment</button>
 </template>
 

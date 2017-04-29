@@ -34,12 +34,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="ml4u-item-view.html">
 
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
 
 <dom-module id="ml4u-app">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
-        --app-primary-color: #4285f4;
+        --app-primary-color: #C41318;
         --app-secondary-color: black;
 
         display: block;
@@ -51,6 +55,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
+      }
+
+      app-toolbar {
+        color: #fff;
+        background-color: var(--app-primary-color);
       }
 
       .drawer-list {
@@ -97,6 +106,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       paper-dialog {
         max-width: 769px !important;
       }
+
+      .drawerheader {
+        color: #fff;
+        background-color: var(--app-primary-color);
+        min-height: 135px;
+        padding: 20px;
+        position: relative;
+      }
+
+      .drawerheader > .title {
+        font-size: 25px;
+        line-height: 20pt;
+      }
+
+      .drawerheader > .userdiv {
+        position: absolute;
+        bottom: 20px;
+      }
+
     </style>
 
     <ml4u-dbschedule-provider is-ready="{{dbScheduleProviderReady}}" id="scheduleDataProvider"></ml4u-dbschedule-provider>
@@ -114,14 +142,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <app-drawer-layout id="drawer_layout" fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer">
-        <app-toolbar>Menu</app-toolbar>
+        <!--<app-toolbar>ICML 2017</app-toolbar>-->
+        <div class="drawerheader">
+          <div class="title">ICML<br/>2017</div>
+          <div class="userdiv"><b>{{username}}</b></div>
+        </div>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="home" href="/home">Home</a>
-          <a name="schedule" href="/schedule">Schedule</a>
-          <a name="posters" href="/posters">Posters</a>
+          <a name="home" href="/home"><iron-icon icon="icons:list"></iron-icon>Feed</a>
+          <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon>Schedule</a>
+          <a name="posters" href="/posters"><iron-icon icon="icons:today"></iron-icon>Posters</a>
+
           <template is="dom-if" if="{{!loggedIn}}">
-            <a name="register" href="/register">Register</a>
-            <a name="login" href="/login">Login</a>
+            <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon>Register</a>
+            <a name="login" href="/login"><iron-icon icon="social:person"></iron-icon>Login</a>
           </template>
         </iron-selector>
         <div hidden$="[[!loggedIn]]">
@@ -135,7 +168,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="ml4u-icons:menu" drawer-toggle></paper-icon-button>
-            <div main-title>ICML 2017</div>
+            <div main-title>{{page}}</div>
           </app-toolbar>
         </app-header>
 

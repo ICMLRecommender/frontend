@@ -9,23 +9,18 @@
 <dom-module id="ml4u-item-view">
 
 <style is="custom-style">
+
   :host {
     padding: 0 0 !important;
+    background-color: gray;
   }
 
   .container {
-    margin-top : 5px;
-    clear: right;
+    background-color: white;
+    margin-bottom: 20px;
+    box-shadow: 0px 5px 5px grey;
   }
-  .container > ml4u-user-view, ml4u-user-review {
-        padding: 5px;
-        margin: 10px;
-        background-color: white;
-        min-height: 20px;
-        min-width: 200px;
-        max-width: 250px;
-        float:left;
-  }
+
   paper-icon-button.favourite {
     color:GoldenRod;
   }
@@ -37,52 +32,112 @@
   .cardBlock {
     display: block;
     border-bottom: 1px solid #e0e0e0 !important;
-    padding: 0px 24px 24px 24px;
+    padding: 10px 24px 10px 24px;
   }
 
   section.itemViewHeader {
-    background-color: #F2D7D5;
+    color: white;
+    background-color: var(--app-primary-color);
     padding: 5px;
+    font-weight: bold;
+    font-size: 20px;
+
   }
 
-  paper-button.writeReview {
-    /*float: right;*/
+  section.itemViewHeader > span {
+    text-align: center;
   }
-  .itemViewUserReview {
-    background-color: #f5f5f5;
+
+  .styledbulletpoint {
+    color: #9A9A9A;
+    font-weight: bold;
   }
+  .authorlink {
+    color: #3475CC;
+    font-weight: bold;
+    font-size: 15px;
+  }
+
+  .papertitle {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 20px 10px 8px 0px;
+  }
+
+  .papericon {
+    color: #959595;
+  }
+
+  div.sectionTitleContainer {
+    display: block;
+    height: 22px;
+    line-height: 22px;
+    font-size: 14px;
+    color: #000;
+    clear:both;
+  }
+  span.sectiontitle {
+    text-transform: uppercase;
+    color: #979797;
+    font-weight: bold;
+    float: left;
+  }
+  span.sectionInfo {
+    float: right;
+  }
+
+
 </style>
 <template>
   <section class="itemViewHeader">
     <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-    <span hidden$="[[!loggedIn]]">
-      <paper-icon-button hidden$="[[!loggedIn]]" icon="icons:star" id="favouriteIcon" on-click='_toggleFavourite'></paper-icon-button>
-    </div>
+    <span>Paper</span>
   </section>
-  <section class="itemViewDescription">
-    <div class="cardBlock">
-      <h1>[[itemObject.title]]</h1>
-      <div>[[itemObject.description]]</div>
-      <div class="container">
-        <template is="dom-repeat" items="{{itemObject.authors}}">
-            <a dialog-confirm href="/person?id=[[item.id]]"><iron-icon icon="icons:account-circle"></iron-icon>[[item.name]]</a>
-        </template>
+  <section class="container">
+    <section class="cardBlock">
+        <div class="papertitle">[[itemObject.title]]</div>
+        <div>
+          <template is="dom-repeat" items="{{itemObject.authors}}">
+              <a dialog-confirm href="/person?id=[[item.id]]" class="authorlink"><span class="styledbulletpoint">&bull;</span> [[item.name]]</a>
+          </template>
+        </div>
+        <paper-icon-button icon="icons:bookmark" id="favouriteIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
+        <paper-icon-button icon="icons:favorite" id="likeIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
+    </section>
+    <section class="cardBlock">
+      <div class="sectionTitleContainer">
+        <span class="sectiontitle">Topics</span><span class="sectionInfo">Stats, ML</span>
       </div>
-    </div>
+    </section>
+    <section class="cardBlock">
+      <div class="sectionTitleContainer">
+        <span class="sectiontitle">Session</span><span class="sectionInfo">Sat 2pm, Room 12</span>
+      </div>
+    </section>
+    <section class="cardBlock">
+      <div class="sectionTitleContainer">
+        <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" id="favouriteIcon" class="papericon" on-click='_toggleAbstract'></paper-icon-button></span>
+      </div>
+      <div hidden$="{{!abstractVisible}}">[[itemObject.description]]</div>
+    </section>
   </section>
-  hello [[loggedIn]]
+  <!--
   <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
   <section class="itemViewUserReview" hidden="{{displayRateItemButton}}">
     <div class="cardBlock">
       <ml4u-item-review  display-rate-item-button="{{displayRateItemButton}}" ></ml4u-item-review>
     </div>
   </section>
-  <section class="itemViewReviews" hidden="{{!feedbackRetrieved}}">
+  -->
+  <section class="itemViewReviews container" hidden="{{!feedbackRetrieved}}">
+    <!--
     <div>
       <b>Likes:</b>
       <ml4u-item-likes likes-array={{feedback.likes}}></ml4u-item-likes>
     </div>
+
     <h3>Comments</h3>
+    -->
     <ml4u-item-comments comments-array={{feedback.comments}}></ml4u-item-comments>
 
       <!--
@@ -126,7 +181,19 @@
       },
       feedback: {
         type: Object
+      },
+      abstractVisible: {
+              type: Boolean,
+              value: false
+      },
+      abstractIconStr: {
+        type: String,
+        value: "hardware:keyboard-arrow-down"
       }
+    },
+    _toggleAbstract: function() {
+      this.abstractVisible = !this.abstractVisible;
+      this.abstractIconStr = this.abstractVisible ? "hardware:keyboard-arrow-up" : "hardware:keyboard-arrow-down";
     },
     _computeLoggedIn: function(profileData) {
       return Object.keys(profileData).length != 0
@@ -225,10 +292,10 @@
       //console.log(this.profile.favourites);
       //console.log("result = " + isFavourite);
       if(isFavourite) {
-        this.$.favouriteIcon.className = "favourite";
+        this.$.favouriteIcon.className = "favourite papericon";
       }
       else{
-        this.$.favouriteIcon.className = "";
+        this.$.favouriteIcon.className = "papericon";
       }
     },
     writeReviewTapped: function() {

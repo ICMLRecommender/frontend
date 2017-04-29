@@ -93,7 +93,7 @@
       created: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.schedDB_local = new PouchDB('schedule');
-        window.ml4u.shedDB_remote = new PouchDB('https://lazar:letmein123@icml.papro.org.uk/couchdb/schedule');
+        window.ml4u.shedDB_remote = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
 
         window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};
