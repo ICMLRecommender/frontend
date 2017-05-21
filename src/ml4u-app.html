@@ -43,7 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <style is="custom-style">
       :host {
-        --app-primary-color: #C41318;
+        --app-primary-color: #C80000;
         --app-secondary-color: black;
 
         display: block;
@@ -125,6 +125,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         bottom: 20px;
       }
 
+      iron-pages {
+        height: 95%
+      }
+
     </style>
 
     <ml4u-dbschedule-provider is-ready="{{dbScheduleProviderReady}}" id="scheduleDataProvider"></ml4u-dbschedule-provider>
@@ -141,7 +145,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <app-drawer-layout id="drawer_layout" fullbleed>
       <!-- Drawer content -->
-      <app-drawer id="drawer">
+      <app-drawer id="drawer" swipe-open>
         <!--<app-toolbar>ICML 2017</app-toolbar>-->
         <div class="drawerheader">
           <div class="title">ICML<br/>2017</div>
@@ -176,7 +180,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             selected="[[page]]"
             attr-for-selected="name"
             fallback-selection="view404"
-            role="main">
+            role="main"
+
+            >
           <ml4u-page-home name="home"></ml4u-page-home>
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}

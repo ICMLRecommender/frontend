@@ -28,39 +28,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: block;
         padding: 10px;
+        background-size: cover;
+        background: url("/images/sydney.png");
+        background-repeat: no-repeat;
+        background-position: bottom;
+        height: 100%;
       }
       #loginErrorDiv {
         font-weight: bold;
         color: red;
       }
+      .center {
+        margin: auto;
+        width: 110px;
+        font-family: Effra-Regular;
+        font-size: 44px;
+        color: #4A4A4A;
+        letter-spacing: 0;
+        line-height: 43px;
+        margin-top: 64px;
+        margin-bottom: 33px;
+      }
+      #loginForm {
+        margin: auto;
+        width: 233.6px;
+      }
+      .cen {
+        margin: auto;
+        width: 20px;
+      }
+      #submitButton {
+        margin-left: 80px;
+        background-color: #4990E2;
+        font-family: Avenir-Heavy;
+        font-size: 18px;
+        color: #FFFFFF;
+        letter-spacing: -0.21px;
+      }
     </style>
-
-    <div class="card">
-      <h1>Login</h1>
-
-      <!--<paper-input id="username" label="Your username"></paper-input>
-      <div id="loginErrorDiv"></div>
-      <paper-dropdown-menu id="logindropdown" label="Select your slack name">
-        <paper-listbox class="dropdown-content">
-          <paper-item>lv</paper-item>
-          <paper-item>danield</paper-item>
-          <paper-item>hptruong93</paper-item>
-          <paper-item>lcharlin</paper-item>
-          <paper-item>mliakata</paper-item>
-          <paper-item>ravenscroftj</paper-item>
-          <paper-item>taimur</paper-item>
-          <paper-item>valerio</paper-item>
-          <paper-item>yeewhye</paper-item>
-        </paper-listbox>
-      </paper-dropdown-menu>-->
-      <form is="iron-form" id="loginForm">
-        <paper-input id="usernameInput" label="username" type="text" required auto-validate></paper-input>
-        <paper-input id="passwordInput" label="password" type="password" required auto-validate></paper-input>
+    <div class="center">ICML<br/> 2017</div>
+    <div>
+      <form is="iron-form" id="loginForm" >
+        <paper-input id="usernameInput" label="Email" type="text" required auto-validate></paper-input>
+        <paper-input id="passwordInput" label="Password" type="password" required auto-validate></paper-input>
         <div id="loginErrorDiv"></div>
         <br/>
         <br/>
         <paper-button id="submitButton" raised noink on-tap="_submit">Login</paper-button>
       </form>
+      <!-- <img src="/images/sydney.png" alt="Sydney, Australia" width="100%" height="auto" /></p> -->
     </div>
   </template>
 
@@ -88,14 +104,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         loginElements.submitButton.disabled = true;
         loginElements.username = this.$.usernameInput.value;
 
-        /*var logindropdown = this.$.logindropdown;
-        var selectedItem = logindropdown.selectedItem;
-
-        if(selectedItem == null) {
-          this.$.loginErrorDiv.innerHTML = "Please select your slack name.";
-          return;
-        }*/
-        //var username = this.$.usernameInput.value;
         var password = this.$.passwordInput.value;
         var callbackfunction = function(err, response) {
           loginElements.submitButton.disabled = false;
