@@ -2,7 +2,7 @@
 <!--TODO: note that the current app-pouchdb element doesn't load the minified version.-->
 <script src="../bower_components/pouchdb/dist/pouchdb.min.js"></script>
 <script src="../bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js"></script>
-<link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-sync.html">
+<link rel="import" href="ml4u-components/ml4u-pouchdb-sync.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-document.html">
 
@@ -18,13 +18,6 @@
     <app-pouchdb-conflict-resolution
       strategy="lastWriteWins">
     </app-pouchdb-conflict-resolution>
-    <!-- <ml4u-pouchdb-document
-      id="ml4upouchdbdoc1"
-      db-name="{{username}}"
-      doc-id="data"
-      data="{{profileData}}">
-    </ml4u-pouchdb-document> -->
-
     <template is="dom-repeat" items="{{collectonOfDocumentsToRetrieve}}">
       <app-pouchdb-document
         db-name="{{username}}"

@@ -9,39 +9,79 @@
     paper-item {
       border-left-style: solid;
       border-left-width: 7px;
+      border-bottom-width: 1px;
+      border-bottom-color: #D0D0D0;
     }
     paper-item.child {
       border-left-width: 17px;
     }
     paper-item.break {
-      border-left-color: floralwhite;
+      border-left-color: #4990E2;
+    }
+    span.sessiontype {
+      color: white;
+      font-size: 12px;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-radius:3px 3px 3px 3px;  //rounds corners for other browsers
+      -moz-border-radius:3px 3px 3px 3px;  // rounds corners for firefox
+    }
+    span.break {
+      background-color: #4990E2;
     }
     paper-item.tutorial {
       border-left-color: #f3d4db;
     }
+    span.tutorial {
+      background-color: #f3d4db;
+    }
     paper-item.session {
       border-left-color: black;
+    }
+    span.session {
+      background-color: black;
     }
     paper-item.poster {
       border-left-color: #00CC99;
     }
+    span.poster {
+      background-color: #00CC99;
+    }
     paper-item.invited.talk {
       border-left-color: #b8cefe;
+    }
+    span.invited.talk {
+      background-color: #b8cefe;
     }
     paper-item.oral {
       border-left-color: #fcb168;
     }
+    span.oral {
+      background-color: #fcb168;
+    }
     paper-item.spotlight {
       border-left-color: #df8095;
+    }
+    span.spotlight {
+      background-color: #df8095;
     }
     paper-item.demonstration {
       border-left-color: #b7b2ed;
     }
+    span.demonstration {
+      background-color: #b7b2ed;
+    }
     paper-item.symposium {
       border-left-color: #60F0F0;
     }
+    span.symposium {
+      background-color: #60F0F0;
+    }
     paper-item.workshop {
       border-left-colorr: #fd9edf;
+    }
+    span.workshop {
+      background-color: #fd9edf;
     }
     iron-icon {
       color:black;
@@ -59,10 +99,9 @@
     }
     </style>
 
+    <!--
       <template is="dom-if" if="{{isAuthor}}">
         <paper-icon-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
-          <!--<div class="avatar blue" item-icon></div>
-          <div icon="icons:account-circle" item-icon></div>-->
           <iron-icon icon="icons:account-circle" class$="{{listItem.type}}" item-icon></iron-icon>
           <paper-item-body three-line>
             <div secondary>
@@ -73,19 +112,17 @@
           </paper-item-body>
         </paper-icon-item>
       </template>
-      <template is="dom-if" if="{{!isAuthor}}">
-        <paper-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
-          <paper-item-body three-line>
-            <div secondary>
-              <span>{{listItem.timeAndLocationString}}<span>
-              <iron-icon icon="icons:star" class$="{{favouriteClass}}"></iron-icon>
-              <span style="float:right">{{listItem.type}}</span><br/>
-            </div>
-            <div>{{listItem.title}}</div>
-            <div secondary>{{listItem.authorsString}}</div>
-          </paper-item-body>
-        </paper-item>
-      </template>
+    -->
+    <paper-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
+      <paper-item-body three-line>
+        <div secondary>
+          <span>{{listItem.timeAndLocationString}}<span>
+          <span style="float:right" class$="{{listItem.type}} sessiontype">{{listItem.type}}</span><br/>
+        </div>
+        <div>{{listItem.title}}</div>
+        <div secondary>{{listItem.authorsString}} <span hidden$="true"><iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];" icon="icons:bookmark" class$="{{favouriteClass}}"></iron-icon></span></div>
+      </paper-item-body>
+    </paper-item>
   </template>
   <script>
     Polymer({
@@ -101,12 +138,15 @@
           type: String,
           notify: true
         },
-        favouriteClass: String,
         profile: {
           type: Object,
           notify: true
         },
-        isAuthor: Boolean
+        favouriteClass: String,
+        isFavouriteDisplay: {
+          type: String,
+          value: 'none'
+        }
       },
         ready: function() {
           this.isAuthor = this.listItem.type == "author";
@@ -122,6 +162,7 @@
       //This is used once the favourite state is changed, not when this element is created.
       setFavourite(isFavourite) {
         this.favouriteClass = isFavourite ? "favourite" : "";
+        this.isFavourite = isFavourite;
       },
       _changeSelectedItem: function(event, d, s) {
         if(this.listItem.itemId == undefined)

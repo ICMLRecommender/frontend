@@ -152,7 +152,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="userdiv"><b>{{username}}</b></div>
         </div>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="home" href="/home"><iron-icon icon="icons:list"></iron-icon>Feed</a>
+          <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon>Feed</a>
           <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon>Schedule</a>
           <a name="posters" href="/posters"><iron-icon icon="icons:today"></iron-icon>Posters</a>
 
@@ -183,7 +183,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main"
 
             >
-          <ml4u-page-home name="home"></ml4u-page-home>
+          <ml4u-page-feed name="feed"></ml4u-page-feed>
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="schedule"></ml4u-page-schedule>
@@ -317,7 +317,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _routePageChanged: function(page) {
-        this.page = page || 'home';
+        this.page = page || 'feed';
 
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();

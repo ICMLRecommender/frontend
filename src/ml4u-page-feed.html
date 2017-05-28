@@ -1,0 +1,36 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="ml4u-nav.html">
+
+<dom-module id="ml4u-page-feed">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+        font-family: Effra-Medium;
+        font-size: 16px;
+        color: #A0A0A0;
+        letter-spacing: 0;
+      }
+
+    </style>
+    <div>
+      RECOMMENDED FOR YOU:
+      <div>list</div>
+      
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ml4u-page-feed',
+      properties: {
+        selectedDay: {
+          type: Number,
+          value: 0
+        }
+      },
+    });
+  </script>
+</dom-module>

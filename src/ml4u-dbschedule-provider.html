@@ -1,15 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
-<link rel="import" href="ml4u-pouchdb/ml4u-pouchdb-document.html">
+<link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-document.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
 
 <dom-module id="ml4u-dbschedule-provider">
   <template>
-    <ml4u-pouchdb-document
+    <app-pouchdb-document
       db-name="schedule"
       doc-id="schedule"
       data="{{scheduleData}}">
-    </ml4u-pouchdb-document>
+    </app-pouchdb-document>
+
+    <app-pouchdb-document
+      db-name="schedule"
+      doc-id="trending"
+      data="{{trending}}">
+    </app-pouchdb-document>
 
   </template>
   <script>
@@ -20,13 +26,18 @@
           type: Object,
           notify: true
         },
+        trending: {
+          type: Object,
+          notify: true
+        },
         isReady: {
           type: Number,
           notify: true
         }
       },
       observers: [
-        'scheduleDataChanged(scheduleData.*)'
+        'scheduleDataChanged(scheduleData.*)',
+        'trendingChanged(trending.*)',
       ],
       scheduleDataChanged(e) {
         if(this.scheduleData == undefined || this.scheduleData._rev == undefined)
