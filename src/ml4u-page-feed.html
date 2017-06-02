@@ -1,24 +1,74 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="ml4u-nav.html">
+<link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
 
 <dom-module id="ml4u-page-feed">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
-        padding: 10px;
+
         font-family: Effra-Medium;
         font-size: 16px;
         color: #A0A0A0;
         letter-spacing: 0;
       }
-
+      ml4u-research-paper-card {
+        border-radius: 3px;
+        margin-right: 5px;
+        margin-bottom: 15px;
+      }
+      .paperList {
+        padding: 10px;
+      }
+      input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #EFEFEF;
+        font-family: Roboto-Regular;
+        font-size: 16px;
+        color: #9B9B9B;
+        letter-spacing: 0;
+      }
+      #searchBarContainer {
+        display: table;
+        width: 100%;
+        background-color: white;
+      }
+      #searchBar {
+        display: table-cell;
+        width: 90%;
+        padding: 8px 15px;
+      }
+      #searchButton {
+        /*display: table-cell;*/
+      }
     </style>
-    <div>
-      RECOMMENDED FOR YOU:
-      <div>list</div>
-      
+    <div id="searchBarContainer">
+      <div id="searchBar"><input type="text" id="searchBarInput" on-keypress="_keyPressed" placeholder="Search for ICML papers..."></div>
+      <paper-icon-button id="searchButton" noink icon="icons:search" on-tap="searchForItems"></paper-icon-button>
+      <!--<template is="dom-if" if="{{showingSearchResults}}">
+        <paper-icon-button id="clearButton" noink icon="icons:clear" on-tap="searchForItems"></paper-icon-button>
+      </template>
+      -->
+    </div>
+    <div class="paperList">
+      <div>
+        <template is="dom-repeat" items="{{displayedItems}}" initialCount="10">
+          <ml4u-research-paper-card
+            id="1"
+            title={{item.title}}
+            tags='[{"id": "1", "color": "red", "text": "ML"}]'
+            authors='{{item.authors}}' trending
+          ></ml4u-research-paper-card>
+        </template>
+      </div>
     </div>
   </template>
 
@@ -29,8 +79,77 @@
         selectedDay: {
           type: Number,
           value: 0
+        },
+        trendingObject: {
+          type: Object,
+          notify: true,
+          observer: 'trendingObjectChanged'
+        },
+        trendingItems: {
+          type: Object
+        },
+        displayedItems: {
+          type: Object
+        },
+        showingSearchResults: {
+          type: Boolean,
+          value: false
         }
       },
+      trendingObjectChanged: function(newVal, oldVal) {
+        if(this.trendingObject == undefined || this.trendingObject.trendingids == undefined)
+          return;
+        itemIds = this.trendingObject.trendingids;
+        newTrendingItemsArray = [];
+        for (var i=0, len=itemIds.length; i<len; ++i) {
+          t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i]);
+          newTrendingItemsArray.push(t_item);
+        }
+        this.trendingItems = newTrendingItemsArray;
+        console.log("LOGGING TRENDING ITEMS");
+        console.log(this.trendingItems);
+        if(!this.showingSearchResults) {
+          this.displayedItems = this.trendingItems;
+        }
+      },
+
+      searchForItems: function() {
+        console.log("searching for items");
+        searchString = this.$.searchBarInput.value;
+        searchString = searchString.trim();
+        if(searchString.length == 0) {
+          this.showingSearchResults = false;
+          this.displayedItems = this.trendingItems;
+          return;
+        }
+        this.showingSearchResults = true;
+        this.displayedItems = [];
+        this.async(function() {
+          items = window.ml4u.sharedElements.scheduleDataProvider.getItems();
+          console.log("ITEMS:");
+          console.log(items);
+          //for(var i=0; i<6; ++i) {
+          for (var key_t in items) {
+            item_t = items[key_t];
+            //console.log(i);
+            //console.log("trying to read:");
+            //console.log(item_t);
+            //if (object.hasOwnProperty(property)) {
+            if(item_t.description.includes(searchString) || item_t.authorsString.includes(searchString)) {
+              // need to call getItem, so that I can compute the authors properly...
+              this.push('displayedItems', window.ml4u.sharedElements.scheduleDataProvider.getItem(key_t));
+            }
+            //}
+          }
+        });
+      },
+      _keyPressed: function(e) {
+        console.log("KEYPRESSED");
+        if (13 === e.charCode) {
+            console.log("ENTER PRESSED");
+            this.searchForItems();
+        }
+      }
     });
   </script>
 </dom-module>

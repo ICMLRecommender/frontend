@@ -1,0 +1,128 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="ml4u-research-paper-card">
+  <template>
+    <style>
+      :host {
+        --icon-toggle-color: lightgrey;
+        --icon-toggle-outline-color: black;
+        --icon-toggle-pressed-color: red;
+        font-family: sans-serif;
+        display: block;
+
+      };
+      .tag {
+        display: inline-block;
+        border-radius: 3px;
+        padding-left: 7px;
+        padding-right: 7px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        background: gray;
+        color: white;
+        font-size: 0.9em;
+        margin-right: 5px;
+      }
+      .title {
+        color: #4a4a4a;
+        font-size: 1.4em;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+      .author {
+        display: inline-block;
+        color: #989898;
+        margin-right: 3px;
+        font-weight: 500;
+      }
+      .author:after {
+        padding-left: 7px;
+        content: '•';
+      }
+      .author:last-child:after {
+        content: ''
+      }
+      .card-actions {
+        background: #fafafa;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        padding: 0 !important;
+      }
+      .card-actions-inner {
+        width: 100%;
+        display: flex;
+      }
+      .action {
+        display: inline-block;
+        width: 33.333%;
+        text-align: center;
+        margin: 0;
+        color: #9b9b9b;
+      }
+      .action:hover {
+        color: #4a4a4a;
+      }
+      .trending {
+        float:right;
+        background: #F8DA1C;
+        border-radius: 3px;
+        ont-family: Effra-Medium;
+        font-size: 12px;
+        color: #958A00;
+        letter-spacing: 0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+    </style>
+
+    <paper-card style="border-radius: 4px">
+      <div class="card-content">
+        <div>
+        <template is="dom-repeat" items="[[tags]]">
+          <div class="tag">{{item.text}}</div>
+        </template>
+        <template is="dom-if" if="{{trending}}">
+          <span class="trending">TRENDING</span>
+        </template>
+        </div>
+        <div class="title">[[title]]</div>
+        <div class="authors">
+          <template is="dom-repeat" items="[[authors]]">
+            <div class="author">{{item.name}}</div>
+          </template>
+        </div>
+      </div>
+      <div class="card-actions">
+        <div class="card-actions-inner">
+          <paper-button class="action"><iron-icon icon="icons:clear"></iron-icon>Dismiss</paper-button>
+          <paper-button class="action"><iron-icon icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
+          <paper-button class="action"><iron-icon icon="icons:favorite"></iron-icon>Like</paper-button>
+        </div>
+      </div>
+    </paper-card>
+  </template>
+
+  <script>
+   Polymer({
+      is: 'ml4u-research-paper-card',
+      properties: {
+        id: {
+          type: String
+        },
+        title: {
+          type: String
+        },
+        authors: {
+          type: Array
+        },
+        tags: {
+          type: Array
+        },
+        trending: Boolean
+      }
+    });
+  </script>
+</dom-module>

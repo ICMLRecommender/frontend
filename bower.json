@@ -32,7 +32,8 @@
     "iron-form": "PolymerElements/iron-form#^1.1.4",
     "gold-email-input": "PolymerElements/gold-email-input#^1.0.9",
     "gold-password-input": "GeoloeG/gold-password-input#^1.1.6",
-    "pouchdb-authentication": "^0.5.5"
+    "pouchdb-authentication": "^0.5.5",
+    "paper-card": "PolymerElements/paper-card#^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

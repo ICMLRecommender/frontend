@@ -70,7 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="center">ICML<br/> 2017</div>
     <div>
       <form is="iron-form" id="loginForm" >
-        <paper-input id="usernameInput" label="Email" type="text" required auto-validate></paper-input>
+        <paper-input id="usernameInput" label="Username" type="text" required auto-validate></paper-input>
         <paper-input id="passwordInput" label="Password" type="password" required auto-validate></paper-input>
         <div id="loginErrorDiv"></div>
         <br/>
@@ -93,8 +93,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           notify: true
         }
-      }
-      ,
+      },
       _submit: function(e) {
         if(!this.$.loginForm.validate())
           return;
@@ -126,6 +125,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         //console.log("username = ." + this.username + ".");
         //this.set('route.path', '/home/');
+      },
+      ready: function() {
+        this.$.loginForm.addEventListener('iron-form-presubmit', function() {
+          console.log("PRESUBMIT CALLED!!!");
+        });
       }
     });
   </script>

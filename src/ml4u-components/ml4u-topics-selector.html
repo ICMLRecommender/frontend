@@ -1,0 +1,100 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="ml4u-topics-selector">
+  <template>
+    <style>
+      .topic {
+        display: block;
+        height: 63px;
+        width: 100%;
+        background: #FAFAFA;
+        border: 1px solid #DCDCDC;
+        padding: 10px;
+      }
+      .check > iron-icon {
+        float: left;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 8px;
+        margin-top: 8px;
+        opacity: 0.54;
+      }
+      .selected > .check > iron-icon {
+        color: green;
+      }
+      span.topicTitle {
+        font-size: 19px;
+        color: #51623E;
+      }
+      span.keywordsTitle {
+        font-size: 16px;
+        color: #8E9982;
+      }
+      span.keywordsList {
+        font-size: 16px;
+        color: #8E9982;
+      }
+      div.keywords {
+        line-height: 1.0;
+      }
+      div.selected {
+        background-color: #EDF5E3;
+      }
+      div.hint {
+        display: block;
+        margin: 30px 10px 60px 30px;
+      }
+    </style>
+    <div class="hint">
+      <img src="/images/bulb.png" style="float:left;"/>
+      <div style="font-size: 23px;">Which topics are you interested in?</div>
+    </div>
+    <div style="clear: both;">
+    <template is="dom-repeat" items="{{topics}}">
+      <div style="clear:both;" class="topic" on-tap="toggleTopic" id="topic{{index}}">
+        <div class="check">
+          <iron-icon icon="icons:check"></iron-icon>
+        </div>
+        <div>
+          <span class="topicTitle">Deep Learning</span><br/>
+          <div class="keywords"><span class="keywordsTitle">Keywords: </span><span class="keywordsList">word1, word2, word3, word4</span><div>
+        </div>
+      </div>
+    </template>
+    </div>
+  </template>
+
+  <script>
+   Polymer({
+      is: 'ml4u-topics-selector',
+      properties: {
+        topics: {
+          type: Object,
+          notify: true
+        }
+      },
+      toggleTopic: function(e) {
+        var path = e.path;
+        var id = -1;
+        var parentDiv;
+        for (var i=0; i < e.path.length; ++i) {
+          if(e.path[i].id.includes("topic")) {
+            parentDiv = e.path[i];
+            id = e.path[i].id;
+            topicId = Number(id.substr(5));
+            break;
+          }
+        }
+
+        if(parentDiv.className.includes("selected")) {
+          strIndex_start = parentDiv.className.indexOf("selected");
+          parentDiv.className = parentDiv.className.substr(0, strIndex_start);
+        }
+        else {
+          parentDiv.className += " selected";
+        }
+      }
+    });
+  </script>
+</dom-module>

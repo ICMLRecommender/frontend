@@ -17,6 +17,12 @@
       data="{{trending}}">
     </app-pouchdb-document>
 
+    <app-pouchdb-document
+      db-name="schedule"
+      doc-id="topics"
+      data="{{topics}}">
+    </app-pouchdb-document>
+
   </template>
   <script>
     Polymer({
@@ -30,14 +36,17 @@
           type: Object,
           notify: true
         },
+        topics: {
+          type: Object,
+          notify: true
+        },
         isReady: {
           type: Number,
           notify: true
         }
       },
       observers: [
-        'scheduleDataChanged(scheduleData.*)',
-        'trendingChanged(trending.*)',
+        'scheduleDataChanged(scheduleData.*)'
       ],
       scheduleDataChanged(e) {
         if(this.scheduleData == undefined || this.scheduleData._rev == undefined)
@@ -84,6 +93,11 @@
           item.authors.push(person);
         }
         return item;
+      },
+      getItems: function() {
+        if(this.scheduleData == undefined || this.scheduleData.items == undefined)
+          return {};
+        return this.scheduleData.items;
       },
       getSessionsDaysArray: function() {
         if(this.scheduleData == undefined || this.scheduleData.dayList == undefined)
