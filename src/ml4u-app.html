@@ -131,7 +131,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <ml4u-dbschedule-provider is-ready="{{dbScheduleProviderReady}}" id="scheduleDataProvider" trending={{trendingObject}} topics={{topics}}></ml4u-dbschedule-provider>
+    <ml4u-dbschedule-provider is-ready="{{dbScheduleProviderReady}}" id="scheduleDataProvider" trending={{trending}} topics={{topics}} ></ml4u-dbschedule-provider>
     <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}>
     </ml4u-user-profile>
 
@@ -183,7 +183,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main"
 
             >
-          <ml4u-page-feed trending-object={{trendingObject}} name="feed"></ml4u-page-feed>
+          <ml4u-page-feed trending-object={{trending}} name="feed"></ml4u-page-feed>
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="schedule"></ml4u-page-schedule>

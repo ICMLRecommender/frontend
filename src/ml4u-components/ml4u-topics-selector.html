@@ -51,14 +51,15 @@
       <div style="font-size: 23px;">Which topics are you interested in?</div>
     </div>
     <div style="clear: both;">
-    <template is="dom-repeat" items="{{topics}}">
+    <template is="dom-repeat" items="{{topics.topics}}">
       <div style="clear:both;" class="topic" on-tap="toggleTopic" id="topic{{index}}">
         <div class="check">
           <iron-icon icon="icons:check"></iron-icon>
         </div>
         <div>
-          <span class="topicTitle">Deep Learning</span><br/>
-          <div class="keywords"><span class="keywordsTitle">Keywords: </span><span class="keywordsList">word1, word2, word3, word4</span><div>
+          <span class="topicTitle">{{item.title}}</span><br/>
+          <div class="keywords"><span class="keywordsTitle">Keywords: </span>
+          <span class="keywordsList"><template is="dom-repeat" items={{item.keywords}} as="keyword">{{keyword}} </template></span><div>
         </div>
       </div>
     </template>
@@ -72,11 +73,16 @@
         topics: {
           type: Object,
           notify: true
+        },
+        selectedTopics: {
+          type: Object,
+          notify: true,
+          value: {}
         }
       },
       toggleTopic: function(e) {
         var path = e.path;
-        var id = -1;
+        var topicId = -1;
         var parentDiv;
         for (var i=0; i < e.path.length; ++i) {
           if(e.path[i].id.includes("topic")) {
@@ -90,11 +96,13 @@
         if(parentDiv.className.includes("selected")) {
           strIndex_start = parentDiv.className.indexOf("selected");
           parentDiv.className = parentDiv.className.substr(0, strIndex_start);
+          delete this.selectedTopics[''+topicId];
         }
         else {
           parentDiv.className += " selected";
+          this.selectedTopics[''+topicId] = topicId;
         }
-      }
+      },
     });
   </script>
 </dom-module>

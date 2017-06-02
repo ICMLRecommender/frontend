@@ -1,0 +1,217 @@
+<html>
+<script src="../bower_components/pouchdb/dist/pouchdb.min.js"></script>
+<script>
+var sessionsDb = new PouchDB('https://icml.papro.org.uk/couchdb/sessions');
+var itemsDb = new PouchDB('https://icml.papro.org.uk/couchdb/items');
+var authorsDb = new PouchDB('https://icml.papro.org.uk/couchdb/authors');
+var scheduleDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
+
+
+var allSessionDocs;
+// 1 array for each day - Monday, Tuesday, Wednesday
+var sessions = [ [], [], [] ];
+var dailySchedule = [ {"dayString":"Monday", "slots":[]}, {"dayString":"Tuesday", "slots":[]}, {"dayString":"Wednesday", "slots":[]} ];
+var types = ["poster session", "break", "tutorial", "session", "poster", "invited talk", "oral", "spotlight", "demonstration", "symposium", "workshop"];
+var items = {};
+var people = {};
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+
+randomCounter = 0;
+function sortSession(session, dayIndex) {
+  randomCounter++;
+  start_time = new Date(session.talks[0].session_time)
+  //start_time_str = session.talks[0].substring(11);
+  selectedDaySessionsArray = sessions[dayIndex];
+  //mondaySessionsArray = sessions[0];
+
+  placed = false;
+  for(var i=0; i<selectedDaySessionsArray.length; ++i) {
+    //access the first talk of the first item of the current Monday timegroup
+    start_time_t = new Date(selectedDaySessionsArray[i][0].talks[0].session_time);
+    if(start_time.getTime() == start_time_t.getTime()) {
+      console.log("Yes!!!!!");
+      selectedDaySessionsArray[i].push(session);
+      placed = true;
+      break;
+    }
+  }
+  if(!placed) {
+    newTimeGroup = [ session ];
+    selectedDaySessionsArray.push(newTimeGroup);
+  }
+}
+
+function getFormattedHourMinute(date) {
+  var hh = date.getHours();
+  var mm = date.getMinutes();
+  // These lines ensure you have two-digits
+  if (hh < 10) {hh = "0"+hh;}
+  if (mm < 10) {mm = "0"+mm;}
+  // This formats your string to HH:MM:SS
+  var t = hh+":"+mm;
+  return t;
+}
+
+sessionsDb.allDocs({
+    include_docs: true,
+    attachments: true
+  }).then(function (result) {
+    console.log("logging result:");
+    console.log(result);
+    allSessionDocs = result.rows;
+
+    for(var sessDoc_index=0; sessDoc_index<allSessionDocs.length; ++sessDoc_index){
+      t_doc = allSessionDocs[sessDoc_index].doc;
+      console.log(t_doc.session_title);
+      var dayIndex = -1;
+      if(t_doc.session_day == "Monday") {
+        dayIndex = 0;
+      }
+      if(t_doc.session_day == "Tuesday") {
+        dayIndex = 1;
+      }
+      if(t_doc.session_day == "Wednesday") {
+        dayIndex = 2;
+      }
+      sortSession(t_doc, dayIndex);
+    }
+    //sort sessions by time and by place
+    for(var i=0; i<sessions.length; ++i) {
+      //sort each day by time
+      sessions[i].sort(function(a,b){
+        str_timeA = a[0].talks[0].session_time;
+        str_timeB = b[0].talks[0].session_time;
+        return new Date(str_timeA) - new Date(str_timeB);
+      });
+
+      timeSlotsWithinThisDay = sessions[i];
+      for(var j=0; j<timeSlotsWithinThisDay.length; j++) {
+        timeSlotsWithinThisDay[j].sort(function(a,b){
+          strA = a.session_location;
+          strB = b.session_location;
+          if(strA < strB) return -1;
+          if(strA > strB) return 1;
+          return 0;
+        });
+      }
+    }
+    // populate dailySchedule
+    for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
+      timeslots = sessions[dayIndex];
+      //console.log(timeslots);
+      for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
+        str_time = timeslots[timeslotIndex][0].talks[0].session_time;
+        time = new Date(str_time);
+        str_time_formatted = getFormattedHourMinute(time);
+        dailySchedule[dayIndex].slots.push(str_time_formatted);
+      }
+    }
+
+    // assign random types
+    for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
+      timeslots = sessions[dayIndex];
+      for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
+        sessionInThisTimeSlot = timeslots[timeslotIndex];
+        for(var h=0; h<sessionInThisTimeSlot.length; ++h) {
+          t_session = sessionInThisTimeSlot[h];
+          t_session.type = types[getRandomInt(0, 9)];
+        }
+      }
+    }
+
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+
+function transformItem(oldItem) {
+  var newItem = new Object();
+  newItem.id = oldItem.paper_id;
+  newItem.title = oldItem.title;
+  newItem.description = oldItem.abstract;
+  newItem.authorIds = oldItem.author_ids;
+  newItem.pdf_url = oldItem.pdf_url;
+  newItem.poster_session = oldItem.poster_session;
+  newItem.session_id = oldItem.session_id;
+  newItem.session_time = oldItem.session_time;
+  return newItem;
+}
+
+itemsDb.allDocs({
+    include_docs: true,
+    attachments: true
+  }).then(function (result) {
+    console.log("logging result for items:");
+    console.log(result);
+    allOldItems = result.rows;
+
+    for (var property in allOldItems) {
+      if (!allOldItems.hasOwnProperty(property)) {
+        continue;
+      }
+      newItem = transformItem(allOldItems[property].doc);
+      items[newItem.id] = newItem;
+    }
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+function transformAuthor(oldAuthor) {
+  var newAuthor = new Object();
+  newAuthor.id = oldAuthor.author_id;
+  newAuthor.name = oldAuthor.author;
+  newAuthor.institution = oldAuthor.affiliation;
+  newAuthor.paper_ids = oldAuthor.paper_ids;
+  return newAuthor;
+}
+
+authorsDb.allDocs({
+    include_docs: true,
+    attachments: true
+  }).then(function (result) {
+    console.log("logging result for authors:");
+    console.log(result);
+    allOldAuthors = result.rows;
+
+    for (var property in allOldAuthors) {
+      if (!allOldAuthors.hasOwnProperty(property)) { continue; }
+      newAuthor = transformAuthor(allOldAuthors[property].doc);
+      people[newAuthor.id] = newAuthor;
+    }
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function demo() {
+  await sleep(5000);
+  console.log("LOGGING PEOPLE LENGTH");
+  console.log(people);
+  scheduleDb.put({
+    _id: 'schedule_new',
+    sessions: sessions,
+    dailySchedule: dailySchedule,
+    items: items,
+    people: people
+  });
+}
+demo();
+/**
+  scheduleDb.put({
+    _id: 'schedule_new',
+    sessions: sessions,
+    dailySchedule: dailySchedule,
+    items: items,
+    people: people
+  });
+**/
+</script>
+</html>

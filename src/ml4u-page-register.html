@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/gold-password-input/gold-password-input.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="ml4u-components/ml4u-topics-selector.html">
+<link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
 
 <dom-module id="ml4u-page-register">
   <template>
@@ -19,7 +20,7 @@
       background-position: bottom;
       height: 100%;
     }
-    #loginErrorDiv {
+    .errorDiv {
       font-weight: bold;
       color: red;
     }
@@ -60,24 +61,34 @@
         label="Password" reveal prefix strength-meter
         required auto-validate minlength="6" maxlength="24" error-message="Use 6 to 24 characters.">
       </gold-password-input>
-      <div id="registerErrorDiv"></div>
+      <div id="registerErrorDiv" class="errorDiv"></div>
       <br/>
       <br/>
-      <ml4u-topics-selector topics={{topics}}></ml4u-topics-selector>
+      <ml4u-topics-selector topics={{topics}} selected-topics={{selectedTopics}}></ml4u-topics-selector>
+      <br/>
+      <br/>
       <!-- <img src="/images/sydney.png" alt="Sydney, Australia" width="100%" height="auto" /></p> -->
       <paper-button id="submitButton" raised noink on-tap="_submit" class="center">Register</paper-button>
     </form>
-
-  </div>
-  <div>
-
   </div>
   </template>
   <script>
     Polymer({
       is: 'ml4u-page-register',
       properties: {
+        route: {
+          type: Object,
+          notify: true
+        },
+        username: {
+          type: String,
+          notify: true
+        },
         topics: {
+          type: Object,
+          notify: true
+        },
+        selectedTopics: {
           type: Object,
           notify: true
         }
@@ -85,6 +96,14 @@
       _submit: function(e) {
         if(!this.$.registerForm.validate())
           return;
+        var numOfSelectedTopics = 0;
+        var selectedTopics = this.selectedTopics;
+        for (var k in selectedTopics) if (selectedTopics.hasOwnProperty(k)) ++numOfSelectedTopics;
+        if(numOfSelectedTopics<2) {
+          this.$.registerErrorDiv.innerHTML = "Please select at least two topics.";
+          return;
+        }
+
         var loginElements = new Object();
         loginElements.submitButton = this.$.submitButton;
         loginElements.registerErrorDiv = this.$.registerErrorDiv;
@@ -92,70 +111,61 @@
         loginElements.failedRegisterToast = this.$.failedRegisterToast;
         loginElements.submitButton.disabled = true;
 
-        var callbackfunction = this._onFormRequestLoad;
-
         var username = this.$.usernameInput.value;
-        //var email = this.$.emailInput.value;
+        var email = this.$.emailInput.value;
         var password = this.$.passwordInput.value;
+        loginElements.username = username;
+        loginElements.password = password;
         var postData = "username=" + username
-                      + "&password=" + password;
+                      + "&password=" + password
+                      + "&email=" + email;
         var uriEncodedPostData = encodeURI(postData);
 
-        var rq = new Object();
-        rq.loginElements = loginElements;
-        rq.uriEncodedPostData = uriEncodedPostData;
-        rq.onLoad = function(e) {
-          this.failure = false;
-          callbackfunction(e, loginElements)
-        };
-        rq.onError = function(e) {
+        var callbackfunction_afterLogin = function(err, response) {
+          loginElements.submitButton.disabled = false;
+          if(err) {
+
+          }
+          else {
+            this.username = loginElements.username;
+            //add selected topics
+            db = new PouchDB(loginElements.username);
+            db.put({
+              _id: 'preferred_topics',
+              topicids: selectedTopics
+            });
+          }
+          //whether successful or not, re-route to home page.
+          this.set('route.path', '/');
+        }.bind(this);
+
+        var callbackfunction_afterRegistration = function(e) {
+          loginElements.submitButton.disabled = false;
+          var status = e.target.status;
+          var responseText = e.target.responseText;
+          console.log("RESPONSE:");
+          console.log(e.target);
+          console.log(status);
+          console.log(responseText);
+          if(status!=200) {
+            //loginElements.registerErrorDiv.innerHTML = responseText;
+            loginElements.registerErrorDiv.innerHTML = "An error occurred. Please try again.";
+            return;
+          }
+          console.log(this);
+          window.ml4u.sharedElements.userProfileElement.login(loginElements.username, loginElements.password, callbackfunction_afterLogin);
+        }.bind(this);
+
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', callbackfunction_afterRegistration);
+        xhr.addEventListener('error', function(e) {
           loginElements.registerErrorDiv.innerHTML = "An error occurred. Please try again.";
           loginElements.submitButton.disabled = false;
-        }
-
-        this._sendLoginRequest(rq, 1);
-      },
-
-      _sendLoginRequest: function(rq, attempts) {
-        var xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', rq.onLoad.bind(this));
-        xhr.addEventListener('error', function(e) {
-          // Flaky connections might fail fetching resources
-          if (attempts > 1) {
-            console.log(rq);
-            this.debounce('_sendLoginRequest', this._sendLoginRequest.bind(this, rq, attempts - 1), 200);
-          } else {
-            rq.onError.call(this, e);
-          }
         }.bind(this));
-
         xhr.open("POST", "http://localhost:8000/icml/registration/", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.send(rq.uriEncodedPostData);
+        xhr.send(uriEncodedPostData);
       },
-
-      _onFormRequestLoad: function(e, loginElements) {
-        //if the status is 200 (OK), then the login has been successful
-        var status = e.target.status;
-        var responseText = e.target.responseText;
-        if(status!=200) {
-          //loginElements.registerErrorDiv.innerHTML = responseText;
-          loginElements.registerErrorDiv.innerHTML = "An error occurred. Please try again.";
-          loginElements.submitButton.disabled = false;
-          return;
-        }
-
-        loginElements.submitButton.disabled = false;
-      },
-
-      refresh: function() {
-        this._submit();
-      },
-
-      ready: function() {
-        this.failure = false;
-      }
-
     });
 
   </script>
