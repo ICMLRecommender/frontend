@@ -6,7 +6,7 @@
 <link rel="import" href="ml4u-item-comments.html">
 
 
-<dom-module id="ml4u-item-view">
+<dom-module id="ml4u-view-item">
 
 <style is="custom-style">
 
@@ -89,10 +89,19 @@
 
 </style>
 <template>
-  <section class="itemViewHeader">
-    <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-    <span>Paper</span>
-  </section>
+  <template is="dom-if" if="{{displayedWithinSession}}">
+    <section class="itemViewHeader">
+      <paper-icon-button on-tap='_backButtonTapped' icon="icons:arrow-back"></paper-icon-button>
+      <span>Paper</span>
+    </section>
+  </template>
+  <template is="dom-if" if="{{!displayedWithinSession}}">
+    <section class="itemViewHeader">
+      <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
+      <span>Paper</span>
+    </section>
+  </template>
+
   <section class="container">
     <section class="cardBlock">
         <div class="papertitle">[[itemObject.title]]</div>
@@ -153,7 +162,7 @@
 
 <script>
   Polymer({
-    is: 'ml4u-item-view',
+    is: 'ml4u-view-item',
     properties: {
       itemId : {
         type: Object,
@@ -163,6 +172,11 @@
         type: Object,
         observer: '_onItemChanged'
       },
+
+
+
+
+
       profileData: {
         type: Object,
         notify: true
@@ -189,6 +203,10 @@
       abstractIconStr: {
         type: String,
         value: "hardware:keyboard-arrow-down"
+      },
+      displayedWithinSession: {
+        type: Boolean,
+        value: false
       }
     },
     _toggleAbstract: function() {
@@ -199,14 +217,23 @@
       return Object.keys(profileData).length != 0
     },
     _onItemIdChanged: function() {
+      if(this.itemId == undefined)
+        return;
+
+      if(this.abstractVisible) {
+        this._toggleAbstract();
+      }
       this.feedbackRetrieved = false;
       this.updateItem();
       this.getFeedback();
     },
 
     getFeedback: function() {
+      /*
       var xhr = new XMLHttpRequest();
       // xhr.addEventListener('load', rq.onLoad.bind(this));
+
+
       xhr.addEventListener('load', function(e){
         var madeUpResponse = {
           comments : [
@@ -238,17 +265,18 @@
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       // xhr.send(rq.uriEncodedPostData);
       xhr.send();
+      */
     },
 
 
     updateItem: function() {
       if(this.itemId == undefined)
-        return;
+        return {};
 
       this.async(function() {
         var itemId = this.itemId;
-        if(itemId === undefined)
-          return {};
+        /*if(itemId === undefined)
+          return {};*/
         item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
         console.log("computed the following itemObj for itemId " + itemId);
         console.log(item);
@@ -260,6 +288,7 @@
         return;
       this._updateStars();
     },
+/*
     _toggleFavourite: function() {
       if(!this.loggedIn) {
         window.ml4u.sharedElements.papertoast.text = "Please login first.";
@@ -298,9 +327,14 @@
         this.$.favouriteIcon.className = "papericon";
       }
     },
+    */
     writeReviewTapped: function() {
       console.log("writeReviewTapped tapped");
       this.displayRateItemButton = false;
+    },
+    _backButtonTapped: function() {
+      console.log("_backButtonTapped");
+      this.fire('back_button_tapped');
     }
   });
   </script>

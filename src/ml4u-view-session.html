@@ -36,23 +36,26 @@ span.loc {
 .bottomSessionInfo {
   font-size: 16px;
 }
+#papersDiv {
+  margin-top: 1px;
+}
 
 </style>
 <template>
   <section class="itemViewHeader">
     <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-    <span>Paper</span>
+    <span>Session</span>
   </section>
   <section class="container">
     <div id="sessionInfo">
-      <div class="timeandloc"><span>08:00 - 09:30</span><span class="loc">Room 222B</span></div>
-      <div class="sessionTitle">Neural Networks and Deep Learning</div>
-      <div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">Hugo Larochelle</span></div>
+      <div class="timeandloc"><span>{{session.session_time_string}}</span><span class="loc">{{session.session_location}}</span></div>
+      <div class="sessionTitle">{{session.session_title}}</div>
+      <div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>
     </div>
-    <ml4u-list items="[[papers]]" selected-day="[[selectedDay]]"
-        selected-item={{selectedItem}}
-        profile-data={{profileData}} id-prefix="sched">
-    </ml4u-list>
+    <div id="papersDiv">
+      <ml4u-list items="[[papers]]"
+          selected-item={{selectedPaper}} id-prefix="sched" is-paper-list></ml4u-list>
+    </div>
   </section>
 </template>
 
@@ -61,19 +64,31 @@ span.loc {
     is: 'ml4u-view-session',
     properties: {
       sessionId: String,
+      session: {
+        type: Object,
+        computed: '_computeSession(sessionId)'
+      },
       papers: {
         type: Object,
         computed: '_computePapersList(sessionId)'
+      },
+      selectedPaper: {
+        type: String,
+        notify: true
       }
     },
+    _computeSession: function(sessionId) {
+      if(sessionId == undefined || sessionId=="") {
+        return {};
+      }
+      session = window.ml4u.sharedElements.scheduleDataProvider.getSession(sessionId);
+      return session;
+    },
     _computePapersList: function(sessionId) {
-      console.log("_computePapersList");
       if(sessionId == undefined || sessionId=="") {
         return [];
       }
-      console.log("_computePapersList1");
       papers = window.ml4u.sharedElements.scheduleDataProvider.getSessionItems(sessionId);
-      console.log(papers);
       return papers;
     }
 

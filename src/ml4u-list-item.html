@@ -9,6 +9,7 @@
     paper-item {
       border-left-style: solid;
       border-left-width: 7px;
+      border-bottom-style: solid;
       border-bottom-width: 1px;
       border-bottom-color: #D0D0D0;
     }
@@ -78,16 +79,16 @@
       background-color: #60F0F0;
     }
     paper-item.workshop {
-      border-left-colorr: #fd9edf;
+      border-left-color: #fd9edf;
     }
     span.workshop {
       background-color: #fd9edf;
     }
 
-    paper-item.workshop {
-      border-left-colorr: #BC0000;
+    paper-item.paper {
+      border-left-color: #BC0000;
     }
-    span.workshop {
+    span.paper {
       background-color: #BC0000;
     }
 
@@ -105,17 +106,24 @@
       width:100%;
       height:100%;
     }
+    #authorsString {
+      display:inline-block;
+      max-width: 80%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     </style>
 
     <template is="dom-if" if="{{isPaper}}">
-      <paper-item class$="paper"  on-tap="_changeSelectedItem">
+      <paper-item class="paper"  on-tap="_changeSelectedItem">
         <paper-item-body three-line>
           <div secondary>
             <span>{{listItem.session_time}}<span>
-            <span style="float:right" class$="paper sessiontype">Paper</span><br/>
+            <span style="float:right" class="paper sessiontype">Paper</span><br/>
           </div>
           <div>{{listItem.title}}</div>
-          <div secondary>Author1 Author2 Author3 <span hidden$="true"><iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];" icon="icons:bookmark" class$="{{favouriteClass}}"></iron-icon></span></div>
+          <div secondary><span id="authorsString">{{listItem.authorsString}}</span><span style="float:right" hidden$="true"><iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];" icon="icons:bookmark" class$="{{favouriteClass}}"></iron-icon></span></div>
         </paper-item-body>
       </paper-item>
     </template>
@@ -173,9 +181,20 @@
         this.isFavourite = isFavourite;
       },
       _changeSelectedItem: function(event, d, s) {
+        console.log("_changeSelectedItem");
         if(this.listItem.session_id == undefined)
           return;
-        this.selectedItem = this.listItem.session_id;
+        console.log("1");
+        if(this.isPaper) {
+          this.selectedItem = this.listItem.id;
+          console.log("2");
+          console.log(this.selectedItem);
+        }
+        else {
+          this.selectedItem = this.listItem.session_id;
+          console.log("3");
+          console.log(this.selectedItem);
+        }
       }
 });
 

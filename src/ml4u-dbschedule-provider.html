@@ -100,15 +100,19 @@
           return {};
         return this.scheduleData.items;
       },
+      getSession: function(sessionId) {
+        if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
+          return {};
+        mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
+        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.sub_index];
+        return session;
+      },
       getSessionItems: function(sessionId) {
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)
           return {};
         mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
         session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.sub_index];
-        console.log("REtrieved:");
-        console.log(session);
         papers_ids = session.talks;
-
         items = [];
         for (var i=0; i<papers_ids.length; ++i) {
           itemid = papers_ids[i].paper_id;
@@ -122,18 +126,6 @@
           return [];
         return this.scheduleData.dailySchedule;
       },
-      /*
-      getPostersDaysArray: function() {
-        if(this.scheduleData == undefined || this.scheduleData.dayList == undefined)
-          return [];
-        var posterSessionsByDay = this.scheduleData.posterSessionsByDay;
-        var daysCount = posterSessionsByDay.length;
-        var dayList = new Array();
-        for(var i=0; i<daysCount; ++i){
-          dayList.push(posterSessionsByDay[i].dayString);
-        }
-        return dayList;
-      },*/
       created: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.schedDB_local = new PouchDB('schedule');

@@ -32,7 +32,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
-<link rel="import" href="ml4u-item-view.html">
 <link rel="import" href="ml4u-view-session-and-item.html">
 
 
@@ -237,7 +236,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-dialog>
     <paper-dialog id="dialog" with-backdrop>
       <paper-dialog-scrollable>
-        <ml4u-view-session-and-item session-id=[[selectedItem]]></ml4u-view-session-and-item>
+        <ml4u-view-session-and-item id="sessionAndItemView" session-id=[[selectedItem]]></ml4u-view-session-and-item>
         <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>-->
       </paper-dialog-scrollable>
     </paper-dialog>
@@ -295,7 +294,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _queryItemIdChanged: function(newVal) {
-        console.log("_queryItemIdChanged " + newVal);
         if(newVal == this.selectedItem)
           return;
         if(newVal == null || newVal == undefined) {
@@ -337,7 +335,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _itemDialogClosed: function(e) {
-        console.log("_itemDialogClosed called");
+        this.$.sessionAndItemView.resetState();
         //this.selectedItem = undefined;
         this.set('queryParams.itemid', null);
       },
@@ -385,26 +383,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u.sharedElements.papertoast = this.$.papertoast;
         window.ml4u.sharedElements.scheduleDataProvider = this.$.scheduleDataProvider;
         window.ml4u.sharedElements.userProfileElement = this.$.userProfileElement;
-        //window.ml4u = window.ml4u || {};
         window.ml4u.helpervars = window.ml4u.helpervars || {};
         window.ml4u.helpervars.ml4uappcreated = true;
-        if(window.ml4u.helpervars.dbschedulesynced) {
-            //console.log("removing hidden from ml4u-app:ready()");
-            //removeLoadscreen();
-        }
         window.ml4u.helpervars.drawer_layout = this.$.drawer_layout;
         window.ml4u.helpervars.header_layout = this.$.header_layout;
         window.ml4u.helpervars.ml4u_app_element = this;
-      },
-
-      removeLoadscreen: function() {
-        this.removeAttribute('hidden');
-        document.getElementById("splashscreen").setAttribute("hidden", "true");
-
-        this.async(function() {
-          this.$.drawer_layout.resetLayout();
-          this.$.header_layout.resetLayout();
-        }, 1);
       }
     });
   </script>

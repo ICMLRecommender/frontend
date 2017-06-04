@@ -8,13 +8,13 @@
     background-color: white
   }
   </style>
-    <div role="listbox" id="testlistbox">
+    <div role="listbox">
       <template is="dom-if" if="{{isPaperList}}">
         <template is="dom-repeat" items="{{items}}" initialCount="10">
           <div>
             <ml4u-list-item list-item="{{item}}"
               id="listitem{{idPrefix}}{{item.itemId}}"
-              selected-item="{{selectedItem}}"></ml4u-list-item>
+              selected-item="{{selectedItem}}" is-paper></ml4u-list-item>
           </div>
         </template>
       </template>
