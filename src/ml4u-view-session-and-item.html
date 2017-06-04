@@ -1,0 +1,45 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="ml4u-view-session.html">
+
+
+<dom-module id="ml4u-view-session-and-item">
+
+<style is="custom-style">
+</style>
+<template>
+  <button on-tap='switchView'>Switch View</button>
+  <iron-pages selected="{{selectedView}}">
+    <ml4u-view-session session-id=[[sessionId]]></ml4u-view-session>
+    <div>Hello</div>
+  </iron-pages>
+
+</template>
+
+<script>
+  Polymer({
+    is: 'ml4u-view-session-and-item',
+    properties: {
+      selectedPaper: {
+        type: String,
+        observer: '_onSelectedPaperChanged'
+      },
+      selectedView: {
+        type: Number,
+        value: 0
+      },
+      sessionId: {
+        type: String
+      }
+    },
+    _onSelectedPaperChanged: function(newVal, oldVal) {
+      selectedView == 0 ? 1 : 0;
+    },
+    switchView: function() {
+      this.selectedView = this.selectedView == 0 ? 1 : 0;
+    }
+
+  });
+  </script>
+</dom-module>

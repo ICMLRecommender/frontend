@@ -1,0 +1,82 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="ml4u-list.html">
+
+<dom-module id="ml4u-view-session">
+
+<style is="custom-style">
+:host {
+}
+
+section.itemViewHeader {
+  color: white;
+  background-color: var(--app-primary-color);
+  padding: 5px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#sessionInfo {
+  padding: 14px 30px 14px 30px;
+  background: #FAFAFA;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
+}
+.timeandloc {
+  font-size: 16px;
+  color: #989898;
+}
+span.loc {
+  float: right;
+}
+.sessionTitle {
+  font-size: 23px;
+  color: #4A4A4A;
+  margin: 10px 0px 10px 0px;
+}
+.bottomSessionInfo {
+  font-size: 16px;
+}
+
+</style>
+<template>
+  <section class="itemViewHeader">
+    <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
+    <span>Paper</span>
+  </section>
+  <section class="container">
+    <div id="sessionInfo">
+      <div class="timeandloc"><span>08:00 - 09:30</span><span class="loc">Room 222B</span></div>
+      <div class="sessionTitle">Neural Networks and Deep Learning</div>
+      <div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">Hugo Larochelle</span></div>
+    </div>
+    <ml4u-list items="[[papers]]" selected-day="[[selectedDay]]"
+        selected-item={{selectedItem}}
+        profile-data={{profileData}} id-prefix="sched">
+    </ml4u-list>
+  </section>
+</template>
+
+<script>
+  Polymer({
+    is: 'ml4u-view-session',
+    properties: {
+      sessionId: String,
+      papers: {
+        type: Object,
+        computed: '_computePapersList(sessionId)'
+      }
+    },
+    _computePapersList: function(sessionId) {
+      console.log("_computePapersList");
+      if(sessionId == undefined || sessionId=="") {
+        return [];
+      }
+      console.log("_computePapersList1");
+      papers = window.ml4u.sharedElements.scheduleDataProvider.getSessionItems(sessionId);
+      console.log(papers);
+      return papers;
+    }
+
+  });
+  </script>
+</dom-module>

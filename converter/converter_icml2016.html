@@ -10,6 +10,7 @@ var scheduleDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
 var allSessionDocs;
 // 1 array for each day - Monday, Tuesday, Wednesday
 var sessions = [ [], [], [] ];
+var sessionIdToIndexMapping = {};
 var dailySchedule = [ {"dayString":"Monday", "slots":[]}, {"dayString":"Tuesday", "slots":[]}, {"dayString":"Wednesday", "slots":[]} ];
 var types = ["poster session", "break", "tutorial", "session", "poster", "invited talk", "oral", "spotlight", "demonstration", "symposium", "workshop"];
 var items = {};
@@ -35,7 +36,6 @@ function sortSession(session, dayIndex) {
     //access the first talk of the first item of the current Monday timegroup
     start_time_t = new Date(selectedDaySessionsArray[i][0].talks[0].session_time);
     if(start_time.getTime() == start_time_t.getTime()) {
-      console.log("Yes!!!!!");
       selectedDaySessionsArray[i].push(session);
       placed = true;
       break;
@@ -58,17 +58,27 @@ function getFormattedHourMinute(date) {
   return t;
 }
 
+function getSessionsTimeString(session) {
+  start_time = new Date(session.talks[0].session_time)
+  end_time = new Date(session.talks[session.talks.length-1].session_time)
+  start_time_formatted = getFormattedHourMinute(start_time);
+  end_time_formatted = getFormattedHourMinute(end_time);
+
+  return start_time_formatted + " - " + end_time_formatted;
+}
+
 sessionsDb.allDocs({
     include_docs: true,
     attachments: true
   }).then(function (result) {
-    console.log("logging result:");
-    console.log(result);
     allSessionDocs = result.rows;
 
     for(var sessDoc_index=0; sessDoc_index<allSessionDocs.length; ++sessDoc_index){
       t_doc = allSessionDocs[sessDoc_index].doc;
-      console.log(t_doc.session_title);
+      t_doc.session_time_string = getSessionsTimeString(t_doc);
+      t_doc.session_id = t_doc.session_id.replace(/\/|\,|\(| |\)/gi, "");
+      t_doc.session_id = t_doc.session_id.replace(" ", "");
+
       var dayIndex = -1;
       if(t_doc.session_day == "Monday") {
         dayIndex = 0;
@@ -125,6 +135,19 @@ sessionsDb.allDocs({
       }
     }
 
+    // create a sesiionid to index mapping sessionIdToIndexMapping
+    for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
+      timeslots = sessions[dayIndex];
+      for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
+        sessionInThisTimeSlot = timeslots[timeslotIndex];
+        for(var h=0; h<sessionInThisTimeSlot.length; ++h) {
+          t_session = sessionInThisTimeSlot[h];
+          t_session_id = t_session.session_id;
+          sessionIdToIndexMapping[t_session_id] = {"dayIndex" : dayIndex, "timeslotIndex": timeslotIndex, "sub_index": h};
+        }
+      }
+    }
+
   }).catch(function (err) {
     console.log(err);
   });
@@ -147,8 +170,6 @@ itemsDb.allDocs({
     include_docs: true,
     attachments: true
   }).then(function (result) {
-    console.log("logging result for items:");
-    console.log(result);
     allOldItems = result.rows;
 
     for (var property in allOldItems) {
@@ -175,8 +196,6 @@ authorsDb.allDocs({
     include_docs: true,
     attachments: true
   }).then(function (result) {
-    console.log("logging result for authors:");
-    console.log(result);
     allOldAuthors = result.rows;
 
     for (var property in allOldAuthors) {
@@ -188,22 +207,55 @@ authorsDb.allDocs({
     console.log(err);
   });
 
+
+function addAuthorsToItems() {
+  for (var property in items) {
+    if (!items.hasOwnProperty(property)) {
+      continue;
+    }
+    item = items[property];
+
+    authorIds = item.authorIds;
+    if(typeof(authorIds)=="string")
+      item.authorsString = people[authorIds].name;
+    else {
+      authorsString = people[authorIds[0]].name;
+      for(var i=1; i<authorIds.length; ++i) {
+        authorsString += " bull; " + people[authorIds[i]].name;
+      }
+      item.authorsString = authorsString;
+    }
+  }
+}
+
+function makeAllPeopleArticlesIntoArray() {
+  for (var property in people) {
+    if (!people.hasOwnProperty(property)) { continue; }
+    paper_ids = people[property].paper_ids;
+    if(typeof(paper_ids)=="number" || typeof(paper_ids)=="string") {
+      people[property].paper_ids = [paper_ids];
+    }
+  }
+}
+
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function demo() {
   await sleep(5000);
-  console.log("LOGGING PEOPLE LENGTH");
-  console.log(people);
+  addAuthorsToItems();
+  makeAllPeopleArticlesIntoArray();
   scheduleDb.put({
-    _id: 'schedule_new',
+    _id: 'schedulenew',
     sessions: sessions,
     dailySchedule: dailySchedule,
     items: items,
-    people: people
+    people: people,
+    sessionIdToIndexMapping: sessionIdToIndexMapping
   });
 }
-demo();
+//demo();
 /**
   scheduleDb.put({
     _id: 'schedule_new',

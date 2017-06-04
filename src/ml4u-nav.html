@@ -6,10 +6,21 @@
   <template>
     <style>
       paper-tabs {
+        height: 38px;
+      }
+      paper-tabs.main {
         --paper-tabs : {background-color: #A70F0F	;};
         --paper-tabs-selection-bar-color : white;
         color: white;
+      }
+      paper-tabs.secondary {
+        --paper-tabs : {background-color: #EFEFEF	;};
+        --paper-tabs-selection-bar-color : { rgba(188,0,0,1); };
 
+      }
+      .secondary > paper-tab {
+        --paper-tab-content : {color: rgba(188,0,0,1); };
+        --paper-tab-content-unselected: {color: rgba(0,0,0,0.45)};
       }
       .link {
         @apply(--layout-horizontal);
@@ -18,10 +29,17 @@
         color: inherit;
       }
     </style>
-    <paper-tabs selected="{{selectedIndex}}" attr-for-selected="name">
+    <paper-tabs class="main" selected="{{selectedIndex}}" attr-for-selected="name">
       <template is="dom-repeat" items="{{tabs}}">
         <paper-tab noink link  name="{{index}}">
-          <a href="#{{index}}" class="link tab" tabindex="-1">{{item}}</a>
+          <a href="#{{index}}" class="link tab" tabindex="-1">{{item.dayString}}</a>
+        </paper-tab>
+      </template>
+    </paper-tabs>
+    <paper-tabs class="secondary" selected="{{selectedSubIndex}}" attr-for-selected="name">
+      <template is="dom-repeat" items="{{subtabs}}">
+        <paper-tab noink link  name="{{index}}">
+          <a href="#{{selectedIndex}}{{index}}" class="link tab" tabindex="-1">{{item}}</a>
         </paper-tab>
       </template>
     </paper-tabs>
@@ -35,11 +53,27 @@
         type:Number,
         notify: true
       },
+      selectedSubIndex: {
+        type: Number,
+        notify: true
+      },
       tabs: Array,
+      subtabs: {
+        type: Array,
+        computed: '_computeSubTabs(tabs, selectedIndex)'
+      }
+    },
+    _computeSubTabs: function(tabs, selectedIndex) {
+      if(tabs == undefined || tabs.length==0) {
+        return [];
+      }
+      var returnValue = tabs[selectedIndex].slots;
+      return returnValue;
     },
 
     ready: function() {
-      console.log("ml4u-nav is ready");
+      console.log("READY CALLED FROM ML4U-NAV");
+      console.log(this.selectedSubIndex);
     }
   });
   </script>

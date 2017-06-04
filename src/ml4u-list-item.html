@@ -83,6 +83,14 @@
     span.workshop {
       background-color: #fd9edf;
     }
+
+    paper-item.workshop {
+      border-left-colorr: #BC0000;
+    }
+    span.workshop {
+      background-color: #BC0000;
+    }
+
     iron-icon {
       color:black;
     }
@@ -99,45 +107,48 @@
     }
     </style>
 
-    <!--
-      <template is="dom-if" if="{{isAuthor}}">
-        <paper-icon-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
-          <iron-icon icon="icons:account-circle" class$="{{listItem.type}}" item-icon></iron-icon>
-          <paper-item-body three-line>
-            <div secondary>
-              <span style="float:right">{{listItem.type}}</span>
-            </div>
-            <div><a href="/person?id=[[listItem.id]]">{{listItem.name}}</a></div>
-            <div secondary>{{listItem.authorsString}}</div>
-          </paper-item-body>
-        </paper-icon-item>
-      </template>
-    -->
-    <paper-item class$="{{listItem.type}} {{additionalClasses}}"  on-tap="_changeSelectedItem">
-      <paper-item-body three-line>
-        <div secondary>
-          <span>{{listItem.timeAndLocationString}}<span>
-          <span style="float:right" class$="{{listItem.type}} sessiontype">{{listItem.type}}</span><br/>
-        </div>
-        <div>{{listItem.title}}</div>
-        <div secondary>{{listItem.authorsString}} <span hidden$="true"><iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];" icon="icons:bookmark" class$="{{favouriteClass}}"></iron-icon></span></div>
-      </paper-item-body>
-    </paper-item>
+    <template is="dom-if" if="{{isPaper}}">
+      <paper-item class$="paper"  on-tap="_changeSelectedItem">
+        <paper-item-body three-line>
+          <div secondary>
+            <span>{{listItem.session_time}}<span>
+            <span style="float:right" class$="paper sessiontype">Paper</span><br/>
+          </div>
+          <div>{{listItem.title}}</div>
+          <div secondary>Author1 Author2 Author3 <span hidden$="true"><iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];" icon="icons:bookmark" class$="{{favouriteClass}}"></iron-icon></span></div>
+        </paper-item-body>
+      </paper-item>
+    </template>
+
+    <template is="dom-if" if="{{!isPaper}}">
+      <paper-item class$="{{listItem.type}}"  on-tap="_changeSelectedItem">
+        <paper-item-body three-line>
+          <div secondary>
+            <span>{{listItem.session_time_string}} &bull; {{listItem.session_location}}<span>
+            <span style="float:right" class$="{{listItem.type}} sessiontype">{{listItem.type}}</span><br/>
+          </div>
+          <div>{{listItem.session_title}}</div>
+          <div secondary>Chair: {{listItem.session_chair}}</div>
+        </paper-item-body>
+      </paper-item>
+    </template>
   </template>
   <script>
     Polymer({
       is: 'ml4u-list-item',
       properties: {
         listItem: Object,
-        isChild: Boolean,
-        additionalClasses : {
-          type: String,
-          computed: '_computeAdditionalClasses(listItem, isChild)'
+        isPaper: {
+          type: Boolean,
+          value: false
         },
         selectedItem: {
           type: String,
           notify: true
         },
+
+        /*
+        <span hidden$="true"><iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];" icon="icons:bookmark" class$="{{favouriteClass}}"></iron-icon></span>
         profile: {
           type: Object,
           notify: true
@@ -146,18 +157,15 @@
         isFavouriteDisplay: {
           type: String,
           value: 'none'
-        }
+        },*/
+
       },
         ready: function() {
-          this.isAuthor = this.listItem.type == "author";
           //if(this.listItem.itemId in this.profile.favourites) {
           //  this.favouriteClass = "favourite";
           //}
         //console.log("the following item used:1");
         //console.log(this.listItem);
-      },
-      _computeAdditionalClasses : function(listItem, isChild) {
-        return isChild ? "child" : "";
       },
       //This is used once the favourite state is changed, not when this element is created.
       setFavourite(isFavourite) {
@@ -165,9 +173,9 @@
         this.isFavourite = isFavourite;
       },
       _changeSelectedItem: function(event, d, s) {
-        if(this.listItem.itemId == undefined)
+        if(this.listItem.session_id == undefined)
           return;
-        this.selectedItem = this.listItem.itemId;
+        this.selectedItem = this.listItem.session_id;
       }
 });
 

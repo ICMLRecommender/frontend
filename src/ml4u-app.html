@@ -33,6 +33,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="ml4u-item-view.html">
+<link rel="import" href="ml4u-view-session-and-item.html">
+
 
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/av-icons.html">
@@ -79,17 +81,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-weight: bold;
       }
 
-      paper-dialog div.dialogbuttonbar {
-        margin-top:0px !important;
-        padding-left:0px !important;
-
+      /***Styles related to the dialog***/
+      paper-dialog {
+        --paper-dialog: {
+          height: 90%;
+        }
       }
+      paper-dialog paper-dialog-scrollable {
+        height: 98%;
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+        --paper-dialog-scrollable: {
+          box-sizing: border-box;
+          width: 500px;
+          height: 98%;
+          padding-left: 0px;
+          padding-right: 0px;
+          background-color: #EFEFEF;
+        }
+      }
+/*TODO: un-comment
 
-      --paper-dialog-scrollable: {
-        padding-left: 0px;
-        padding-right: 0px;
-      };
+*/
 
+/*TODO: un-comment
       paper-dialog-scrollable {
         --paper-dialog-scrollable: {
           padding-left: 0px;
@@ -102,10 +117,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-right: 0px !important;
 
       }
+*/
 
-      paper-dialog {
+
+
+      /*paper-dialog {
         max-width: 769px !important;
+      }*/
+
+/*TODO: un-comment
+      paper-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 5% 20% 5% 20%;
       }
+*/
 
       .drawerheader {
         color: #fff;
@@ -125,15 +155,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         bottom: 20px;
       }
 
-      iron-pages {
-        height: 95%
-      }
-
     </style>
 
     <ml4u-dbschedule-provider is-ready="{{dbScheduleProviderReady}}" id="scheduleDataProvider" trending={{trending}} topics={{topics}} ></ml4u-dbschedule-provider>
-    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}>
-    </ml4u-user-profile>
+    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}></ml4u-user-profile>
 
     <iron-location hash="{{ironRouteHash}}" path={{ironRoutePath}} query={{ironRouteQuery}}></iron-location>
     <app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
@@ -154,7 +179,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon>Feed</a>
           <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon>Schedule</a>
-          <a name="posters" href="/posters"><iron-icon icon="icons:today"></iron-icon>Posters</a>
+          <!--<a name="posters" href="/posters"><iron-icon icon="icons:today"></iron-icon>Posters</a>-->
 
           <template is="dom-if" if="{{!loggedIn}}">
             <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon>Register</a>
@@ -202,13 +227,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-toast id="papertoast" text=""></paper-toast>
 
     <!--The dialog needs to be in the main view in order to display properly-->
-    <paper-dialog id="itemDialog" with-backdrop>
-      <paper-dialog-scrollable class="scrollable">
-        <ml4u-item-view id="itemView" item-id="[[selectedItem]]" profile-data="{{profileData}}"></ml4u-item-view>
+    <paper-dialog id="itemDialog" with-backdrop auto-fit-on-attach>
+      <h1>hi</h1>
+      <paper-dialog-scrollable>
+        <ml4u-view-session-and-item></ml4u-view-session-and-item>
+        <!--<ml4u-item-view id="itemView" item-id="[[selectedItem]]" profile-data="{{profileData}}"></ml4u-item-view>-->
+      </paper-dialog-scrollable>
+      bye
+    </paper-dialog>
+    <paper-dialog id="dialog" with-backdrop>
+      <paper-dialog-scrollable>
+        <ml4u-view-session-and-item session-id=[[selectedItem]]></ml4u-view-session-and-item>
+        <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>-->
       </paper-dialog-scrollable>
     </paper-dialog>
-
-
   </template>
 
   <script>
@@ -293,12 +325,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _displaySelectedItem: function(manuallyUpdatePopup){
-        if(manuallyUpdatePopup)
-          this.$.itemView.updateItem();
+        //if(manuallyUpdatePopup)
+        //  this.$.itemView.updateItem();
         this.async(function() {
-          var articleDialog = this.$.itemDialog;
-          articleDialog.verticalOffset = 1;
-          articleDialog.horizontalOffset = 1;
+          var articleDialog = this.$.dialog;
           articleDialog.open();
         });
         console.log(this.queryParams.itemid);

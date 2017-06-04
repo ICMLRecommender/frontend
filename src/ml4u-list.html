@@ -7,29 +7,25 @@
   div {
     background-color: white
   }
-/*    div.sessionChildren {
-      border-left-style: solid;
-      border-left-width: 4px;
-    }
-*/
   </style>
     <div role="listbox" id="testlistbox">
-      <template is="dom-repeat" items="{{items}}" initialCount="10">
-        <div class$="session day{{item.day}}" >
-          <ml4u-list-item list-item="{{item}}"
-            id="listitem{{idPrefix}}{{item.itemId}}"
-            selected-item="{{selectedItem}}" profile={{profile}}></ml4u-list-item>
-          <!-- Render the child sessions, if there are any-->
-          <template is="dom-if" if="{{displaySubSessions}}">
-            <div class="sessionChildren">
-              <template is="dom-repeat" class$="childSession" items="{{item.childSessions}}" as="childSession" initialCount="10">
-                <ml4u-list-item list-item="{{childSession}}" is-child="true"
-                  id="listitem{{idPrefix}}{{childSession.itemId}}"
-                  selected-item="{{selectedItem}}"  profile={{profile}}></ml4u-list-item>
-              </template>
-            </div>
-          </template>
-        </div>
+      <template is="dom-if" if="{{isPaperList}}">
+        <template is="dom-repeat" items="{{items}}" initialCount="10">
+          <div>
+            <ml4u-list-item list-item="{{item}}"
+              id="listitem{{idPrefix}}{{item.itemId}}"
+              selected-item="{{selectedItem}}"></ml4u-list-item>
+          </div>
+        </template>
+      </template>
+      <template is="dom-if" if="{{!isPaperList}}">
+        <template is="dom-repeat" items="{{items}}" initialCount="10">
+          <div>
+            <ml4u-list-item list-item="{{item}}"
+              id="listitem{{idPrefix}}{{item.itemId}}"
+              selected-item="{{selectedItem}}"></ml4u-list-item>
+          </div>
+        </template>
       </template>
     </div>
 
@@ -42,52 +38,27 @@
           type: String,
           notify: true
         },
-        displaySubSessions: {
-          type: Boolean
-        },
         items: {
-          type: Array,
-          observer: 'itemsChanged'
+          type: Array
         },
-        selectedFilterIndex: {
-          type: Number,
-          observer: 'applyFilter'
+        isPaperList: {
+          type: Boolean,
+          value: false
         },
+        /*
         profileData: {
           type: Object,
           notify: true,
           observer: '_profileDataChanged'
-        },
+        },*/
         //needed so that the item ids don't clash
         //^...I think
         idPrefix: String
       },
-      observers: [
+/*      observers: [
         '_userBookmarksChanged(profileData.bookmarks.*)'
       ],
-      itemsChanged: function(newItems, oldItems) {
-        this.applyFilter(this.selectedFilterIndex);
-      },
-      applyFilter: function(filterIndex, oldFilterIndex) {
-        if(filterIndex == oldFilterIndex)
-          return;
-        this.async(function() {
-          var rows = Polymer.dom(this.root).querySelectorAll(".session");
-          var numOfRows = rows.length;
-          if(numOfRows==0 || items.length==0)
-            return;
-          var items = this.items;
-          var types = ML4U.schedule.types;
-          for(var i=0; i<items.length; ++i) {
-            if(filterIndex==0 || items[i].type == types[filterIndex-1])
-              rows[i].removeAttribute("hidden", "");
-            else
-              rows[i].setAttribute("hidden", "");
-          }
-
-        });
-      },
-      _userBookmarksChanged: function(changeRecord) {
+      _userBookmarksChanged: function(changeRecord) {*/
         //console.log(">>>>>>>>>>>>>>_userFavouritesChanged called");
         /*console.log("_userFavouritesChanged123 called with the following changeRecord:");
         console.log(changeRecord);
@@ -108,10 +79,10 @@
         listElement.setFavourite(changeRecord.value != null);
         //this.$$("")
         */
-      },
+      /*},
       _profileDataChanged: function() {
         //console.log(">>>>>>>_profileDataChanged called");
-      }
+      }*/
     });
 
   </script>

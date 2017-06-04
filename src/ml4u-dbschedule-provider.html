@@ -7,7 +7,7 @@
   <template>
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="schedule"
+      doc-id="schedulenew"
       data="{{scheduleData}}">
     </app-pouchdb-document>
 
@@ -59,10 +59,10 @@
         console.log(this.scheduleData);
         this.fire('iron-signal', {name: 'schedule', data: null});
       },
-      getSessionsSchedule: function(day) {
+      getSessionsSchedule: function(day, track) {
         if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
           return [];
-        return this.scheduleData.sessions[day];
+        return this.scheduleData.sessions[day][track];
       },
       getPostersSchedule: function(day) {
         if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
@@ -100,11 +100,29 @@
           return {};
         return this.scheduleData.items;
       },
-      getSessionsDaysArray: function() {
-        if(this.scheduleData == undefined || this.scheduleData.dayList == undefined)
-          return [];
-        return this.scheduleData.dayList;
+      getSessionItems: function(sessionId) {
+        if(this.scheduleData == undefined || this.scheduleData.items == undefined)
+          return {};
+        mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
+        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.sub_index];
+        console.log("REtrieved:");
+        console.log(session);
+        papers_ids = session.talks;
+
+        items = [];
+        for (var i=0; i<papers_ids.length; ++i) {
+          itemid = papers_ids[i].paper_id;
+          item = this.scheduleData.items[itemid];
+          items.push(item);
+        }
+        return items;
       },
+      getSessionsDaysArray: function() {
+        if(this.scheduleData == undefined || this.scheduleData.dailySchedule == undefined)
+          return [];
+        return this.scheduleData.dailySchedule;
+      },
+      /*
       getPostersDaysArray: function() {
         if(this.scheduleData == undefined || this.scheduleData.dayList == undefined)
           return [];
@@ -115,7 +133,7 @@
           dayList.push(posterSessionsByDay[i].dayString);
         }
         return dayList;
-      },
+      },*/
       created: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.schedDB_local = new PouchDB('schedule');

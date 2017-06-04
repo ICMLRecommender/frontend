@@ -15,19 +15,11 @@
       }
     </style>
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
-    <ml4u-nav selected-index="{{selectedDay}}" tabs="[[_tabs]]" ></ml4u-nav>
-    <template is="dom-if" if="{{!showPosters}}">
-      <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
-        selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
+    <ml4u-nav selected-index="{{selectedDay}}" selected-sub-index={{selectedTrack}} tabs="[[_tabs]]" ></ml4u-nav>
+    <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
+        selected-item={{selectedItem}}
         profile-data={{profileData}} id-prefix="sched">
-      </ml4u-list>
-    </template>
-    <template is="dom-if" if="{{showPosters}}">
-      <ml4u-list items="[[_items]]" selected-day="[[selectedDay]]"
-        selected-item={{selectedItem}} selected-filter-index=[[selectedFilterIndex]]
-        profile-data={{profileData}} id-prefix="posters" display-sub-sessions>
-      </ml4u-list>
-    </template>
+    </ml4u-list>
   </template>
 
   <script>
@@ -53,7 +45,10 @@
       },
       selectedDay: {
         type:Number,
-        observer: '_onSelectedDayChanged',
+        value: 0
+      },
+      selectedTrack: {
+        type:Number,
         value: 0
       },
       _tabs: {
@@ -69,32 +64,30 @@
         value: false
       }
     },
+    observers: [
+      '_onSelectedItemsChanged(selectedDay, selectedTrack)'
+    ],
 
     _onIronRouteHashChanged: function(newVal) {
-      console.log("_onIronRouteHashChanged" + newVal);
-      console.log("_onIronRouteHashChanged" + typeof(newVal));
-      this.selectedDay = newVal == undefined ? 0 : Number(newVal);
+      if (newVal == undefined || newVal == "") {
+        this.selectedDay = 0;
+        this.selectedTrack = 0;
+      }
+      else {
+        this.selectedDay = newVal[0];
+        this.selectedTrack = newVal.length > 1 ? newVal[1] : 0;
+      }
     },
 
-    _onSelectedDayChanged: function(newVal, oldVal) {
-      console.log("_onSelectedDayChanged " + newVal + " " + oldVal);
-      if(newVal == oldVal)
+    _onSelectedItemsChanged: function(day, track) {
+      if(day == undefined || track==undefined)
         return;
-      if(!this.showPosters)
-        this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
-      else
-        this._items = window.ml4u.sharedElements.scheduleDataProvider.getPostersSchedule(this.selectedDay);
+      this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(day, track);
     },
 
     _onScheduleDataChanged: function(e) {
-      if(!this.showPosters) {
-        this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
-        this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
-      }
-      else {
-        this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getPostersDaysArray();
-        this._items = window.ml4u.sharedElements.scheduleDataProvider.getPostersSchedule(this.selectedDay);
-      }
+      this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
+      this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
     },
     ready: function() {
       //this.selectedDay = this.ironRouteHash || '0';
@@ -102,10 +95,7 @@
       //  this.selectedItem = this.route.__queryParams.itemid;
 
       if(this._tabs.length==0) {
-        if(!this.showPosters)
-          this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
-        else
-          this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getPostersDaysArray();
+        this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
       }
     },
 
