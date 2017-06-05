@@ -216,12 +216,14 @@ function addAuthorsToItems() {
     item = items[property];
 
     authorIds = item.authorIds;
-    if(typeof(authorIds)=="string")
+    if(typeof(authorIds)=="string") {
+      item.authorIds = [authorIds];
       item.authorsString = people[authorIds].name;
+    }
     else {
       authorsString = people[authorIds[0]].name;
       for(var i=1; i<authorIds.length; ++i) {
-        authorsString += " bull; " + people[authorIds[i]].name;
+        authorsString += ", " + people[authorIds[i]].name;
       }
       item.authorsString = authorsString;
     }

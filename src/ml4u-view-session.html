@@ -75,10 +75,23 @@ span.loc {
       selectedPaper: {
         type: String,
         notify: true
+      },
+      needsReload: {
+        type: Number,
+        notify: true,
+        value: 0
       }
     },
     _computeSession: function(sessionId) {
+      console.log("hello from _computeSession, where sessionId is:");
+      console.log(sessionId);
       if(sessionId == undefined || sessionId=="") {
+        return {};
+      }
+      if(window.ml4u == undefined || window.ml4u.sharedElements == undefined
+        || window.ml4u.sharedElements.scheduleDataProvider == undefined) {
+        //postpone the reloading for later.
+        this.needsReload = 1;
         return {};
       }
       session = window.ml4u.sharedElements.scheduleDataProvider.getSession(sessionId);
@@ -86,6 +99,12 @@ span.loc {
     },
     _computePapersList: function(sessionId) {
       if(sessionId == undefined || sessionId=="") {
+        return [];
+      }
+      if(window.ml4u == undefined || window.ml4u.sharedElements == undefined
+        || window.ml4u.sharedElements.scheduleDataProvider == undefined) {
+        //postpone the reloading for later.
+        this.needsReload = 1;
         return [];
       }
       papers = window.ml4u.sharedElements.scheduleDataProvider.getSessionItems(sessionId);

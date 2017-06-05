@@ -174,9 +174,6 @@
       },
 
 
-
-
-
       profileData: {
         type: Object,
         notify: true
@@ -205,17 +202,16 @@
         value: "hardware:keyboard-arrow-down"
       },
       displayedWithinSession: {
-        type: Boolean,
-        value: false
+        type: Number,
+        value: 0
+      },
+      needsReload: {
+        type: Number,
+        notify: true,
+        value: 0
       }
     },
-    _toggleAbstract: function() {
-      this.abstractVisible = !this.abstractVisible;
-      this.abstractIconStr = this.abstractVisible ? "hardware:keyboard-arrow-up" : "hardware:keyboard-arrow-down";
-    },
-    _computeLoggedIn: function(profileData) {
-      return Object.keys(profileData).length != 0
-    },
+
     _onItemIdChanged: function() {
       if(this.itemId == undefined)
         return;
@@ -227,7 +223,43 @@
       this.updateItem();
       this.getFeedback();
     },
+    updateItem: function() {
+      if(this.itemId == undefined)
+        return;
 
+      if(window.ml4u == undefined || window.ml4u.sharedElements == undefined
+        || window.ml4u.sharedElements.scheduleDataProvider == undefined) {
+          //postpone the reloading for later.
+          this.needsReload = 1;
+          return;
+      }
+      var itemId = this.itemId;
+      item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
+      //check if item is empty
+      isItemEmpty = true;
+      for(var prop in item) {
+        if(item.hasOwnProperty(prop)) {
+          isItemEmpty = false;
+          break;
+        }
+      }
+      if(isItemEmpty) {
+        this.needsReload = 1;
+        return;
+      }
+      console.log("computed the following itemObj for itemId " + itemId);
+      console.log(item);
+      this.itemObject = item;
+
+
+      /*this.async(function() {
+        var itemId = this.itemId;
+        item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
+        console.log("computed the following itemObj for itemId " + itemId);
+        console.log(item);
+        this.itemObject = item;
+      });*/
+    },
     getFeedback: function() {
       /*
       var xhr = new XMLHttpRequest();
@@ -267,26 +299,13 @@
       xhr.send();
       */
     },
-
-
-    updateItem: function() {
-      if(this.itemId == undefined)
-        return {};
-
-      this.async(function() {
-        var itemId = this.itemId;
-        /*if(itemId === undefined)
-          return {};*/
-        item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
-        console.log("computed the following itemObj for itemId " + itemId);
-        console.log(item);
-        this.itemObject = item;
-      });
+    _computeLoggedIn: function(profileData) {
+      return Object.keys(profileData).length != 0
     },
     _onItemChanged: function(newItemValue) {
       if(newItemValue === undefined)
         return;
-      this._updateStars();
+      //this._updateStars();
     },
 /*
     _toggleFavourite: function() {
@@ -328,6 +347,10 @@
       }
     },
     */
+    _toggleAbstract: function() {
+      this.abstractVisible = !this.abstractVisible;
+      this.abstractIconStr = this.abstractVisible ? "hardware:keyboard-arrow-up" : "hardware:keyboard-arrow-down";
+    },
     writeReviewTapped: function() {
       console.log("writeReviewTapped tapped");
       this.displayRateItemButton = false;

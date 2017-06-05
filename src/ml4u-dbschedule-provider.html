@@ -84,9 +84,10 @@
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)
           return {};
         var orgItem =  this.scheduleData.items[itemId]
-        var item = {};
-        item.title = orgItem.title;
-        item.description = orgItem.description;
+        if(orgItem == undefined)
+          return {};
+
+        var item = orgItem;
         item.authors = new Array();
         for(var i in orgItem.authorIds) {
           var authorId = orgItem.authorIds[i];
@@ -104,6 +105,8 @@
         if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
           return {};
         mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
+        if(mapping == undefined)
+          return {};
         session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.sub_index];
         return session;
       },
@@ -142,19 +145,6 @@
         }.bind(this)).on('error', function (err) {
           // boo, something went wrong!
         });
-
-        //window.db = new PouchDB('http://@52.178.198.66:5984/auth', {skipSetup: true});
-        /*
-        db.login('jan', 'apple', function (err, response) {
-          if (err) {
-            if (err.name === 'unauthorized') {
-              console.log("name or pass incorrect");
-            } else {
-              console.log("something went wrong during authentication");
-            }
-          }
-
-        });*/
       }
     });
   </script>

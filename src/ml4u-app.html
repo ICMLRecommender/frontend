@@ -99,42 +99,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-color: #EFEFEF;
         }
       }
-/*TODO: un-comment
-
-*/
-
-/*TODO: un-comment
-      paper-dialog-scrollable {
-        --paper-dialog-scrollable: {
-          padding-left: 0px;
-          padding-right: 0px;
-        };
-
-        margin-top: 0px !important;
-        margin-bottom: 0px !important;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-
-      }
-*/
-
-
-
-      /*paper-dialog {
-        max-width: 769px !important;
-      }*/
-
-/*TODO: un-comment
-      paper-dialog {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0;
-        margin: 5% 20% 5% 20%;
-      }
-*/
 
       .drawerheader {
         color: #fff;
@@ -207,7 +171,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main"
 
             >
-          <ml4u-page-feed trending-object={{trending}} name="feed"></ml4u-page-feed>
+          <ml4u-page-feed trending-object={{trending}} name="feed" selected-item={{selectedItem}}></ml4u-page-feed>
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="schedule"></ml4u-page-schedule>
@@ -225,19 +189,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <paper-toast id="papertoast" text=""></paper-toast>
 
-    <!--The dialog needs to be in the main view in order to display properly-->
-    <paper-dialog id="itemDialog" with-backdrop auto-fit-on-attach>
-      <h1>hi</h1>
+    <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
-        <ml4u-view-session-and-item></ml4u-view-session-and-item>
-        <!--<ml4u-item-view id="itemView" item-id="[[selectedItem]]" profile-data="{{profileData}}"></ml4u-item-view>-->
-      </paper-dialog-scrollable>
-      bye
-    </paper-dialog>
-    <paper-dialog id="dialog" with-backdrop>
-      <paper-dialog-scrollable>
-        <ml4u-view-session-and-item id="sessionAndItemView" session-id=[[selectedItem]]></ml4u-view-session-and-item>
-        <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>-->
+        <ml4u-view-session-and-item id="sessionAndItemView" selected-item=[[selectedItem]] popup-display-session=[[popupDisplaySession]]></ml4u-view-session-and-item>
       </paper-dialog-scrollable>
     </paper-dialog>
   </template>
@@ -270,6 +224,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_selectedItemChanged',
           notify: true
         },
+        popupDisplaySession: {
+          type: Number
+        },
         dbScheduleProviderReady: {
           type: Number,
           observer: '_onDbScheduleProviderReady',
@@ -301,7 +258,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.selectedItem = undefined;
         }
         else
-          this.selectedItem = Number(newVal);
+          this.selectedItem = newVal;
 
       },
 
@@ -315,6 +272,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return;
         if(!this.dbScheduleProviderReady) {
             //wait for the schedule data to be downloaded before displaying the item
+            console.log("DISPLAYING WHEN DATA IS READY!!!!");
             this.displayItemOnDbLoad = true;
             return;
         }
@@ -325,8 +283,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _displaySelectedItem: function(manuallyUpdatePopup){
         //if(manuallyUpdatePopup)
         //  this.$.itemView.updateItem();
+        this.$.sessionAndItemView.preload();
         this.async(function() {
-          var articleDialog = this.$.dialog;
+          var articleDialog = this.$.itemDialog;
           articleDialog.open();
         });
         console.log(this.queryParams.itemid);
@@ -354,10 +313,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _pageChanged: function(page) {
         // Load page import on demand. Show 404 page if fails
-        var pageNameToResolve = page;
-        if(page=="posters")
-          pageNameToResolve = "schedule";
+        if(page == "schedule")
+          this.popupDisplaySession = 1;
+        else
+          this.popupDisplaySession = 0;
 
+        var pageNameToResolve = page;
         var resolvedPageUrl = this.resolveUrl('ml4u-page-' + pageNameToResolve + '.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },

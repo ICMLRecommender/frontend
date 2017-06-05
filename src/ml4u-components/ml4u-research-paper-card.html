@@ -77,8 +77,7 @@
         padding-right: 5px;
       }
     </style>
-
-    <paper-card style="border-radius: 4px">
+    <paper-card style="border-radius: 4px" on-tap="_changeSelectedItem">
       <div class="card-content">
         <div>
         <template is="dom-repeat" items="[[tags]]">
@@ -90,9 +89,11 @@
         </div>
         <div class="title">[[title]]</div>
         <div class="authors">
-          <template is="dom-repeat" items="[[authors]]">
+          <!--<template is="dom-repeat" items="[[authors]]">
             <div class="author">{{item.name}}</div>
           </template>
+        -->
+        {{authorsString}}
         </div>
       </div>
       <div class="card-actions">
@@ -109,19 +110,28 @@
    Polymer({
       is: 'ml4u-research-paper-card',
       properties: {
-        id: {
+        paperId: {
           type: String
         },
         title: {
           type: String
         },
-        authors: {
-          type: Array
+        authorsString: {
+          type: String
         },
         tags: {
           type: Array
         },
-        trending: Boolean
+        trending: Boolean,
+        selectedItem: {
+          type: String,
+          notify: true
+        }
+      },
+      _changeSelectedItem: function() {
+        console.log("CHANGING SELECTED ITEM TO:");
+        console.log(this.paperId);
+        this.selectedItem = this.paperId;
       }
     });
   </script>

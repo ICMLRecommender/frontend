@@ -62,10 +62,10 @@
       <div>
         <template is="dom-repeat" items="{{displayedItems}}" initialCount="10">
           <ml4u-research-paper-card
-            id="1"
+            paper-id={{item.id}} selected-item={{selectedItem}}
             title={{item.title}}
             tags='[{"id": "1", "color": "red", "text": "ML"}]'
-            authors='{{item.authors}}' trending
+            authors-string='{{item.authorsString}}' trending
           ></ml4u-research-paper-card>
         </template>
       </div>
@@ -79,6 +79,10 @@
         selectedDay: {
           type: Number,
           value: 0
+        },
+        selectedItem: {
+          type: String,
+          notify: true
         },
         trendingObject: {
           type: Object,
