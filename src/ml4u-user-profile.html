@@ -11,7 +11,7 @@
   <template>
     <ml4u-pouchdb-sync
         id="sync1"
-        source="http://localhost:5985/{{username}}"
+        source="https://icml.papro.org.uk/couchdb/{{username}}"
         target="{{username}}"
         bidirectional>
     </ml4u-pouchdb-sync>
@@ -25,7 +25,6 @@
         data="{{profileData}}">
       </app-pouchdb-document>
     </template>
-
   </template>
 
   <script>
@@ -67,7 +66,7 @@
         PouchDB.plugin(require('pouchdb-authentication'));
       },
       ready: function() {
-        this.authDatabase = new PouchDB('http://localhost:5985/basic', {skipSetup: true});
+        this.authDatabase = new PouchDB('https://icml.papro.org.uk/couchdb/basic', {skipSetup: true});
       },
       login: function(username, password, callbackfn) {
         this.authDatabase.login(username, password, callbackfn);

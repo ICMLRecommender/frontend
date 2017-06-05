@@ -5,6 +5,7 @@
 
 <dom-module id="ml4u-dbschedule-provider">
   <template>
+
     <app-pouchdb-document
       db-name="schedule"
       doc-id="schedulenew"
@@ -31,7 +32,8 @@
       properties: {
         scheduleData: {
           type: Object,
-          notify: true
+          notify: true,
+          value: null
         },
         trending: {
           type: Object,
@@ -46,19 +48,18 @@
           notify: true
         }
       },
+      /*
       observers: [
         'scheduleDataChanged(scheduleData.*)'
       ],
       scheduleDataChanged(e) {
         if(this.scheduleData == undefined || this.scheduleData._rev == undefined)
           return;
-        if(!this.isReady) {
-          this.isReady = 1;
-        }
-        console.log("signalling that scheduleData has changed");
+
+        console.log("scheduleDataChanged called");
         console.log(this.scheduleData);
-        this.fire('iron-signal', {name: 'schedule', data: null});
-      },
+        //this.fire('iron-signal', {name: 'schedule', data: null});
+      },*/
       getSessionsSchedule: function(day, track) {
         if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
           return [];
@@ -140,6 +141,11 @@
           if(window.ml4u.helpervars.ml4uappcreated) {
               //window.ml4u.helpervars.ml4u_app_element.removeLoadscreen();
           }
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!scheduleData has been downloaded!");
+          if(!this.isReady) {
+            this.isReady = 1;
+          }
+          this.fire('iron-signal', {name: 'schedule', data: null});
           window.ml4u.schedDB_local.close();
           window.ml4u.shedDB_remote.close();
         }.bind(this)).on('error', function (err) {

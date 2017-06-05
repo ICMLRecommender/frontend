@@ -77,8 +77,8 @@
         padding-right: 5px;
       }
     </style>
-    <paper-card style="border-radius: 4px" on-tap="_changeSelectedItem">
-      <div class="card-content">
+    <paper-card style="border-radius: 4px">
+      <div class="card-content" on-tap="_changeSelectedItem">
         <div>
         <template is="dom-repeat" items="[[tags]]">
           <div class="tag">{{item.text}}</div>

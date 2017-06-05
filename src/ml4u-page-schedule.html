@@ -86,8 +86,13 @@
     },
 
     _onScheduleDataChanged: function(e) {
+      console.log("_onScheduleDataChanged called!!");
+      console.log("this.selectedDay=");
+      console.log(this.selectedDay);
       this._tabs = window.ml4u.sharedElements.scheduleDataProvider.getSessionsDaysArray();
-      this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay);
+      this._items = window.ml4u.sharedElements.scheduleDataProvider.getSessionsSchedule(this.selectedDay, this.selectedTrack);
+      console.log(this._tabs);
+      console.log(this._items);
     },
     ready: function() {
       //this.selectedDay = this.ironRouteHash || '0';
@@ -100,7 +105,7 @@
     },
 
     favChanged: function(e) {
-
+      
     },
     profileDataChanged: function(e) {
 

@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="ml4u-nav.html">
 <link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
@@ -50,6 +51,7 @@
         /*display: table-cell;*/
       }
     </style>
+    <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
     <div id="searchBarContainer">
       <div id="searchBar"><input type="text" id="searchBarInput" on-keypress="_keyPressed" placeholder="Search for ICML papers..."></div>
       <paper-icon-button id="searchButton" noink icon="icons:search" on-tap="searchForItems"></paper-icon-button>
@@ -99,6 +101,9 @@
           type: Boolean,
           value: false
         }
+      },
+      _onScheduleDataChanged: function() {
+        this.trendingObjectChanged(this.trendingObject);
       },
       trendingObjectChanged: function(newVal, oldVal) {
         if(this.trendingObject == undefined || this.trendingObject.trendingids == undefined)
