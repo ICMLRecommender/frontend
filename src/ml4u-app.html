@@ -40,6 +40,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
 
+<link rel="import" href="ml4u-components/shop-snackbar.html">
+
 <dom-module id="ml4u-app">
   <template>
     <style is="custom-style">
@@ -175,8 +177,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="schedule"></ml4u-page-schedule>
-          <!--TODO: currently, both schedule elements are being loaded.
-            Consider using template dom-if to prevent the hidden one from being loaded prematurely.-->
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="posters" show-posters></ml4u-page-schedule>
@@ -192,6 +192,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
         <ml4u-view-session-and-item id="sessionAndItemView" selected-item=[[selectedItem]] popup-display-session=[[popupDisplaySession]]></ml4u-view-session-and-item>
+        <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
     </paper-dialog>
   </template>
@@ -240,7 +241,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ],
 
       listeners : {
-        'iron-overlay-closed':'_itemDialogClosed'
+        'iron-overlay-closed':'_itemDialogClosed',
+        'iron-overlay-canceled':'_itemDialogCanceled'
       },
 
       _onDbScheduleProviderReady: function(newVal, oldVal) {
@@ -293,10 +295,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.set('queryParams.itemid', String(this.selectedItem));
       },
 
-      _itemDialogClosed: function(e) {
+      _itemDialogClosed: function(event) {
+        this._tapHandler = null;
         this.$.sessionAndItemView.resetState();
         //this.selectedItem = undefined;
         this.set('queryParams.itemid', null);
+      },
+      _itemDialogCanceled: function(event) {
+        console.log("_itemDialogCanceled CALLED");
+        var target = Polymer.dom(event).rootTarget;
+        console.log(target);
+        if (target.localName === 'paper-toast') {
+          console.log("BEING CLOSED BY THE TOAST!!!!");
+          event.preventDefault();
+        }
       },
 
       __computeLoggedIn: function(username) {
@@ -342,6 +354,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u = window.ml4u || {};
         window.ml4u.sharedElements = window.ml4u.sharedElements || {};
         window.ml4u.sharedElements.papertoast = this.$.papertoast;
+        window.ml4u.sharedElements.loginReminderSnackbar = this.$.loginReminderSnackbar;
         window.ml4u.sharedElements.scheduleDataProvider = this.$.scheduleDataProvider;
         window.ml4u.sharedElements.userProfileElement = this.$.userProfileElement;
         window.ml4u.helpervars = window.ml4u.helpervars || {};

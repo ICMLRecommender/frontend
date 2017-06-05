@@ -110,7 +110,7 @@
               <a dialog-confirm href="/person?id=[[item.id]]" class="authorlink"><span class="styledbulletpoint">&bull;</span> [[item.name]]</a>
           </template>
         </div>
-        <paper-icon-button icon="icons:bookmark" id="favouriteIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
+        <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class="papericon" on-click='_toggleBookmark'></paper-icon-button>
         <paper-icon-button icon="icons:favorite" id="likeIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
     </section>
     <section class="cardBlock">
@@ -125,7 +125,7 @@
     </section>
     <section class="cardBlock">
       <div class="sectionTitleContainer">
-        <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" id="favouriteIcon" class="papericon" on-click='_toggleAbstract'></paper-icon-button></span>
+        <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" on-click='_toggleAbstract'></paper-icon-button></span>
       </div>
       <div hidden$="{{!abstractVisible}}">[[itemObject.description]]</div>
     </section>
@@ -250,15 +250,6 @@
       console.log("computed the following itemObj for itemId " + itemId);
       console.log(item);
       this.itemObject = item;
-
-
-      /*this.async(function() {
-        var itemId = this.itemId;
-        item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
-        console.log("computed the following itemObj for itemId " + itemId);
-        console.log(item);
-        this.itemObject = item;
-      });*/
     },
     getFeedback: function() {
       /*
@@ -306,6 +297,12 @@
       if(newItemValue === undefined)
         return;
       //this._updateStars();
+    },
+    _toggleBookmark: function() {
+      //window.ml4u.sharedElements.papertoast.text = "Please login first.";
+      //window.ml4u.sharedElements.papertoast.show();
+      window.ml4u.sharedElements.loginReminderSnackbar.open();
+      return;
     },
 /*
     _toggleFavourite: function() {
