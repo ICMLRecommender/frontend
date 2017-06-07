@@ -4,8 +4,8 @@ ICML 2017 website Frontend project repository
 Website, detailing the app design:
 http://icml2017spec.s3-website-us-west-2.amazonaws.com
 
-# Start the server
- 
+## Start the server
+
 1. 
 ```
 ssh -L 8000:localhost:8000 username@icml.papro.org.uk
@@ -23,7 +23,7 @@ cd /home/icmlapp/backend/server/icml
 /home/icmlapp/env/bin/python manage.py runserver
 ```
 
-# Setup the front end
+## Setup the front end
  
 - Install Polymer v1 (not v2)
 
