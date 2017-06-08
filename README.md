@@ -28,16 +28,18 @@ Start the server
 Setup the frontend
 -----------------
  
+- [Install nodejs and npm](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
+
 - Install Polymer v1 (not v2)
 
   ```
-  sudo npm install -g polymer-cli@0.17.0
+  sudo npm install -g polymer-cli
   ```
   
 - Download the code for the frontend from github
 - Open terminal and enter
-    
     ```
+    cd path/to/frontend
     bower install
     ```
   which would install the needed bower components
