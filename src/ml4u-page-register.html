@@ -8,6 +8,8 @@
 <link rel="import" href="ml4u-components/ml4u-topics-selector.html">
 <link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
 
+<link rel="import" href="shared-styles.html">
+
 <dom-module id="ml4u-page-register">
   <template>
   <style include="shared-styles">
@@ -23,22 +25,6 @@
     .errorDiv {
       font-weight: bold;
       color: red;
-    }
-    .center {
-      text-align: center;
-      margin: auto;
-      /*width: 110px;*/
-      /*letter-spacing: 0;*/
-      line-height: 120% !important;
-      font-family: 'Ubuntu';
-      letter-spacing: 10px;
-      font-weight: normal; 
-      font-style: normal; 
-      font-size: 55px;
-      color: #4A4A4A;
-      line-height: 43px;
-      margin-top: 33px;
-      /*margin-bottom: 33px;*/
     }
     #registerForm {
       margin: auto;
@@ -59,16 +45,20 @@
       margin-left: auto;
       margin-right: auto;
       background-color: #4990E2;
-      font-family: 'Ubuntu';
-      font-size: 18px;
+      font-family: 'effra', sans-serif;
+      font-size: 1.1em;
+      font-weight: 500;
       color: white;
       letter-spacing: -0.21px;
       text-align: center;
       text-transform: none;
       margin-bottom: 30px;
+      margin-top: 20px;
     }
   </style>
-  <div class="center">ICML<br/> 2017</div>
+  <div class="logo">
+    ICML<br/>2017
+  </div>
   <div>
     <form is="iron-form" id="registerForm" >
       <paper-input id="usernameInput" label="Username" type="text" required auto-validate></paper-input>
@@ -82,8 +72,6 @@
       <br/>
       <ml4u-topics-selector topics={{topics}} selected-topics={{selectedTopics}}></ml4u-topics-selector>
       <br/>
-      <br/>
-      <!-- <img src="/images/sydney.png" alt="Sydney, Australia" width="100%" height="auto" /></p> -->
       <paper-button id="submitButton" raised noink on-tap="_submit">Register</paper-button>
     </form>
   </div>

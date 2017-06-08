@@ -4,20 +4,44 @@
 <dom-module id="ml4u-topics-selector">
   <template>
     <style>
+      :host {
+        margin-left: -20px;
+      }
       .topic {
         display: block;
-        height: 63px;
+        height: auto;
         width: 100%;
         background: #FAFAFA;
         border: 1px solid #DCDCDC;
-        padding: 10px;
+        border-bottom: 0;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        cursor: pointer;
+      }
+      .topic:hover {
+        background: #EDEDED;
+      }
+      .selected {
+        background: #EDF5E3 !important;
+      }
+      .topic:last-of-type {
+        border-bottom: 1px solid #DCDCDC;
+      }
+      .check {
+        height: 100%;
+        width: 15%;
+        text-align:center;
+        padding-left: 10px;
+        vertical-align: top;
+        display: inline-block;
+      }
+      .topic-info {
+        display: inline-block;
+        width: 75%;
+        padding-right: 10px;
       }
       .check > iron-icon {
-        float: left;
-        margin-left: 20px;
-        margin-right: 20px;
-        margin-bottom: 8px;
-        margin-top: 8px;
+        margin-top: 2px;
         opacity: 0.54;
       }
       .selected > .check > iron-icon {
@@ -35,21 +59,19 @@
         font-size: 16px;
         color: #8E9982;
       }
-      div.keywords {
-        line-height: 1.0;
+      .keywords {
+        line-height: 1.4em;
       }
-      div.selected {
-        background-color: #EDF5E3;
-      }
-      div.hint {
+      .hint {
         display: block;
-        margin: 30px 10px 60px 30px;
+        margin: 30px 15px 40px 20px;
       }
-      span.info-bulb-topics {
-        padding: 17px;
-        font-family: 'Ubuntu';
+      .info-bulb-topics {
+        padding: 22px;
+        font-family: 'effra', sans-serif;
         -webkit-box-decoration-break: clone;
         box-decoration-break: clone;
+        color: rgb(94, 94, 91);
       }
     </style>
     <div class="hint">
@@ -62,7 +84,7 @@
         <div class="check">
           <iron-icon icon="icons:check"></iron-icon>
         </div>
-        <div>
+        <div class="topic-info">
           <span class="topicTitle">{{item.title}}</span><br/>
           <div class="keywords"><span class="keywordsTitle">Keywords: </span>
           <span class="keywordsList"><template is="dom-repeat" items={{item.keywords}} as="keyword">{{keyword}} </template></span><div>
