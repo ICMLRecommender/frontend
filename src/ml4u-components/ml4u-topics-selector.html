@@ -45,10 +45,16 @@
         display: block;
         margin: 30px 10px 60px 30px;
       }
+      span.info-bulb-topics {
+        padding: 17px;
+        font-family: 'Ubuntu';
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
     </style>
     <div class="hint">
       <img src="/images/bulb.png" style="float:left;"/>
-      <div style="font-size: 23px;">Which topics are you interested in?</div>
+      <span class="info-bulb-topics" style="font-size: 23px;">Which topics are you interested in?</span>
     </div>
     <div style="clear: both;">
     <template is="dom-repeat" items="{{topics.topics}}">
