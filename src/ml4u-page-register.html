@@ -37,12 +37,17 @@
       font-size: 55px;
       color: #4A4A4A;
       line-height: 43px;
-      margin-top: 64px;
+      margin-top: 33px;
       /*margin-bottom: 33px;*/
     }
     #registerForm {
       margin: auto;
       width: 433.6px;
+    }
+    @media (max-width: 640px){
+      #registerForm {
+        width: 80%;
+      }
     }
     .cen {
       margin: auto;
@@ -60,6 +65,7 @@
       letter-spacing: -0.21px;
       text-align: center;
       text-transform: none;
+      margin-bottom: 30px;
     }
   </style>
   <div class="center">ICML<br/> 2017</div>
@@ -78,7 +84,7 @@
       <br/>
       <br/>
       <!-- <img src="/images/sydney.png" alt="Sydney, Australia" width="100%" height="auto" /></p> -->
-      <paper-button id="submitButton" raised noink on-tap="_submit" class="center">Register</paper-button>
+      <paper-button id="submitButton" raised noink on-tap="_submit">Register</paper-button>
     </form>
   </div>
   </template>
