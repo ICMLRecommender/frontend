@@ -41,6 +41,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
 
 <link rel="import" href="ml4u-components/shop-snackbar.html">
+<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/glacial-indifference" type="text/css"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+<!-- <link href="../fonts/effra_1/Effra_Std_It.ttf" rel="stylesheet"> -->
+<!-- <link href="../fonts/effra_1/Effra_Std_Md.ttf" rel="stylesheet"> -->
+<!-- <link href="../fonts/effra_1/Effra_Std_Rg.ttf" rel="stylesheet"> -->
+<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
+
 
 <dom-module id="ml4u-app">
   <template>
@@ -51,6 +58,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         display: block;
       }
+
+      /*@font-face {
+        font-family: "Effra";
+        src: url('../fonts/effra_1/Effra_Std_Rg.ttf') format('truetype');
+      }*/
 
       app-header {
         color: #fff;
@@ -63,6 +75,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app-toolbar {
         color: #fff;
         background-color: var(--app-primary-color);
+      }
+
+      div[main-title] {
+        text-align: center;
+        padding-right: 40px;
+        /*font-weight: 400;*/
+        font-family: 'Ubuntu';
+        /*font-size: 33px;*/
+      }
+
+      div[main-title]:first-letter {
+        text-transform: uppercase;
+      }
+
+      div.title {
+        font-family: 'Ubuntu'; 
+        font-weight: normal; 
+        font-style: normal;
+        font-size: 25px;
+        letter-spacing: 6px;
+      }
+
+      span.sessiontype:first-letter {
+        text-transform: uppercase;
+      }
+
+      paper-card {
+        min-width: 90%;
+      }
+
+      * {
+        font-family: 'Roboto';
+      }
+
+      span.menu-category-keyword {
+        padding-left: 10%;
+        font-family: 'Roboto';
+      }
+
+      a.iron-selected * {
+        color: rgba(66,133,244,1) !important;
+        font-color: rgba(66,133,244,1) !important;
+      }
+      
+      paper-button {
+        font-family: 'Ubuntu';
       }
 
       .drawer-list {
@@ -110,10 +168,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: relative;
       }
 
-      .drawerheader > .title {
+      /*.drawerheader > .title {
         font-size: 25px;
         line-height: 20pt;
-      }
+      }*/
 
       .drawerheader > .userdiv {
         position: absolute;
@@ -142,13 +200,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="userdiv"><b>{{username}}</b></div>
         </div>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon>Feed</a>
-          <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon>Schedule</a>
+          <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon><span class="menu-category-keyword">Feed</span></a>
+          <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon><span class="menu-category-keyword">Schedule</span></a>
           <!--<a name="posters" href="/posters"><iron-icon icon="icons:today"></iron-icon>Posters</a>-->
 
           <template is="dom-if" if="{{!loggedIn}}">
-            <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon>Register</a>
-            <a name="login" href="/login"><iron-icon icon="social:person"></iron-icon>Login</a>
+            <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Register</span></a>
+            <a name="login" href="/login"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Login</span></a>
           </template>
         </iron-selector>
         <div hidden$="[[!loggedIn]]">

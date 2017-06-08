@@ -30,9 +30,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
         background-size: cover;
         background-color: white;
-        background: url("/images/sydney.png");
+       /* background: url("/images/sydney.png");
         background-repeat: no-repeat;
-        background-position: bottom;
+        background-position: bottom;*/
         height: 100%;
       }
       #loginErrorDiv {
@@ -40,14 +40,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: red;
       }
       .center {
-        margin: auto;
-        width: 110px;
-        font-family: Effra-Regular;
+        text-align: center;
+        line-height: 120% !important;
+        font-family: 'Ubuntu';
+        letter-spacing: 10px !important;
+        font-weight: normal; 
+        font-style: normal; 
+        font-size: 55px;
         font-size: 44px;
         color: #4A4A4A;
         letter-spacing: 0;
         line-height: 43px;
-        margin-top: 64px;
+        margin-top: 33px;
         margin-bottom: 33px;
       }
       #loginForm {
@@ -61,10 +65,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #submitButton {
         margin-left: 80px;
         background-color: #4990E2;
-        font-family: Avenir-Heavy;
+        font-family: 'Ubuntu';
         font-size: 18px;
-        color: #FFFFFF;
+        color: white;
         letter-spacing: -0.21px;
+        text-transform: none;
+        position: absolute;
+        margin-top: -30px;
+      }
+
+      #sydney {
+        max-width: 500px;
+        width: 100%;
+        /*width: 20%;*/
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: -30px;
       }
     </style>
     <div class="center">ICML<br/> 2017</div>
@@ -77,7 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <br/>
         <paper-button id="submitButton" raised noink on-tap="_submit">Login</paper-button>
       </form>
-      <!-- <img src="/images/sydney.png" alt="Sydney, Australia" width="100%" height="auto" /></p> -->
+      <img id="sydney" src="/images/sydney.png" alt="Sydney, Australia" width="50%" height="auto" /></p>
     </div>
   </template>
 
