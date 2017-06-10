@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="ml4u-components/shop-snackbar.html">
 
 <!-- Fonts -->
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 <script src="https://use.typekit.net/nqz6xja.js"></script>
 <script>try{Typekit.load({ async: true });}catch(e){}</script>
 
@@ -93,8 +93,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .title {
-        font-family: 'effra', sans-serif; 
-        font-weight: 400; 
+        font-family: 'effra', sans-serif;
+        font-weight: 400;
         font-style: normal;
         font-size: 2em;
         line-height: 1em;
@@ -121,7 +121,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: rgba(66,133,244,1) !important;
         font-color: rgba(66,133,244,1) !important;
       }
-      
+
       paper-button {
         font-family: 'effra', sans-serif;
       }
@@ -267,7 +267,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
-        <ml4u-view-session-and-item id="sessionAndItemView" selected-item=[[selectedItem]] popup-display-session=[[popupDisplaySession]]></ml4u-view-session-and-item>
+        <ml4u-view-session-and-item id="sessionAndItemView" selected-item="[[selectedItem]]" popup-display-session="[[popupDisplaySession]]"
+          profile-data="{{profileData}}", logged-in="[[loggedIn]]">
+        </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
     </paper-dialog>

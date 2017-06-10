@@ -18,9 +18,6 @@
     margin-bottom: 20px;
     box-shadow: 0px 5px 5px grey;
   }
-  paper-icon-button.favourite {
-    color:GoldenRod;
-  }
   a {
     color:inherit;
     text-decoration: none;
@@ -59,11 +56,6 @@
     font-size: 20px;
     padding: 20px 10px 8px 0px;
   }
-
-  .papericon {
-    color: #959595;
-  }
-
   div.sectionTitleContainer {
     display: block;
     height: 22px;
@@ -80,6 +72,12 @@
   }
   span.sectionInfo {
     float: right;
+  }
+  paper-icon-button.bookmarked {
+    color: GoldenRod;
+  }
+  paper-icon-button {
+    color: #959595;
   }
 
 
@@ -106,7 +104,7 @@
               <a dialog-confirm href="/person?id=[[item.id]]" class="authorlink"><span class="styledbulletpoint">&bull;</span> [[item.name]]</a>
           </template>
         </div>
-        <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class="papericon" on-click='_toggleBookmark'></paper-icon-button>
+        <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class$="class1 [[bookmarkedClassString]]" on-click='_toggleBookmark'></paper-icon-button>
         <paper-icon-button icon="icons:favorite" id="likeIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
     </section>
     <section class="cardBlock">
@@ -169,19 +167,18 @@
         observer: '_onItemChanged'
       },
 
-
       profileData: {
         type: Object,
         notify: true
       },
-      displayRateItemButton: {
-        type: Boolean,
-        value: true
-      },
       loggedIn: {
-        type: Boolean,
-        computed: '_computeLoggedIn(profileData)'
+        type: Number
       },
+
+      bookmarkedClassString: {
+        type: String,
+      },
+
       feedbackRetrieved: {
         type: Boolean,
         value: false
@@ -206,6 +203,11 @@
         notify: true,
         value: 0
       }
+      /*displayRateItemButton: {
+        type: Boolean,
+        value: true
+      },*/
+
     },
 
     _onItemIdChanged: function() {
@@ -246,60 +248,40 @@
       console.log("computed the following itemObj for itemId " + itemId);
       console.log(item);
       this.itemObject = item;
-    },
-    getFeedback: function() {
-      /*
-      var xhr = new XMLHttpRequest();
-      // xhr.addEventListener('load', rq.onLoad.bind(this));
 
-
-      xhr.addEventListener('load', function(e){
-        var madeUpResponse = {
-          comments : [
-            {
-              id: "1",
-              username: "username1",
-              comment: "This paper is actually rather interesting."
-            },
-            {
-              id: "2",
-              username: "myusernamel",
-              comment: "I couldn't understand a single sentence."
-            }
-          ],
-          likes: ["username1", "myusernamela", "myusernamelaz"]
-        };
-        this.feedback = madeUpResponse;
-        this.feedbackRetrieved = true;
-        console.log("!!!!!!!!!!!!!!!!!all is cool!");
-      }.bind(this));
-
-      xhr.addEventListener('error', function(e) {
-        console.log("!!!!!!!!!!!!!!!!!error received!");
-        // for now, no need to do anything
-      }.bind(this));
-
-      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
-      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      // xhr.send(rq.uriEncodedPostData);
-      xhr.send();
-      */
-    },
-    _computeLoggedIn: function(profileData) {
-      return Object.keys(profileData).length != 0
-    },
-    _onItemChanged: function(newItemValue) {
-      if(newItemValue === undefined)
-        return;
-      //this._updateStars();
+      this.bookmarkedClassString = "";
+      if(this.loggedIn) {
+        this.profileData.bookmarks = this.profileData.bookmarks || {};
+        if(this.itemId in this.profileData.bookmarks) {
+          this.bookmarkedClassString = "bookmarked";
+        }
+      }
     },
     _toggleBookmark: function() {
-      //window.ml4u.sharedElements.papertoast.text = "Please login first.";
-      //window.ml4u.sharedElements.papertoast.show();
-      window.ml4u.sharedElements.loginReminderSnackbar.open();
-      return;
+      if(!this.loggedIn) {
+        window.ml4u.sharedElements.loginReminderSnackbar.open();
+        return;
+      }
+      console.log("logging this.profileData from _toggleBookmark");
+      console.log(this.profileData);
+      this.profileData.bookmarks = this.profileData.bookmarks || {};
+      if(this.itemId in this.profileData.bookmarks) {
+          console.log("detected item already bookmarked. trying to un-bookmark it.");
+          delete this.profileData.bookmarks[this.itemId];
+          this.notifyPath('profileData.bookmarks.'+this.itemId);
+          this.bookmarkedClassString = "";
+          console.log("Loggin profile:");
+          console.log(this.profileData);
+      }
+      else {
+        this.set('profileData.bookmarks.'+this.itemId, ''+ this.itemId);
+        this.bookmarkedClassString = "bookmarked";
+        //this.profile.favourites[this.articleId] = this.articleId;
+      }
+      console.log("logging this.bookmarkedClassString");
+      console.log(this.bookmarkedClassString)
     },
+
 /*
     _toggleFavourite: function() {
       if(!this.loggedIn) {
@@ -340,14 +322,59 @@
       }
     },
     */
+
+    getFeedback: function() {
+      /*
+      var xhr = new XMLHttpRequest();
+      // xhr.addEventListener('load', rq.onLoad.bind(this));
+
+
+      xhr.addEventListener('load', function(e){
+        var madeUpResponse = {
+          comments : [
+            {
+              id: "1",
+              username: "username1",
+              comment: "This paper is actually rather interesting."
+            },
+            {
+              id: "2",
+              username: "myusernamel",
+              comment: "I couldn't understand a single sentence."
+            }
+          ],
+          likes: ["username1", "myusernamela", "myusernamelaz"]
+        };
+        this.feedback = madeUpResponse;
+        this.feedbackRetrieved = true;
+        console.log("!!!!!!!!!!!!!!!!!all is cool!");
+      }.bind(this));
+
+      xhr.addEventListener('error', function(e) {
+        console.log("!!!!!!!!!!!!!!!!!error received!");
+        // for now, no need to do anything
+      }.bind(this));
+
+      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
+      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      // xhr.send(rq.uriEncodedPostData);
+      xhr.send();
+      */
+    },
+    _onItemChanged: function(newItemValue) {
+      if(newItemValue === undefined)
+        return;
+      //this._updateStars();
+    },
     _toggleAbstract: function() {
       this.abstractVisible = !this.abstractVisible;
       this.abstractIconStr = this.abstractVisible ? "hardware:keyboard-arrow-up" : "hardware:keyboard-arrow-down";
     },
-    writeReviewTapped: function() {
+    /*writeReviewTapped: function() {
       console.log("writeReviewTapped tapped");
       this.displayRateItemButton = false;
-    },
+    },*/
     _backButtonTapped: function() {
       console.log("_backButtonTapped");
       this.fire('back_button_tapped');
