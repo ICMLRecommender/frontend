@@ -5,14 +5,53 @@
 <style is="custom-style">
 .comment {
   display: block;
-  border-bottom: 1px solid #e0e0e0 !important;
-  padding: 10px 24px 10px 24px;
+  background: #FFFFFF;
+  padding: 15px 25px 15px 25px;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
+  color: rgb(120,120,120);
+}
+.username {
+  color: rgb(74,74,74);
+  font-weight: 500;
+  margin-right: 4px;
+}
+.add-comment {
+  width: 100%;
+  background: #FAFAFA;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
+  border: none;
+  padding: 15px 20px 15px 20px;
+  margin-bottom: 10px;
+  border-top: 1px solid rgb(208,208,208);
+  font-family: 'effra', sans-serif;
+  color: rgb(122,122,122);
+  font-weight: 500;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+.add-comment:hover {
+  background: #EFEFEF;
+}
+.no-comments {
+  background: white;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  text-align: center;
+  font-family: 'effra', sans-serif;
+  font-size: 1.2em;
+  color: rgb(72,72,72);
+  line-height: 1.4;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
 }
 </style>
 <template>
+  <div class="wrapper">
+  <template is="dom-if" if="{{!commentsArray.length}}">
+    <div class="no-comments">No comments yet!<br/>Why not start the ball rolling?</div>
+  </template>
   <template is="dom-repeat" items="[[commentsArray]]">
     <div class="comment">
-    <b>[[item.username]]</b>
+    <span class="username">[[item.username]]</span>
     [[item.comment]]
     <div>
   </template>
@@ -23,7 +62,8 @@
   </textarea>
 
   -->
-  <button type="button" on-tap="_submitNewComment">Add Comment</button>
+  <button class="add-comment" type="button" on-tap="_submitNewComment">+ Add Comment</button>
+  </div>
 </template>
 
   <script>

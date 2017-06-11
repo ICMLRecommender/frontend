@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-document.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
 
-<dom-module id="ml4u-dbschedule-provider">
+<dom-module id="ml4u-db-provider">
   <template>
 
     <app-pouchdb-document
@@ -23,12 +23,11 @@
       doc-id="topics"
       data="{{topics}}">
     </app-pouchdb-document>
-<!---->
 
   </template>
   <script>
     Polymer({
-      is: 'ml4u-dbschedule-provider',
+      is: 'ml4u-db-provider',
       properties: {
         scheduleData: {
           type: Object,
@@ -81,7 +80,7 @@
         return posterSessionsForTheDay;
       },
       getItem: function(itemId) {
-        console.log("getItem called with itemId" + itemId);
+        console.log("getItem called with itemId " + itemId);
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)
           return {};
         var orgItem =  this.scheduleData.items[itemId]
@@ -97,6 +96,9 @@
         }
         return item;
       },
+      addComment: function(itemId, commentAuthor, commentText) {
+        // TODO: query backend to do this
+      }, 
       getItems: function() {
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)
           return {};
@@ -137,7 +139,7 @@
 
         window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};
-          window.ml4u.helpervars.dbschedulesynced = true;
+          window.ml4u.helpervars.dbsynced = true;
           if(window.ml4u.helpervars.ml4uappcreated) {
               //window.ml4u.helpervars.ml4u_app_element.removeLoadscreen();
           }

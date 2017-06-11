@@ -14,9 +14,9 @@
     padding: 0 0 !important;
   }
   .container {
-    background-color: white;
     margin-bottom: 20px;
-    box-shadow: 0px 5px 5px grey;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
   }
   a {
     color:inherit;
@@ -27,51 +27,72 @@
     border-bottom: 1px solid #e0e0e0 !important;
     padding: 10px 24px 10px 24px;
   }
-
   section.itemViewHeader {
     color: white;
     background-color: var(--app-primary-color);
     padding: 5px;
     font-weight: bold;
     font-size: 20px;
-
   }
-
   section.itemViewHeader > span {
     text-align: center;
   }
-
   .styledbulletpoint {
     color: #9A9A9A;
     font-weight: bold;
   }
   .authorlink {
     color: #3475CC;
-    font-weight: bold;
-    font-size: 15px;
+    font-weight: 500;
+    font-size: 1.2em;
+    font-family: 'effra', sans-serif;
   }
-
+  .authorlink:not(:last-of-type)::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: gray;
+    border-radius: 5px;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+  }
   .papertitle {
-    font-weight: bold;
-    font-size: 20px;
-    padding: 20px 10px 8px 0px;
+    font-weight: 500;
+    font-family: 'effra', sans-serif;
+    color: rgb(62,62,62);
+    font-size: 1.8em;
+    padding: 12px 10px 12px 0px;
+    line-height: 1.2;
   }
   div.sectionTitleContainer {
     display: block;
-    height: 22px;
-    line-height: 22px;
-    font-size: 14px;
     color: #000;
-    clear:both;
+    padding-bottom: 23px;
+    padding-top: 5px;
   }
   span.sectiontitle {
     text-transform: uppercase;
     color: #979797;
-    font-weight: bold;
     float: left;
+    font-family: 'effra', sans-serif;
+    font-weight: 500;
+    font-size: 1.1em;
   }
   span.sectionInfo {
     float: right;
+    font-family: 'effra', sans-serif;
+    font-size: 1.15em;
+    color: rgb(74,74,74);
+  }
+  .papericon {
+    margin-top: -8px;
+  }
+  .abstract-text {
+    margin-top: 7px;
+    margin-bottom: 10px;
+    color: rgb(74,74,74);
   }
   paper-icon-button.bookmarked {
     color: GoldenRod;
@@ -79,20 +100,31 @@
   paper-icon-button {
     color: #959595;
   }
-
-
+  .actions {
+    margin-top: 10px;
+  }
+  #bookmarkButton {
+    margin-left: -11px;
+  }
+  .close-button {
+    color: white;
+  }
+  .modal-heading {
+    font-family: 'effra', sans-serif;
+    font-weight: 500;
+  }
 </style>
 <template>
   <template is="dom-if" if="{{displayedWithinSession}}">
     <section class="itemViewHeader">
       <paper-icon-button on-tap='_backButtonTapped' icon="icons:arrow-back"></paper-icon-button>
-      <span>Paper</span>
+      <span class="modal-heading">Paper</span>
     </section>
   </template>
   <template is="dom-if" if="{{!displayedWithinSession}}">
     <section class="itemViewHeader">
-      <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-      <span>Paper</span>
+      <paper-icon-button dialog-confirm class="close-button" icon="icons:close"></paper-icon-button>
+      <span class="modal-heading">Paper</span>
     </section>
   </template>
 
@@ -101,11 +133,13 @@
         <div class="papertitle">[[itemObject.title]]</div>
         <div>
           <template is="dom-repeat" items="{{itemObject.authors}}">
-              <a dialog-confirm href="/person?id=[[item.id]]" class="authorlink"><span class="styledbulletpoint">&bull;</span> [[item.name]]</a>
+              <a dialog-confirm href="/person?id=[[item.id]]" class="authorlink">[[item.name]]</a>
           </template>
         </div>
-        <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class$="class1 [[bookmarkedClassString]]" on-click='_toggleBookmark'></paper-icon-button>
-        <paper-icon-button icon="icons:favorite" id="likeIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
+        <div class="actions">
+          <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class$="class1 [[bookmarkedClassString]]" on-click='_toggleBookmark'></paper-icon-button>
+          <paper-icon-button icon="icons:favorite" id="likeIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
+        </div>
     </section>
     <section class="cardBlock">
       <div class="sectionTitleContainer">
@@ -121,8 +155,11 @@
       <div class="sectionTitleContainer">
         <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" on-click='_toggleAbstract'></paper-icon-button></span>
       </div>
-      <div hidden$="{{!abstractVisible}}">[[itemObject.description]]</div>
+      <div hidden$="{{!abstractVisible}}" class="abstract-text">[[itemObject.description]]</div>
     </section>
+  </section>
+  <section class="item-comments">
+    <ml4u-item-comments comments-array={{comments}}></ml4u-item-comments>
   </section>
   <!--
   <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
@@ -141,7 +178,6 @@
 
     <h3>Comments</h3>
     -->
-    <ml4u-item-comments comments-array={{feedback.comments}}></ml4u-item-comments>
 
       <!--
       <ml4u-user-review author-name="Author Name1" author-institution="Author Institution1" review="Item review1"></ml4u-user-review>
@@ -166,7 +202,6 @@
         type: Object,
         observer: '_onItemChanged'
       },
-
       profileData: {
         type: Object,
         notify: true
@@ -174,11 +209,9 @@
       loggedIn: {
         type: Number
       },
-
       bookmarkedClassString: {
         type: String,
       },
-
       feedbackRetrieved: {
         type: Boolean,
         value: false
@@ -186,6 +219,9 @@
       feedback: {
         type: Object
       },
+      comments: {
+        type: Array
+      }, 
       abstractVisible: {
               type: Boolean,
               value: false
@@ -220,6 +256,7 @@
       this.feedbackRetrieved = false;
       this.updateItem();
       this.getFeedback();
+      this.getComments();
     },
     updateItem: function() {
       if(this.itemId == undefined)
@@ -282,7 +319,7 @@
       console.log(this.bookmarkedClassString)
     },
 
-/*
+    /*
     _toggleFavourite: function() {
       if(!this.loggedIn) {
         window.ml4u.sharedElements.papertoast.text = "Please login first.";
@@ -378,6 +415,25 @@
     _backButtonTapped: function() {
       console.log("_backButtonTapped");
       this.fire('back_button_tapped');
+    },
+    getComments: function() {
+        if (this.itemId == undefined) return;
+        const url = 'https://icml.papro.org.uk/couchdb/usercomments/item' + this.itemId;
+        fetch(url).then(res => {
+          return res.json();
+        }).then(json => {
+          if (json.comments) {
+            this.comments = json.comments;
+          } else {
+            this.comments = [];
+          }
+          return true;
+        }).catch(error => {
+          console.error('Error getting item comments:', error);
+        });
+    }, 
+    ready: function() {
+      this.getComments();
     }
   });
   </script>
