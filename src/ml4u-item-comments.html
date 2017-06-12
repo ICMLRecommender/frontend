@@ -1,4 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="ml4u-user-profile.html">
 
 <dom-module id="ml4u-item-comments">
 
@@ -21,7 +25,7 @@
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
   border: none;
   padding: 15px 20px 15px 20px;
-  margin-bottom: 10px;
+  margin-bottom: 50px;
   border-top: 1px solid rgb(208,208,208);
   font-family: 'effra', sans-serif;
   color: rgb(122,122,122);
@@ -43,6 +47,71 @@
   line-height: 1.4;
   box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
 }
+.write-comment {
+  background: white;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
+  border: none;
+  margin-bottom: 10px;
+  border-top: 1px solid rgb(208,208,208);
+}
+.submit-button-wrapper {
+  background: rgb(240,240,240);
+  width: 100%;
+  text-align: right;
+}
+.submit-comment-button {
+  color: gray;
+  font-family: 'effra', sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: right;
+  margin: 0;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-bottom: -1px;
+  padding-top: 12px;
+}
+.success, .error {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: center;
+  font-family: 'effra', sans-serif;
+  font-size: 1.2em;
+  line-height: 1.4;
+  font-weight: 500;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
+  margin-bottom: 25px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+.success {
+  background: rgb(232,245,219);
+  color: rgb(115,177,48);
+}
+.error {
+  background: rgb(242,215,215);
+  color: rgb(200,0,0);
+}
+.comment-input {
+  display: block;
+  width: 100%;
+  border: none;
+  margin-top: 15px;
+  font-size: 1.1em;
+  outline: none;
+  resize: none;
+  font-family: 'Roboto', sans-serif;
+  padding: 0;
+}
+.textarea-wrapper {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.loading-spinner {
+  display: block;
+  margin: 0 auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 </style>
 <template>
   <div class="wrapper">
@@ -51,18 +120,41 @@
   </template>
   <template is="dom-repeat" items="[[commentsArray]]">
     <div class="comment">
-    <span class="username">[[item.username]]</span>
-    [[item.comment]]
+    <span class="username">[[item.username]]</span>[[item.comment]]
+    <template is="dom-if" if="{{isOwnComment(item.username)}}">
+      Delete
+    </template>
     <div>
   </template>
 
-  <!--
-  <b>New Comment:</b>
-  <textarea rows="3" cols="50" id="newCommentInput">
-  </textarea>
+  <!-- TODO: maybe clean up this crazy dom-if business -->
+  <template is="dom-if" if="{{!addCommentFlow.succeeded}}">
+  <template is="dom-if" if="{{!addCommentFlow.writing}}">
+    <button class="add-comment" type="button" on-tap="_writeNewComment">+ Add Comment</button>
+  </template>
+  <template is="dom-if" if="{{addCommentFlow.writing}}">
+    <div class="write-comment">
+      <div class="textarea-wrapper">
+        <textarea id="commentInput" class="comment-input" placeholder="Add a comment..."></textarea>
+      </div>
+      <template is="dom-if" if="{{!addCommentFlow.submitting}}">
+        <div class="submit-button-wrapper">
+          <paper-button class="submit-comment-button" on-tap="_submitNewComment">Add Comment</paper-button>
+          <template is="dom-if" if="{{addCommentFlow.submitting}}">
+          <paper-spinner class="loading-spinner" active></paper-spinner>
+          </template>
+        </div>
+      </template>
+    </div>
+  </template>
+  </template>
+  <template is="dom-if" if="{{addCommentFlow.succeeded}}">
+    <div class="success">Comment added!</div>
+  </template>
+  <template is="dom-if" if="{{addCommentFlow.error}}">
+    <div class="">Something went wrong :(</div>
+  </template>
 
-  -->
-  <button class="add-comment" type="button" on-tap="_submitNewComment">+ Add Comment</button>
   </div>
 </template>
 
@@ -77,34 +169,80 @@
       commentsArray: {
         type: Array,
         observer: '_onCommentsArrayChanged'
+      },
+      itemId: {
+        type: String
+      },
+      addCommentFlow: {
+        type: String
+      },
+      username: {
+        type: String,
+        notify: true,
+        value: null
       }
     },
     _onCommentsArrayChanged: function(newValue) {
        console.log("!!!!!!!!!!!!!!!!_onCommentsArrayChanged called");
        console.log(newValue);
+       this.resetCommentFlow();
+    },
+    _writeNewComment: function() {
+      this.set('addCommentFlow.writing', true);
+      setTimeout(() => { // this is a bit hacky
+        this.$$('#commentInput').focus();
+      }, 1);
     },
     _submitNewComment: function(newValue) {
-      newComment = new Object();
-      newComment.id = 3;
-      newComment.username = "MyCurrentUsername";
-      newComment.comment = this.$.newCommentInput.value;
+      if (!this.$$('#commentInput').value) {
+        return false;
+      }
+      this.set('addCommentFlow.submitting', true);
+
+      // this will be added to the commentsArray
+      const newComment = { 
+        username: 'taimur',
+        comment: this.$$('#commentInput').value
+      }
+
+      // this will be sent to the server
+      var newCommentData = new FormData();
+      newCommentData.append('username', this.username);
+      newCommentData.append('secret', '534a8d862ba840d19c962764b1d1afec');
+      newCommentData.append('paper_id', 'item4');
+      newCommentData.append('comment', this.$$('#commentInput').value);
 
       var xhr = new XMLHttpRequest();
-      // xhr.addEventListener('load', rq.onLoad.bind(this));
-      xhr.addEventListener('load', function(e){
-        this.$.newCommentInput.value = "";
+      xhr.addEventListener('load', res => {
+        this.set('addCommentFlow.succeeded', true);
+        this.$$('#commentInput').value = "";
         this.push('commentsArray', newComment);
-      }.bind(this));
-      xhr.addEventListener('error', function(e) {
-        console.log("!!!!!!!!!!!!!!!!!error received!");
-        // for now, no need to do anything
-      }.bind(this));
-      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
-      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      // xhr.send(rq.uriEncodedPostData);
-      xhr.send();
-      // this.commentsArray.push(newComment);
+      });
+      xhr.addEventListener('error', err => {
+        console.log('Error submitting comment!', err);
+        this.set('addCommentFlow.error', err);
+      });
+
+      xhr.open("POST", "http://localhost:8000/icml/post_comment/", true);
+      xhr.send(newCommentData);
+    },
+    isOwnComment(commentUser) {
+      console.log('isown', commentUser, this.username);
+      return commentUser == this.username;
+    },
+    resetCommentFlow: function() {
+      this.addCommentFlow = {
+            writing: false,
+            submitting: false,
+            succeeded: false,
+            error: ''
+      }
+      if (this.$$('#commentInput')) {
+        this.$$('#commentInput').value = "";
+      }
+    }, 
+    ready: function() {
+      this.resetCommentFlow();
     }
   });
   </script>

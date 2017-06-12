@@ -113,6 +113,9 @@
     font-family: 'effra', sans-serif;
     font-weight: 500;
   }
+  .card-head {
+    background: rgb(250,250,250);
+  }
 </style>
 <template>
   <template is="dom-if" if="{{displayedWithinSession}}">
@@ -129,7 +132,7 @@
   </template>
 
   <section class="container">
-    <section class="cardBlock">
+    <section class="cardBlock card-head">
         <div class="papertitle">[[itemObject.title]]</div>
         <div>
           <template is="dom-repeat" items="{{itemObject.authors}}">
@@ -159,7 +162,7 @@
     </section>
   </section>
   <section class="item-comments">
-    <ml4u-item-comments comments-array={{comments}}></ml4u-item-comments>
+    <ml4u-item-comments comments-array={{comments}} itemId="[[itemId]]"></ml4u-item-comments>
   </section>
   <!--
   <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
