@@ -162,7 +162,7 @@
     </section>
   </section>
   <section class="item-comments">
-    <ml4u-item-comments comments-array={{comments}} itemId="[[itemId]]"></ml4u-item-comments>
+    <ml4u-item-comments comments-array={{comments}} itemId="[[itemId]]" username="[[username]]" userSecret="[[userSecret]]"></ml4u-item-comments>
   </section>
   <!--
   <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
@@ -218,6 +218,9 @@
       feedbackRetrieved: {
         type: Boolean,
         value: false
+      },
+      username: {
+        type: String
       },
       feedback: {
         type: Object
