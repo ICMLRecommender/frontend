@@ -2,23 +2,11 @@
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="ml4u-components/ml4u-item-comment.html">
 
 <dom-module id="ml4u-item-comments">
 
 <style is="custom-style">
-.comment {
-  display: block;
-  position: relative;
-  background: #FFFFFF;
-  padding: 15px 25px 15px 25px;
-  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
-  color: rgb(120,120,120);
-}
-.username {
-  color: rgb(74,74,74);
-  font-weight: 500;
-  margin-right: 4px;
-}
 .not-logged-in {
   background: #FAFAFA;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
@@ -131,23 +119,6 @@
   padding-top: 10px;
   padding-bottom: 10px;
 }
-.delete-button {
-    display: inline-block;
-    position: absolute;
-    right: 6px;
-    top: 7px;
-    padding: 7px;
-    width: 36px;
-    height: 36px;
-}
-.delete-comment-overlay {
-  width: 100%;
-  height: 100%;
-  background: rgba(255,255,255,0.8);
-  position: absolute;
-  left: 0;
-  top: 0;
-}
 </style>
 <template>
   <div class="wrapper">
@@ -155,16 +126,7 @@
     <div class="no-comments">No comments yet!<br/>Why not start the ball rolling?</div>
   </template>
   <template is="dom-repeat" items="[[commentsArray]]">
-    <div class="comment">
-    <span class="username">[[item.username]]</span>[[item.comment]]
-    <template is="dom-if" if="{{isOwnComment(item.username)}}">
-      <paper-icon-button id="{{item.id}}" icon="{{deleteIconStr}}" class="papericon delete-button" on-tap="showDeletePrompt"></paper-icon-button>
-    </template>
-    <template is="dom-if" if="{{isBeingDeleted(item.id)}}">
-      <div class="delete-comment-overlay">
-      </div>
-    </template>
-    <div>
+    <ml4u-item-comment username="[[item.username]]" profile-secret="[[profileSecret]]" id="[[item.id]]" item-id="[[itemId]]" comment="[[item.comment]]" logged-in-username="{{username}}"></ml4u-item-comment>
   </template>
 
   <!-- TODO: maybe clean up this crazy dom-if business -->
@@ -215,6 +177,7 @@
       },
       commentsArray: {
         type: Array,
+        notify: true,
         observer: '_onCommentsArrayChanged'
       },
       loggedIn: {
@@ -258,14 +221,6 @@
         comment: this.$$('#commentInput').value
       }
 
-      // this is very hacky
-      let secret = '';
-      if (window.ml4u.sharedElements.userProfileElement.__data__.profileSecret) {
-        secret = window.ml4u.sharedElements.userProfileElement.__data__.profileSecret.value;
-      }
-      
-      console.log('ID', this.itemId);
-
       // this will be sent to the server
       var newCommentData = new FormData();
       newCommentData.append('username', this.username);
@@ -293,18 +248,6 @@
       xhr.open("POST", "http://localhost:8000/icml/post_comment/", true);
       xhr.send(newCommentData);
     },
-    isOwnComment: function(commentUser) {
-      return commentUser == this.username;
-    },
-    showDeletePrompt: function(event) {
-      const commentId = event.path[2].id; // VERY hacky
-      this.set('addCommentFlow.deleteId', commentId);
-      render();
-    }, 
-    isBeingDeleted: function(commentId) {
-      console.log(commentId == this.addCommentFlow.deleteId);
-      return commentId == this.addCommentFlow.deleteId;
-    }, 
     resetCommentFlow: function() {
       this.addCommentFlow = {
             writing: false,
