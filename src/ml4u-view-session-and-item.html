@@ -14,7 +14,7 @@
   <iron-pages selected="{{selectedView}}">
     <ml4u-view-session id="viewSession" session-id="[[sessionId]]" selected-paper={{selectedPaper}} needs-reload={{sessionViewNeedsReload}}></ml4u-view-session>
     <ml4u-view-item id="viewItem" item-id="[[selectedPaper]]" displayed-within-session="[[popupDisplaySession]]" needs-reload={{itemViewNeedsReload}}
-      profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" userSecret="{{userSecret}}">
+      profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="{{profileSecret}}">
     </ml4u-view-item>
   </iron-pages>
 </template>
@@ -51,6 +51,9 @@
       username: {
         type: String,
       }, 
+      profileSecret: {
+        type: String
+      },
       profileData: {
         type: Object,
         notify: true

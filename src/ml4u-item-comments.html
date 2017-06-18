@@ -19,6 +19,21 @@
   font-weight: 500;
   margin-right: 4px;
 }
+.not-logged-in {
+  background: #FAFAFA;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
+  border: none;
+  padding: 15px 20px 15px 20px;
+  margin-bottom: 50px;
+  border-top: 1px solid rgb(208,208,208);
+  font-family: 'effra', sans-serif;
+  color: rgb(122,122,122);
+  font-weight: 500;
+  font-size: 1.3em;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
 .add-comment {
   width: 100%;
   background: #FAFAFA;
@@ -153,6 +168,7 @@
   </template>
 
   <!-- TODO: maybe clean up this crazy dom-if business -->
+  <template is="dom-if" if="{{loggedIn}}">
   <template is="dom-if" if="{{!addCommentFlow.succeeded}}">
   <template is="dom-if" if="{{!addCommentFlow.writing}}">
     <button class="add-comment" type="button" on-tap="_writeNewComment">+ Add Comment</button>
@@ -179,6 +195,12 @@
   <template is="dom-if" if="{{addCommentFlow.error}}">
     <div class="error">Something went wrong - {{addCommentFlow.error}}</div>
   </template>
+  </template>
+  <template is="dom-if" if="{{!loggedIn}}">
+    <div class="submit-button-wrapper">
+      <div class="not-logged-in" type="button">You must be logged in to comment!</div>
+    </div>
+  </template>
 
   </div>
 </template>
@@ -195,6 +217,9 @@
         type: Array,
         observer: '_onCommentsArrayChanged'
       },
+      loggedIn: {
+        type: Number
+      },
       itemId: {
         type: String
       },
@@ -204,7 +229,7 @@
       username: {
         type: String
       },
-      userSecret: {
+      profileSecret: {
         type: String,
       },
       deleteIconStr: {
@@ -233,11 +258,19 @@
         comment: this.$$('#commentInput').value
       }
 
+      // this is very hacky
+      let secret = '';
+      if (window.ml4u.sharedElements.userProfileElement.__data__.profileSecret) {
+        secret = window.ml4u.sharedElements.userProfileElement.__data__.profileSecret.value;
+      }
+      
+      console.log('ID', this.itemId);
+
       // this will be sent to the server
       var newCommentData = new FormData();
       newCommentData.append('username', this.username);
-      newCommentData.append('secret', '534a8d862ba840d19c962764b1d1afec');
-      newCommentData.append('paper_id', 'item4');
+      newCommentData.append('secret', this.profileSecret.value);
+      newCommentData.append('paper_id', 'item'+this.itemId);
       newCommentData.append('comment', this.$$('#commentInput').value);
 
       var xhr = new XMLHttpRequest();

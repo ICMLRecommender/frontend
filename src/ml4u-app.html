@@ -200,8 +200,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <ml4u-db-provider is-ready="{{dbProviderReady}}" id="scheduleDataProvider" trending={{trending}} topics={{topics}} ></ml4u-db-provider>
-    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}></ml4u-user-profile>
-
+    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}} profile-secret={{profileSecret}}></ml4u-user-profile>
     <iron-location hash="{{ironRouteHash}}" path={{ironRoutePath}} query={{ironRouteQuery}}></iron-location>
     <app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
     <app-route
@@ -268,7 +267,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
         <ml4u-view-session-and-item id="sessionAndItemView" selected-item="[[selectedItem]]" popup-display-session="[[popupDisplaySession]]"
-          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" userSecret="{{userSecret}}">
+          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="{{profileSecret}}">
         </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
@@ -293,6 +292,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           notify: true,
           value: null
+        },
+        profileSecret: {
+          type: String,
+          notify: true
         },
         loggedIn: {
           type: Number,
