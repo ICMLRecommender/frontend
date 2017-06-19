@@ -1,29 +1,170 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="ml4u-components/ml4u-item-comment.html">
 
 <dom-module id="ml4u-item-comments">
 
 <style is="custom-style">
-.comment {
+.not-logged-in {
+  background: #FAFAFA;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
+  border: none;
+  padding: 15px 20px 15px 20px;
+  margin-bottom: 50px;
+  border-top: 1px solid rgb(208,208,208);
+  font-family: 'effra', sans-serif;
+  color: rgb(122,122,122);
+  font-weight: 500;
+  font-size: 1.3em;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+.add-comment {
+  width: 100%;
+  background: #FAFAFA;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
+  border: none;
+  padding: 15px 20px 15px 20px;
+  margin-bottom: 50px;
+  border-top: 1px solid rgb(208,208,208);
+  font-family: 'effra', sans-serif;
+  color: rgb(122,122,122);
+  font-weight: 500;
+  font-size: 1.3em;
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+}
+.add-comment:hover {
+  background: #EFEFEF;
+}
+.no-comments {
+  background: white;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  text-align: center;
+  font-family: 'effra', sans-serif;
+  font-size: 1.2em;
+  color: rgb(72,72,72);
+  line-height: 1.4;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
+}
+.write-comment {
+  background: white;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
+  border: none;
+  margin-bottom: 10px;
+  position: relative;
+  border-top: 1px solid rgb(208,208,208);
+}
+.submit-button-wrapper {
+  background: rgb(240,240,240);
+  width: 100%;
+  text-align: right;
+}
+.submit-comment-button {
+  color: gray;
+  font-family: 'effra', sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: right;
+  margin: 0;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-bottom: -1px;
+  padding-top: 12px;
+}
+.success, .error {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: center;
+  font-family: 'effra', sans-serif;
+  font-size: 1.2em;
+  line-height: 1.4;
+  font-weight: 500;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
+  margin-bottom: 25px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  position: relative;
+}
+.success {
+  background: rgb(232,245,219);
+  color: rgb(115,177,48);
+}
+.error {
+  background: rgb(242,215,215);
+  color: rgb(200,0,0);
+}
+.comment-input {
   display: block;
-  border-bottom: 1px solid #e0e0e0 !important;
-  padding: 10px 24px 10px 24px;
+  width: 100%;
+  border: none;
+  margin-top: 15px;
+  font-size: 1.1em;
+  outline: none;
+  resize: none;
+  font-family: 'Roboto', sans-serif;
+  padding: 0;
+}
+.textarea-wrapper {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.loading-spinner {
+  display: block;
+  margin: 0 auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 </style>
 <template>
+  <div class="wrapper">
+  <template is="dom-if" if="{{!commentsArray.length}}">
+    <div class="no-comments">No comments yet!<br/>Why not start the ball rolling?</div>
+  </template>
   <template is="dom-repeat" items="[[commentsArray]]">
-    <div class="comment">
-    <b>[[item.username]]</b>
-    [[item.comment]]
-    <div>
+    <ml4u-item-comment username="[[item.username]]" profile-secret="[[profileSecret]]" id="[[item.id]]" item-id="[[itemId]]" comment="[[item.comment]]" logged-in-username="{{username}}"></ml4u-item-comment>
   </template>
 
-  <!--
-  <b>New Comment:</b>
-  <textarea rows="3" cols="50" id="newCommentInput">
-  </textarea>
+  <!-- TODO: maybe clean up this crazy dom-if business -->
+  <template is="dom-if" if="{{loggedIn}}">
+  <template is="dom-if" if="{{!addCommentFlow.succeeded}}">
+  <template is="dom-if" if="{{!addCommentFlow.writing}}">
+    <button class="add-comment" type="button" on-tap="_writeNewComment">+ Add Comment</button>
+  </template>
+  <template is="dom-if" if="{{addCommentFlow.writing}}">
+    <div class="write-comment">
+      <div class="textarea-wrapper">
+        <textarea id="commentInput" class="comment-input" placeholder="Add a comment..."></textarea>
+      </div>
+      <template is="dom-if" if="{{!addCommentFlow.submitting}}">
+        <div class="submit-button-wrapper">
+          <paper-button class="submit-comment-button" on-tap="_submitNewComment">Add Comment</paper-button>
+          <template is="dom-if" if="{{addCommentFlow.submitting}}">
+          <paper-spinner class="loading-spinner" active></paper-spinner>
+          </template>
+        </div>
+      </template>
+    </div>
+  </template>
+  </template>
+  <template is="dom-if" if="{{addCommentFlow.succeeded}}">
+    <div class="success">Comment added!</div>
+  </template>
+  <template is="dom-if" if="{{addCommentFlow.error}}">
+    <div class="error">Something went wrong - {{addCommentFlow.error}}</div>
+  </template>
+  </template>
+  <template is="dom-if" if="{{!loggedIn}}">
+    <div class="submit-button-wrapper">
+      <div class="not-logged-in" type="button">You must be logged in to comment!</div>
+    </div>
+  </template>
 
-  -->
-  <button type="button" on-tap="_submitNewComment">Add Comment</button>
+  </div>
 </template>
 
   <script>
@@ -36,35 +177,91 @@
       },
       commentsArray: {
         type: Array,
+        notify: true,
         observer: '_onCommentsArrayChanged'
-      }
+      },
+      loggedIn: {
+        type: Number
+      },
+      itemId: {
+        type: String
+      },
+      addCommentFlow: {
+        type: Object
+      },
+      username: {
+        type: String
+      },
+      profileSecret: {
+        type: String,
+      },
+      deleteIconStr: {
+        type: String,
+        value: "delete"
+      },
     },
     _onCommentsArrayChanged: function(newValue) {
-       console.log("!!!!!!!!!!!!!!!!_onCommentsArrayChanged called");
-       console.log(newValue);
+       this.resetCommentFlow();
+    },
+    _writeNewComment: function() {
+      this.set('addCommentFlow.writing', true);
+      setTimeout(() => { // this is a bit hacky
+        this.$$('#commentInput').focus();
+      }, 1);
     },
     _submitNewComment: function(newValue) {
-      newComment = new Object();
-      newComment.id = 3;
-      newComment.username = "MyCurrentUsername";
-      newComment.comment = this.$.newCommentInput.value;
+      if (!this.$$('#commentInput').value) {
+        return false;
+      }
+      this.set('addCommentFlow.submitting', true);
+
+      // this will be added to the commentsArray
+      const newComment = { 
+        username: this.username,
+        comment: this.$$('#commentInput').value
+      }
+
+      // this will be sent to the server
+      var newCommentData = new FormData();
+      newCommentData.append('username', this.username);
+      newCommentData.append('secret', this.profileSecret.value);
+      newCommentData.append('paper_id', 'item'+this.itemId);
+      newCommentData.append('comment', this.$$('#commentInput').value);
 
       var xhr = new XMLHttpRequest();
-      // xhr.addEventListener('load', rq.onLoad.bind(this));
-      xhr.addEventListener('load', function(e){
-        this.$.newCommentInput.value = "";
-        this.push('commentsArray', newComment);
-      }.bind(this));
-      xhr.addEventListener('error', function(e) {
-        console.log("!!!!!!!!!!!!!!!!!error received!");
-        // for now, no need to do anything
-      }.bind(this));
-      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
-      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      // xhr.send(rq.uriEncodedPostData);
-      xhr.send();
-      // this.commentsArray.push(newComment);
+      xhr.addEventListener('load', res => {
+        console.log(res);
+        if (res.currentTarget.status == 400) {
+          console.log('Error submitting comment!', res.currentTarget.responseText);
+          this.set('addCommentFlow.error', res.currentTarget.responseText);
+        } else {
+          this.set('addCommentFlow.succeeded', true);
+          this.$$('#commentInput').value = "";
+          this.push('commentsArray', newComment);
+        }
+      });
+      xhr.addEventListener('error', err => {
+        console.log('Error submitting comment!', err);
+        this.set('addCommentFlow.error', err);
+      });
+
+      xhr.open("POST", "http://localhost:8000/icml/post_comment/", true);
+      xhr.send(newCommentData);
+    },
+    resetCommentFlow: function() {
+      this.addCommentFlow = {
+            writing: false,
+            submitting: false,
+            succeeded: false,
+            error: '',
+            deleteId: ''
+      }
+      if (this.$$('#commentInput')) {
+        this.$$('#commentInput').value = "";
+      }
+    }, 
+    ready: function() {
+      this.resetCommentFlow();
     }
   });
   </script>

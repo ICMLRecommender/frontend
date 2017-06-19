@@ -24,6 +24,11 @@
         doc-id="data"
         data="{{profileData}}">
       </app-pouchdb-document>
+      <app-pouchdb-document
+        db-name="{{username}}"
+        doc-id="secret"
+        data="{{profileSecret}}">
+      </app-pouchdb-document>
     </template>
   </template>
 
@@ -42,11 +47,14 @@
           observer: '_dataChanged'
         },
         authDatabase: Object,
-
         collectonOfDocumentsToRetrieve: {
           type: Object,
           notify: true,
           value: []
+        },
+        profileSecret: {
+          	type: Object,
+          	notify: true,
         }
       },
       _usernameChanged: function() {

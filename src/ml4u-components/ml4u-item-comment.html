@@ -1,0 +1,205 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+
+<dom-module id="ml4u-item-comment">
+  <template>
+    <style>
+    .username {
+      color: rgb(74,74,74);
+      font-weight: 500;
+      margin-right: 4px;
+    }
+    .comment {
+      display: block;
+      position: relative;
+      background: #FFFFFF;
+      padding: 15px 25px 15px 25px;
+      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.35);
+      color: rgb(120,120,120);
+    }
+    .deleting {
+      padding-top: 25px;
+      padding-bottom: 25px;
+      transition: 100ms ease-out;
+    }
+    .delete-button {
+      display: inline-block;
+      position: absolute;
+      right: 6px;
+      top: 7px;
+      padding: 7px;
+      width: 36px;
+      height: 36px;
+    }
+    .delete-comment-overlay {
+      width: 94%;
+      padding-left: 3%;
+      padding-right: 3%;
+      height: 100%;
+      text-align: center;
+      background: rgba(255,255,255,0.94);
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .delete-prompt, .delete-error {
+      font-size: 1.1em;
+      display: inline-block;
+      margin-right: 10px;
+      vertical-align:middle;
+      color: rgb(100,100,100);
+    }
+    .delete-error {
+      color: rgb(220,9,9);
+    }
+    .dummy-child { 
+      height: 100%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    paper-button {
+      font-family: 'effra', sans-serif;
+      padding-top: 6px;
+      padding-bottom: 5px;
+      color: white;
+      display: inline-block;
+      vertical-align:middle;
+    }
+    paper-spinner {
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .confirm-delete {
+      background: rgb(220,9,9);
+    }
+    .cancel-delete {
+      background: gray;
+    }
+    </style>
+    <div class="comment">
+      <span class="username">[[username]]</span>[[comment]]
+      <template is="dom-if" if="{{isOwnComment}}">
+        <paper-icon-button icon="{{deleteIconStr}}" class="papericon delete-button" on-tap="showDeletePrompt"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="{{deletePrompt}}">
+        <div class="delete-comment-overlay">
+          <div class="dummy-child"></div>
+          <template is="dom-if" if="{{showDeletePromptText}}">
+            <div class="delete-prompt">Delete?</div>
+          </template>
+          <template is="dom-if" if="{{deleteLoading}}">
+            <paper-spinner class="loading-spinner" active></paper-spinner>
+          </template>
+          <template is="dom-if" if="{{deleteError}}">
+            <div class="delete-error">Error :(</div>
+          </template>
+          <paper-button raised class="cancel-delete" on-tap="hideDeletePrompt">Cancel</paper-button>
+          <paper-button raised class="confirm-delete" on-tap="deleteComment">Delete</paper-button>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+   Polymer({
+      is: 'ml4u-item-comment',
+      properties: {
+        username: {
+          type: String
+        },
+        comment: {
+          type: String
+        },
+        id: {
+          type: String
+        },
+        itemId: {
+          type: String
+        },
+        loggedInUsername: {
+          type: String
+        }, 
+        profileSecret: {
+          type: String
+        },
+        isOwnComment: {
+          type: Boolean,
+          computed: '_isOwnComment(username, loggedInUsername)'
+        },
+        deletePrompt: {
+          type: Boolean,
+          value: false
+        },
+        deleteIconStr: {
+          type: String,
+          value: "delete"
+        },
+        deleteLoading: {
+          type: Boolean,
+          value: false
+        },
+        deleteError: {
+          type: String
+        },
+        showDeletePromptText: {
+          type: Boolean,
+          value: true
+        }
+      },
+      _isOwnComment: function(username, loggedInUsername) {
+        return username == loggedInUsername;
+      },
+      showDeletePrompt: function() {
+        this.$$('.comment').classList.add('deleting');
+        this.deletePrompt = true;
+      },
+      hideDeletePrompt: function() {
+        this.$$('.comment').classList.remove('deleting');
+        this.deleteLoading = false;
+        this.deleteError = null;
+        this.showDeletePromptText = true;
+        this.deletePrompt = false;
+      },
+      deleteComment: function() {
+        this.showDeletePromptText = false;
+        this.deleteLoading = true;
+
+        // this will be sent to the server
+        var newCommentData = new FormData();
+        newCommentData.append('username', this.loggedInUsername);
+        newCommentData.append('secret', this.profileSecret.value);
+        newCommentData.append('paper_id', 'item'+this.itemId);
+        newCommentData.append('comment_id', this.id);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.addEventListener('load', res => {
+          this.deleteLoading = false;
+          console.log(res);
+          if (res.currentTarget.status == 400) {
+            console.log('Error deleting comment!', res.currentTarget.responseText);
+            this.deleteError = res.currentTarget.responseText;
+          } else {
+            console.log('Comment deleted successfully (I think)');
+            this.remove();
+          }
+        });
+        xhr.addEventListener('error', err => {
+          this.deleteLoading = false;
+          console.log('Error deleting comment!', err);
+          this.deleteError = err;
+        });
+
+        xhr.open("POST", "http://localhost:8000/icml/delete_comment/", true);
+        xhr.send(newCommentData);
+      },
+      ready: function() {
+        console.log(this.username, this.loggedInUsername);
+        console.log(this.isOwnComment);
+      }
+    });
+  </script>
+</dom-module>

@@ -28,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
-<link rel="import" href="ml4u-dbschedule-provider.html">
+<link rel="import" href="ml4u-db-provider.html">
 <link rel="import" href="ml4u-user-profile.html">
 
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
@@ -199,9 +199,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <ml4u-dbschedule-provider is-ready="{{dbScheduleProviderReady}}" id="scheduleDataProvider" trending={{trending}} topics={{topics}} ></ml4u-dbschedule-provider>
-    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}}></ml4u-user-profile>
-
+    <ml4u-db-provider is-ready="{{dbProviderReady}}" id="scheduleDataProvider" trending={{trending}} topics={{topics}} ></ml4u-db-provider>
+    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}} profile-secret={{profileSecret}}></ml4u-user-profile>
     <iron-location hash="{{ironRouteHash}}" path={{ironRoutePath}} query={{ironRouteQuery}}></iron-location>
     <app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
     <app-route
@@ -268,7 +267,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
         <ml4u-view-session-and-item id="sessionAndItemView" selected-item="[[selectedItem]]" popup-display-session="[[popupDisplaySession]]"
-          profile-data="{{profileData}}", logged-in="[[loggedIn]]">
+          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="{{profileSecret}}">
         </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
@@ -294,6 +293,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
           value: null
         },
+        profileSecret: {
+          type: String,
+          notify: true
+        },
         loggedIn: {
           type: Number,
           computed: '__computeLoggedIn(username)'
@@ -306,9 +309,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         popupDisplaySession: {
           type: Number
         },
-        dbScheduleProviderReady: {
+        dbProviderReady: {
           type: Number,
-          observer: '_onDbScheduleProviderReady',
+          observer: '_ondbProviderReady',
           value: 0
         }
       },
@@ -323,7 +326,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         'iron-overlay-canceled':'_itemDialogCanceled'
       },
 
-      _onDbScheduleProviderReady: function(newVal, oldVal) {
+      _ondbProviderReady: function(newVal, oldVal) {
         //wait for the schedule data to be downloaded before displaying the item
         if(newVal && this.displayItemOnDbLoad) {
           this._displaySelectedItem(true);
@@ -350,7 +353,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if(newSelectedItemValue == undefined || newSelectedItemValue == oldValue)
             return;
-        if(!this.dbScheduleProviderReady) {
+        if(!this.dbProviderReady) {
             //wait for the schedule data to be downloaded before displaying the item
             console.log("DISPLAYING WHEN DATA IS READY!!!!");
             this.displayItemOnDbLoad = true;
