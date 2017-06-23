@@ -5,6 +5,7 @@
 <link rel="import" href="ml4u-components/ml4u-pouchdb-sync.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-conflict-resolution.html">
 <link rel="import" href="../bower_components/app-pouchdb/app-pouchdb-document.html">
+<link rel="import" href="../bower_components/polymer-cookie/polymer-cookie.html">
 
 
 <dom-module id="ml4u-user-profile">
@@ -30,6 +31,12 @@
         data="{{profileSecret}}">
       </app-pouchdb-document>
     </template>
+    <polymer-cookie
+      id="username_cookie"
+      name="username_cookie"
+      value="{{username}}"
+      time="-1">
+     </polymer-cookie>
   </template>
 
   <script>
@@ -39,6 +46,7 @@
         username : {
           type: String,
           notify: true,
+          value: null,
           observer: '_usernameChanged'
         },
         profileData: {
@@ -75,9 +83,24 @@
       },
       ready: function() {
         this.authDatabase = new PouchDB('https://icml.papro.org.uk/couchdb/basic', {skipSetup: true});
+        var cookie_value = this.$.username_cookie.readCookie();
+        console.log("cookie_value");
+        console.log(cookie_value);
+        if(cookie_value != "") {
+          this.username = cookie_value;
+          console.log(this.username);
+        }
       },
       login: function(username, password, callbackfn) {
-        this.authDatabase.login(username, password, callbackfn);
+        //this.authDatabase.login(username, password, callbackfn);
+        this.authDatabase.login(username, password, function(err, response) {
+          if(!err) {
+            console.log("successfully logged in!");
+            this.username = username;
+            this.$.username_cookie.createCookie();
+            callbackfn(err, response);
+          }
+        }.bind(this));
       },
       logout: function() {
         this.authDatabase.logout(function (err, response) {
@@ -87,6 +110,7 @@
             // network error
             return;
           }
+          this.$.username_cookie.eraseCookie();
           this.username = null;
         }.bind(this));
 

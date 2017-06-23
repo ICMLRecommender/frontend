@@ -34,7 +34,8 @@
     "gold-password-input": "GeoloeG/gold-password-input#^1.1.6",
     "pouchdb-authentication": "^0.5.5",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
-    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0"
+    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
+    "polymer-cookie": "^1.1.1"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
