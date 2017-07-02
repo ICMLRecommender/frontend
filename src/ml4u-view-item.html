@@ -233,7 +233,7 @@
       },
       comments: {
         type: Array
-      }, 
+      },
       abstractVisible: {
               type: Boolean,
               value: false
@@ -317,7 +317,14 @@
       if(this.itemId in this.profileData.bookmarks) {
           console.log("detected item already bookmarked. trying to un-bookmark it.");
           delete this.profileData.bookmarks[this.itemId];
-          this.notifyPath('profileData.bookmarks.'+this.itemId);
+          //this.notifyPath checks for changes and doesn't work for deleting
+          //so we'll set a dummy property
+          newDummyValue = true;
+          if(this.profileData.dummyProperty != undefined) {
+            newDummyValue = !this.profileData.dummyProperty;
+          }
+          this.set('profileData.dummyProperty', newDummyValue);
+          //this.notifyPath('profileData.bookmarks.'+this.itemId);
           this.bookmarkedClassString = "";
           console.log("Loggin profile:");
           console.log(this.profileData);
@@ -443,7 +450,7 @@
         }).catch(error => {
           console.error('Error getting item comments:', error);
         });
-    }, 
+    },
     ready: function() {
       this.getComments();
     }

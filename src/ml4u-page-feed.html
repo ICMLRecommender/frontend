@@ -64,7 +64,9 @@
             paper-id={{item.id}} selected-item={{selectedItem}}
             title={{item.title}}
             tags='[{"id": "1", "color": "red", "text": "ML"}]'
-            authors-string='{{item.authorsString}}' trending
+            authors-string='[[item.authorsString]]'
+            is-bookmarked=[[item.isBookmarked]] trending
+            profile-data={{profileData}} logged-in=[[loggedIn]]
           ></ml4u-research-paper-card>
         </template>
     </div>
@@ -74,6 +76,12 @@
     Polymer({
       is: 'ml4u-page-feed',
       properties: {
+        loggedIn: Number,
+        profileData: {
+          type: Object,
+          notify: true,
+          observer: '_profileDataChanged'
+        },
         selectedDay: {
           type: Number,
           value: 0
@@ -96,6 +104,30 @@
         showingSearchResults: {
           type: Boolean,
           value: false
+        }
+      },
+      observers: [
+        'updateBookmarks(displayedItems, profileData.bookmarks)'
+      ],
+      _profileDataChanged: function() {
+        this.updateBookmarks(this.displayedItems, this.profiledata);
+      },
+      updateBookmarks: function(items, profileData) {
+        //performing the if out the for loop, so I don't have to evaluate it N times
+        if(items == undefined) {
+          return;
+        }
+
+        if(this.loggedIn && this.profileData.bookmarks != undefined) {
+          for(var i=0; i<items.length; ++i) {
+            isBookmarked = this.profileData.bookmarks[items[i].id] != undefined ? 1 : 0;
+            this.set('displayedItems.' + i + ".isBookmarked", isBookmarked);
+          }
+        }
+        else {
+          for(var i=0; i<items.length; ++i) {
+            this.set('displayedItems.' + i + ".isBookmarked", 0);
+          }
         }
       },
       _onScheduleDataChanged: function() {

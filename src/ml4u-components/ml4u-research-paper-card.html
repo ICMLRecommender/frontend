@@ -91,6 +91,9 @@
       .action-bookmark:hover {
         color: goldenrod;
       }
+      .bookmarked {
+        color: goldenrod;
+      }
       .action-like:hover {
         color: #4dc333;
       }
@@ -131,7 +134,7 @@
       <div class="card-actions">
         <div class="card-actions-inner">
           <paper-button class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
-          <paper-button class="action action-bookmark"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
+          <paper-button on-tap="_toggleBookmark" class$="action action-bookmark [[bookmarkClassString]]"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
           <paper-button class="action action-like"><iron-icon class="action-icon" icon="icons:favorite"></iron-icon>Like</paper-button>
         </div>
       </div>
@@ -142,28 +145,63 @@
    Polymer({
       is: 'ml4u-research-paper-card',
       properties: {
-        paperId: {
-          type: String
+        loggedIn: Number,
+        profileData: {
+          type: Object,
+          notify: true
         },
-        title: {
-          type: String
+        isBookmarked: Number,
+        bookmarkClassString: {
+          type: String,
+          computed: 'computeBookmarkClassString(isBookmarked)'
         },
-        authorsString: {
-          type: String
-        },
-        tags: {
-          type: Array
-        },
+        paperId: String,
+        title: String,
+        authorsString: String,
+        tags: Array,
         trending: Boolean,
         selectedItem: {
           type: String,
           notify: true
         }
       },
+      computeBookmarkClassString: function(isBookmarked) {
+        val = isBookmarked ? "bookmarked" : "";
+        console.log("computeBookmarkClassString called, returning: " + val);
+        return val;
+      },
       _changeSelectedItem: function() {
         console.log("CHANGING SELECTED ITEM TO:");
         console.log(this.paperId);
         this.selectedItem = this.paperId;
+      },
+      _toggleBookmark: function() {
+        if(!this.loggedIn) {
+          window.ml4u.sharedElements.loginReminderSnackbar.open();
+          return;
+        }
+        this.profileData.bookmarks = this.profileData.bookmarks || {};
+        if(this.paperId in this.profileData.bookmarks) {
+            console.log("detected item already bookmarked. trying to un-bookmark it.");
+            delete this.profileData.bookmarks[this.paperId];
+            //this.notifyPath checks for changes and doesn't work for deleting
+            //so we'll set a dummy property
+            newDummyValue = true;
+            if(this.profileData.dummyProperty != undefined) {
+              newDummyValue = !this.profileData.dummyProperty;
+            }
+            this.set('profileData.dummyProperty', newDummyValue);
+            //this.notifyPath('profileData.bookmarks.'+this.paperId);
+            this.bookmarkedClassString = "";
+            console.log("Loggin profile:");
+            console.log(this.profileData);
+        }
+        else {
+          this.set('profileData.bookmarks.'+this.paperId, ''+ this.paperId);
+          //this.profile.favourites[this.articleId] = this.articleId;
+        }
+        console.log("logging this.bookmarkedClassString");
+        console.log(this.bookmarkedClassString)
       }
     });
   </script>
