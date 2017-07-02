@@ -129,8 +129,9 @@
           <div secondary>
             <span id="authorsString">{{listItem.authorsString}}</span>
             <span style="float:right" hidden$="true">
-              <iron-icon style="float:right; color:#D0011B; display:[[isFavouriteDisplay]];"
-                          icon="icons:bookmark" class$="{{bookmarkClassString}}"></iron-icon>
+              <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
+                          icon="icons:bookmark" class="bookmarked">
+              </iron-icon>
             </span>
           </div>
         </paper-item-body>
@@ -145,7 +146,13 @@
             <span style="float:right" class$="{{listItem.type}} sessiontype">{{listItem.type}}</span><br/>
           </div>
           <div>{{listItem.session_title}}</div>
-          <div secondary>Chair: {{listItem.session_chair}}</div>
+          <div secondary>Chair: {{listItem.session_chair}}
+            <span style="float:right" hidden$="true">
+              <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
+                          icon="icons:bookmark" class="bookmarked">
+              </iron-icon>
+            </span>
+          </div>
         </paper-item-body>
       </paper-item>
     </template>
@@ -164,14 +171,15 @@
           notify: true
         },
         isBookmarked: Number,
-        bookmarkClassString: {
-          type: String,
-          computed: 'computeBookmarkClassString(isBookmarked)'
+        bookmarkDisplayString: {
+            type: String,
+            value: 'none',
+            computed: 'computeBookmarkDisplayString(isBookmarked)'
         },
       },
-      computeBookmarkClassString: function(isBookmarked) {
-        val = isBookmarked ? "bookmarked" : "";
-        console.log("computeBookmarkClassString called, returning: " + val);
+      computeBookmarkDisplayString: function(isBookmarked) {
+        val = isBookmarked ? "inline" : "none";
+        //console.log("computeBookmarkDisplayString called, returning: " + val);
         return val;
       },
       _changeSelectedItem: function(event, d, s) {
