@@ -220,7 +220,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon><span class="menu-category-keyword">Feed</span></a>
           <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon><span class="menu-category-keyword">Schedule</span></a>
-          <a name="library" href="/library"><iron-icon icon="image:collections-bookmark"></iron-icon><span class="menu-category-keyword">Library</span></a>
+          <template is="dom-if" if="{{loggedIn}}">
+            <a name="library" href="/library"><iron-icon icon="image:collections-bookmark"></iron-icon><span class="menu-category-keyword">Library</span></a>
+          </template>
           <template is="dom-if" if="{{!loggedIn}}">
             <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Register</span></a>
             <a name="login" href="/login"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Login</span></a>
@@ -250,7 +252,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="[[username]]" profile-data="[[profileData]]" logged-in=[[loggedIn]] name="schedule"></ml4u-page-schedule>
-          <ml4u-page-library trending-object={{trending}} name="library" selected-item={{selectedItem}} profile-data="{{profileData}}" logged-in=[[loggedIn]]></ml4u-page-library>
+          <ml4u-page-library name="library" selected-item={{selectedItem}} profile-data="{{profileData}}" logged-in=[[loggedIn]]></ml4u-page-library>
+          <ml4u-page-person  name="person" selected-item={{selectedItem}}
+          profile-data="{{profileData}}" logged-in=[[loggedIn]]
+          route=[[route]] selected-page=[[page]]></ml4u-page-person>
           <!--<ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="posters" show-posters></ml4u-page-schedule>
@@ -262,7 +267,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-header-layout>
     </app-drawer-layout>
 
-    <paper-toast id="papertoast" text=""></paper-toast>
+    <!--<paper-toast id="papertoast" text=""></paper-toast>-->
+    <shop-snackbar id="loginReminderSnackbar1">Please login first.</shop-snackbar>
 
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
@@ -433,8 +439,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.sharedElements = window.ml4u.sharedElements || {};
-        window.ml4u.sharedElements.papertoast = this.$.papertoast;
+        //window.ml4u.sharedElements.papertoast = this.$.papertoast;
         window.ml4u.sharedElements.loginReminderSnackbar = this.$.loginReminderSnackbar;
+        window.ml4u.sharedElements.loginReminderSnackbar1 = this.$.loginReminderSnackbar1;
         window.ml4u.sharedElements.scheduleDataProvider = this.$.scheduleDataProvider;
         window.ml4u.sharedElements.userProfileElement = this.$.userProfileElement;
         window.ml4u.helpervars = window.ml4u.helpervars || {};

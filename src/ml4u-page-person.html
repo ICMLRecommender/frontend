@@ -1,0 +1,114 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="ml4u-list-item.html">
+<link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
+
+<dom-module id="ml4u-page-person">
+
+  <template>
+    <style>
+      .personInfo {
+        padding-left: 31px;
+        padding-top: 19px;
+        padding-bottom: 43px;
+        padding-right: 31px;
+        background-color: white;
+        border-bottom: 1px solid #D0D0D0;
+      }
+      .personInfo > .name {
+        font-size: 26px;
+        color: #4A4A4A;
+      }
+      .personInfo > .university {
+        font-size: 20px;
+        color: #989898;
+      }
+      .paperList {
+        padding: 10px;
+      }
+    </style>
+    <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
+    <div class="personInfo">
+      <span class="name">{{selectedPerson.name}}</span><br/>
+      <span class="university">{{selectedPerson.institution}}</span>
+    </div>
+
+    <div class="paperList">
+        <template is="dom-repeat" items="{{selectedPerson.papers}}" initialCount="10">
+          HELLO
+          <ml4u-research-paper-card
+            paper-id={{item.id}} selected-item={{selectedItem}}
+            title={{item.title}}
+            tags='[{"id": "1", "color": "red", "text": "ML"}]'
+            authors-string='[[item.authorsString]]'
+            is-bookmarked=[[item.isBookmarked]] trending
+            profile-data={{profileData}} logged-in=[[loggedIn]]
+            dismissible
+          ></ml4u-research-paper-card>
+        </template>
+    </div>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'ml4u-page-person',
+      properties: {
+        selectedPage: String,
+        loggedIn: Number,
+        profileData: {
+          type: Object,
+          notify: true
+        },
+        selectedItem: {
+          type: String,
+          notify: true
+        },
+        route: {
+          type: Object,
+          observer: '_computeSelectedPerson'
+        },
+        selectedPerson: {
+          type: Object
+        },
+      },
+      observers: [
+        'updateBookmarks(selectedPerson.papers, profileData.bookmarks)'
+      ],
+      updateBookmarks: function(items, profileData) {
+        console.log("updateBookmarks called");
+        //performing the if out the for loop, so I don't have to evaluate it N times
+        if(items == undefined || items==null) {
+          return;
+        }
+
+        if(this.loggedIn && this.profileData.bookmarks != undefined) {
+          for(var i=0; i<items.length; ++i) {
+            isBookmarked = this.profileData.bookmarks[items[i].id] != undefined ? 1 : 0;
+            this.set('selectedPerson.papers.' + i + ".isBookmarked", isBookmarked);
+          }
+        }
+        else {
+          for(var i=0; i<items.length; ++i) {
+            this.set('selectedPerson.papers.' + i + ".isBookmarked", 0);
+          }
+        }
+      },
+      _computeSelectedPerson: function() {
+        if(this.selectedPage != "person") {
+          return;
+        }
+        var personId = this.route.__queryParams.id;
+        this.selectedPerson = window.ml4u.sharedElements.scheduleDataProvider.getPerson(personId);
+      },
+      _onScheduleDataChanged: function() {
+        this._computeSelectedPerson();
+      },
+      ready: function() {
+        console.log(this.selectedPerson);
+      }
+    });
+
+  </script>
+
+</dom-module>

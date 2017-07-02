@@ -179,8 +179,10 @@
         this.selectedItem = this.paperId;
       },
       _toggleBookmark: function() {
+        console.log("toggleBookmark called");
         if(!this.loggedIn) {
-          window.ml4u.sharedElements.loginReminderSnackbar.open();
+          window.ml4u.sharedElements.loginReminderSnackbar1.open();
+          console.log("toggleBookmark called");
           return;
         }
         this.profileData.bookmarks = this.profileData.bookmarks || {};
