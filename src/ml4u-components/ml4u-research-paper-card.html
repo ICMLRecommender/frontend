@@ -133,7 +133,9 @@
       </div>
       <div class="card-actions">
         <div class="card-actions-inner">
-          <paper-button class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
+          <template is="dom-if" if="{{dismissible}}">
+            <paper-button class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
+          </template>
           <paper-button on-tap="_toggleBookmark" class$="action action-bookmark [[bookmarkClassString]]"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
           <paper-button class="action action-like"><iron-icon class="action-icon" icon="icons:favorite"></iron-icon>Like</paper-button>
         </div>
@@ -160,6 +162,7 @@
         authorsString: String,
         tags: Array,
         trending: Boolean,
+        dismissible: Boolean,
         selectedItem: {
           type: String,
           notify: true
