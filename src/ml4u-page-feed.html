@@ -79,8 +79,7 @@
         loggedIn: Number,
         profileData: {
           type: Object,
-          notify: true,
-          observer: '_profileDataChanged'
+          notify: true
         },
         selectedDay: {
           type: Number,
@@ -109,10 +108,8 @@
       observers: [
         'updateBookmarks(displayedItems, profileData.bookmarks)'
       ],
-      _profileDataChanged: function() {
-        this.updateBookmarks(this.displayedItems, this.profiledata);
-      },
       updateBookmarks: function(items, profileData) {
+        console.log("updateBookmarks called?!");
         //performing the if out the for loop, so I don't have to evaluate it N times
         if(items == undefined) {
           return;

@@ -38,6 +38,7 @@ span.loc {
 }
 #papersDiv {
   margin-top: 1px;
+  background-color: white;
 }
 
 </style>
@@ -53,8 +54,14 @@ span.loc {
       <div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>
     </div>
     <div id="papersDiv">
-      <ml4u-list items="[[papers]]"
-          selected-item={{selectedPaper}} id-prefix="sched" is-paper-list></ml4u-list>
+      <template is="dom-repeat" items="{{papers}}" initialCount="10">
+        <div>
+          <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
+           is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+        </div>
+      </template>
+<!--      <ml4u-list items="[[papers]]"
+          selected-item={{selectedPaper}} id-prefix="sched" is-paper-list></ml4u-list>-->
     </div>
   </section>
 </template>
@@ -80,6 +87,34 @@ span.loc {
         type: Number,
         notify: true,
         value: 0
+      },
+      profileData: {
+        type: Object,
+        notify: true
+      },
+      loggedIn: {
+        type: Number
+      }
+    },
+    observers: [
+      'updateBookmarks(papers, profileData.bookmarks)'
+    ],
+    updateBookmarks: function(items, profileData) {
+      console.log("updateBookmarks called?! from view-session");
+      if(items == undefined) {
+        return;
+      }
+      //performing the if out the for loop, so I don't have to evaluate it N times
+      if(this.loggedIn && this.profileData.bookmarks != undefined) {
+        for(var i=0; i<items.length; ++i) {
+          isBookmarked = this.profileData.bookmarks[items[i].id] != undefined ? 1 : 0;
+          this.set('papers.' + i + ".isBookmarked", isBookmarked);
+        }
+      }
+      else {
+        for(var i=0; i<items.length; ++i) {
+          this.set('papers.' + i + ".isBookmarked", 0);
+        }
       }
     },
     _computeSession: function(sessionId) {
