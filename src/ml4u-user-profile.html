@@ -30,6 +30,11 @@
         doc-id="secret"
         data="{{profileSecret}}">
       </app-pouchdb-document>
+      <app-pouchdb-document
+        db-name="{{username}}"
+        doc-id="recommendations"
+        data="{{profileRecommendations}}">
+      </app-pouchdb-document>
     </template>
     <polymer-cookie
       id="username_cookie"
@@ -63,7 +68,11 @@
         profileSecret: {
           	type: Object,
           	notify: true,
-        }
+        },
+        profileRecommendations: {
+          	type: Object,
+          	notify: true,
+        },
       },
       _usernameChanged: function() {
         if(this.username  != null)

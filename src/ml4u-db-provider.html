@@ -108,8 +108,10 @@
       },
       getItem: function(itemId) {
         console.log("getItem called with itemId " + itemId);
-        if(this.scheduleData == undefined || this.scheduleData.items == undefined)
+        if(this.scheduleData == undefined || this.scheduleData.items == undefined) {
+          console.log("Returning an empty object =(");
           return {};
+        }
         var orgItem =  this.scheduleData.items[itemId]
         if(orgItem == undefined)
           return {};
@@ -121,6 +123,8 @@
           var person = this.scheduleData.people[authorId];
           item.authors.push(person);
         }
+        console.log("Returning the following object:");
+        console.log(item);
         return item;
       },
       addComment: function(itemId, commentAuthor, commentText) {

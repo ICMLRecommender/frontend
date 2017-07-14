@@ -65,9 +65,10 @@
             title={{item.title}}
             tags='[{"id": "1", "color": "red", "text": "ML"}]'
             authors-string='[[item.authorsString]]'
-            is-bookmarked=[[item.isBookmarked]] trending
+            is-bookmarked=[[item.isBookmarked]]
+            trending=[[item.trending]] recommended=[[item.recommended]]
             profile-data={{profileData}} logged-in=[[loggedIn]]
-            dismissible
+            dismissible dismiss-object={{dismissObject}}
           ></ml4u-research-paper-card>
         </template>
     </div>
@@ -94,17 +95,124 @@
         trendingItems: {
           type: Object
         },
+        recommendedItems: {
+          type: Object
+        },
         displayedItems: {
           type: Object
         },
         showingSearchResults: {
           type: Boolean,
           value: false
+        },
+        profileRecommendations: {
+          type: Object,
+          notify: true,
+        },
+        dismissObject : {
+          type: Object,
+          value: {}
         }
       },
       observers: [
-        'updateBookmarks(displayedItems, profileData.bookmarks)'
+        'updateBookmarks(displayedItems, profileData.bookmarks)',
+        'updateRecommendations(profileRecommendations)',
+        'dismissObjectChanged(dismissObject.itemid)'
       ],
+      dismissObjectChanged: function() {
+        if(this.dismissObject.recommended) {
+          if(!this.loggedIn || this.profileRecommendations == null || this.profileRecommendations == undefined) {
+            this.dismissObject.itemid = -1;
+            return;
+          }
+          if(this.profileRecommendations.latestdismissed == undefined) {
+            this.profileRecommendations.latestdismissed = {};
+          }
+          console.log("logging profileRecommendations.latestdismissed");
+          console.log(this.profileRecommendations.latestdismissed);
+          this.set('profileRecommendations.latestdismissed.' + this.dismissObject.itemid, this.dismissObject.itemid);
+          this.dismissObject.itemid = -1;
+          console.log("kewl. added dimissed recommendation");
+        }
+        if(this.dismissObject.trending) {
+          if(!this.loggedIn || this.profileRecommendations == null || this.profileRecommendations == undefined) {
+            window.ml4u.sharedElements.loginReminderSnackbar1.open();
+            this.dismissObject.itemid = -1;
+            return;
+          }
+          if(this.profileRecommendations.dismissedTrending == undefined) {
+            this.profileRecommendations.dismissedTrending = {};
+          }
+          //this.set('profileRecommendations.dismissedTrending.' + this.dismissObject.itemid, this.dismissObject.itemid);
+          this.profileRecommendations.dismissedTrending[this.dismissObject.itemid] = this.dismissObject.itemid;
+          this.dismissObject.itemid = -1;
+          console.log("kewl. added dimissed recommendation");
+          this.trendingObjectChanged();
+        }
+        //console.log("DismissObjectChangedCalled");
+      },
+      updateRecommendations: function() {
+        console.log("hello");
+        if(this.profileRecommendations == null || this.profileRecommendations == undefined || this.profileRecommendations.papers == undefined) {
+          return;
+        }
+        if(this.profileRecommendations.latestdismissed == undefined) {
+          this.profileRecommendations.latestdismissed = {};
+        }
+        itemIds = this.profileRecommendations.papers;
+        newRecommendedItemsArray = [];
+        for (var i=0, len=itemIds.length; i<len; ++i) {
+          if(this.profileRecommendations.latestdismissed.hasOwnProperty(itemIds[i])) {
+            continue;
+          }
+          t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i]);
+          t_item.trending = 0;
+          t_item.recommended = 1;
+          newRecommendedItemsArray.push(t_item);
+        }
+        this.recommendedItems = newRecommendedItemsArray;
+        console.log("LOGGING RECOMMENDED ITEMS");
+        console.log(this.recommendedItems);
+        if(!this.showingSearchResults) {
+          this.setDisplayedItems();
+        }
+      },
+      setDisplayedItems: function() {
+        console.log("setDisplayedItems called:");
+        if(this.showingSearchResults) {
+          return;
+        }
+        if(this.recommendedItems == null || this.recommendedItems == undefined) {
+          this.displayedItems = this.trendingItems;
+        }
+        else {
+          this.displayedItems = this.trendingItems.concat(this.recommendedItems);
+        }
+      },
+      trendingObjectChanged: function(newVal, oldVal) {
+        if(this.trendingObject == undefined || this.trendingObject.trendingids == undefined)
+          return;
+        itemIds = this.trendingObject.trendingids;
+        newTrendingItemsArray = [];
+        for (var i=0, len=itemIds.length; i<len; ++i) {
+          if(this.loggedIn && this.profileRecommendations != null && this.profileRecommendations != undefined) {
+            if(this.profileRecommendations.dismissedTrending.hasOwnProperty(itemIds[i])) {
+              continue;
+            }
+          }
+          t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i]);
+          t_item.trending = 1;
+          t_item.recommended = 0;
+          newTrendingItemsArray.push(t_item);
+        }
+        this.trendingItems = newTrendingItemsArray;
+        console.log("LOGGING TRENDING ITEMS");
+        console.log(this.trendingItems);
+        if(!this.showingSearchResults) {
+          this.setDisplayedItems();
+        }
+      },
+
       updateBookmarks: function(items, profileData) {
         console.log("updateBookmarks called?!");
         //performing the if out the for loop, so I don't have to evaluate it N times
@@ -126,22 +234,6 @@
       },
       _onScheduleDataChanged: function() {
         this.trendingObjectChanged(this.trendingObject);
-      },
-      trendingObjectChanged: function(newVal, oldVal) {
-        if(this.trendingObject == undefined || this.trendingObject.trendingids == undefined)
-          return;
-        itemIds = this.trendingObject.trendingids;
-        newTrendingItemsArray = [];
-        for (var i=0, len=itemIds.length; i<len; ++i) {
-          t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i]);
-          newTrendingItemsArray.push(t_item);
-        }
-        this.trendingItems = newTrendingItemsArray;
-        console.log("LOGGING TRENDING ITEMS");
-        console.log(this.trendingItems);
-        if(!this.showingSearchResults) {
-          this.displayedItems = this.trendingItems;
-        }
       },
 
       searchForItems: function() {
@@ -166,9 +258,10 @@
             //console.log("trying to read:");
             //console.log(item_t);
             //if (object.hasOwnProperty(property)) {
-            if(item_t.description.includes(searchString) || item_t.authorsString.includes(searchString)) {
+            if(item_t.title.includes(searchString) || item_t.description.includes(searchString) || item_t.authorsString.includes(searchString)) {
               // need to call getItem, so that I can compute the authors properly...
               this.push('displayedItems', window.ml4u.sharedElements.scheduleDataProvider.getItem(key_t));
+              console.log(item_t);
             }
             //}
           }
@@ -176,6 +269,7 @@
       },
       _keyPressed: function(e) {
         console.log("KEYPRESSED");
+        //console.log(e.charCode);
         if (13 === e.charCode) {
             console.log("ENTER PRESSED");
             this.searchForItems();

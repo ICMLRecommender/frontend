@@ -108,6 +108,17 @@
         padding-left: 5px;
         padding-right: 5px;
       }
+      .recommended {
+        float:right;
+        background: #F8DA1C;
+        border-radius: 3px;
+        font-family: 'effra', sans-serif;
+        font-size: 12px;
+        color: #958A00;
+        letter-spacing: 0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
       .card-content:hover {
         cursor: pointer;
       }
@@ -120,6 +131,9 @@
         </template>
         <template is="dom-if" if="{{trending}}">
           <span class="trending">TRENDING</span>
+        </template>
+        <template is="dom-if" if="{{recommended}}">
+          <span class="recommended">RECOMMENDED</span>
         </template>
         </div>
         <div class="title">[[title]]</div>
@@ -134,7 +148,7 @@
       <div class="card-actions">
         <div class="card-actions-inner">
           <template is="dom-if" if="{{dismissible}}">
-            <paper-button class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
+            <paper-button on-tap="_dismissPressed" class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
           </template>
           <paper-button on-tap="_toggleBookmark" class$="action action-bookmark [[bookmarkClassString]]"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
           <paper-button class="action action-like"><iron-icon class="action-icon" icon="icons:favorite"></iron-icon>Like</paper-button>
@@ -162,11 +176,29 @@
         authorsString: String,
         tags: Array,
         trending: Boolean,
-        dismissible: Boolean,
+        recommended: Boolean,
+        dismissible: {
+          type: Boolean,
+          computed: '_computeDismissible(trending, recommended)'
+        },
+        dismissObject: {
+          type: Object,
+          notify: true
+        },
         selectedItem: {
           type: String,
           notify: true
         }
+      },
+      _computeDismissible: function(trending, recommended) {
+        return trending || recommended;
+      },
+      _dismissPressed: function() {
+        console.log("_dismissPressed called");
+        console.log(this.dismissObject);
+        this.dismissObject.trending = this.trending;
+        this.dismissObject.recommended = this.recommended;
+        this.set('dismissObject.itemid', this.paperId);
       },
       computeBookmarkClassString: function(isBookmarked) {
         val = isBookmarked ? "bookmarked" : "";
