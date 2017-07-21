@@ -3,6 +3,7 @@
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="ml4u-nav.html">
 <link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
+<link rel="import" href="ml4u-db-provider.html">
 
 <dom-module id="ml4u-page-feed">
   <template>
@@ -61,8 +62,13 @@
     <div class="paperList">
         <template is="dom-repeat" items="{{displayedItems}}" initialCount="10">
           <ml4u-research-paper-card
+            user-likes={{userLikes}}
             paper-id={{item.id}} selected-item={{selectedItem}}
             title={{item.title}}
+            profile-secret={{profileSecret}}
+            username={{username}} 
+            likes={{item.likes}}
+            logged-in=[[loggedIn]]
             tags='[{"id": "1", "color": "red", "text": "ML"}]'
             authors-string='{{item.authorsString}}' trending
           ></ml4u-research-paper-card>
@@ -96,6 +102,19 @@
         showingSearchResults: {
           type: Boolean,
           value: false
+        },
+        profileSecret: {
+          type: String
+        },
+        username: {
+          type: String,
+        },
+        userLikes: {
+          type: Object,
+          notify: true
+        }, 
+        loggedIn: {
+          type: Number
         }
       },
       _onScheduleDataChanged: function() {
@@ -117,7 +136,6 @@
           this.displayedItems = this.trendingItems;
         }
       },
-
       searchForItems: function() {
         console.log("searching for items");
         searchString = this.$.searchBarInput.value;
@@ -148,12 +166,26 @@
           }
         });
       },
+      _hasUserLiked: function(itemId) {
+        if (this.userLikes) {
+          if (this.userLikes.hasOwnProperty('likes')){
+            return this.userLikes.likes.hasOwnProperty(itemId);
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }, 
       _keyPressed: function(e) {
         console.log("KEYPRESSED");
         if (13 === e.charCode) {
             console.log("ENTER PRESSED");
             this.searchForItems();
         }
+      },
+      ready: function() {
+        console.log('user likes', this.userLikes);
       }
     });
   </script>

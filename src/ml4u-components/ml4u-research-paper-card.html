@@ -91,8 +91,11 @@
       .action-bookmark:hover {
         color: goldenrod;
       }
-      .action-like:hover {
+      .action-like:hover, .liked {
         color: #4dc333;
+      }
+      .unliked {
+        color: #9b9b9b !important;
       }
       .trending {
         float:right;
@@ -132,7 +135,7 @@
         <div class="card-actions-inner">
           <paper-button class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
           <paper-button class="action action-bookmark"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
-          <paper-button class="action action-like"><iron-icon class="action-icon" icon="icons:favorite"></iron-icon>Like</paper-button>
+          <paper-button class$="action action-like {{likedClassString}} {{optimisticLikeString}}" on-click='_toggleLike'><iron-icon class="action-icon" icon="icons:favorite"></iron-icon>Like</paper-button>
         </div>
       </div>
     </paper-card>
@@ -158,12 +161,124 @@
         selectedItem: {
           type: String,
           notify: true
+        },
+        loggedIn: {
+          type: Number
+        },
+        username: {
+          type: String
+        },
+        profileSecret: {
+          type: String
+        },
+        likes: {
+          type: Object,
+          observer: '_likesChanged'
+        },
+        userLikes: {
+          type: Object,
+          notify: true
+        }, 
+        optimisticLikeString: {
+          type: String,
+          value: ''
+        },
+        likedClassString: {
+          type: String,
+          computed: '_getLikedClassString(userLikes, paperId)'
+        },
+        hasUserLiked: {
+          type: Boolean,
+          computed: '_hasUserLiked(userLikes, paperId)',
+          notify: true
         }
       },
       _changeSelectedItem: function() {
         console.log("CHANGING SELECTED ITEM TO:");
         console.log(this.paperId);
         this.selectedItem = this.paperId;
+      },
+      _likesChanged: function(newLikes, oldLikes) {
+        console.log('research paper card likes observed', this.likes);
+        this.hasUserLiked = newLikes.hasOwnProperty(this.username)
+      },
+      _getLikedClassString: function(userLikes, itemId) {
+        if (this.userLikes) {
+            if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes['item'+itemId] != null){
+              if (this.userLikes.likes.hasOwnProperty('item'+itemId)) {
+                return 'liked'
+              } else {
+                return ''
+              }
+            } else {
+              return '';
+            }
+          } else {
+            return '';
+          }
+      },
+      _hasUserLiked: function(userLikes, itemId) {
+        if (this.userLikes) {
+            if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes['item'+itemId] != null){
+              return this.userLikes.likes.hasOwnProperty('item'+itemId);
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+      }, 
+      _toggleLike: function() {
+        console.log('optimistic like string', this.optimisticLikeString);
+        // check whether user is logged in
+        if(!this.loggedIn) {
+          window.ml4u.sharedElements.loginReminderSnackbar.open();
+          return;
+        }
+        if (this.hasUserLiked) {
+          console.log('user has liked:', this.hasUserLiked);
+          // unlike
+          this.optimisticLikeString = 'unliked';
+          setTimeout(() => {
+            if (this.optimisticLikeString == 'unliked') {
+              console.log('timeout optimist reset from unliked');
+              this.optimisticLikeString = ''
+            }
+          }, 2000);
+          console.log('un-liking...')
+          this.set('userLikes.likes.'+this.paperId, null)
+        } else {
+          // like
+          this.optimisticLikeString = 'liked';
+          setTimeout(() => {
+            if (this.optimisticLikeString == 'liked') {
+              console.log('timeout optimist reset from liked');
+              this.optimisticLikeString = ''
+            }
+          }, 2000);
+          console.log('liking...')
+        }
+        var likeData = new FormData();
+        likeData.append('username', this.username);
+        likeData.append('secret', this.profileSecret.value);
+        likeData.append('paper_id', 'item'+this.paperId);
+
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', res => {
+          console.log(res);
+          if (res.currentTarget.status == 400) {
+            console.log('Error liking paper!', res.currentTarget.responseText);
+          }
+        });
+        xhr.addEventListener('error', err => {
+          console.log('Error liking comment!', err);
+        });
+
+        xhr.open("POST", "http://localhost:8000/icml/like_paper/", true);
+        xhr.send(likeData);
+      },
+      ready: function() {
+        console.log(this.liked);
       }
     });
   </script>

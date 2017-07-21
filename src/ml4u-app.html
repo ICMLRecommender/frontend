@@ -200,7 +200,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <ml4u-db-provider is-ready="{{dbProviderReady}}" id="scheduleDataProvider" trending={{trending}} topics={{topics}} ></ml4u-db-provider>
-    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}} profile-secret={{profileSecret}}></ml4u-user-profile>
+    <ml4u-user-profile id="userProfileElement" username="{{username}}" profile-data={{profileData}} profile-secret={{profileSecret}} user-likes={{userLikes}}></ml4u-user-profile>
     <iron-location hash="{{ironRouteHash}}" path={{ironRoutePath}} query={{ironRouteQuery}}></iron-location>
     <app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
     <app-route
@@ -248,7 +248,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <ml4u-page-feed trending-object={{trending}} name="feed" selected-item={{selectedItem}} profile-data="{{profileData}}"></ml4u-page-feed>
+          <ml4u-page-feed profile-secret={{profileSecret}} logged-in="[[loggedIn]]" username="{{username}}" user-likes="{{userLikes}}" trending-object={{trending}} name="feed" selected-item={{selectedItem}} profile-data="{{profileData}}"></ml4u-page-feed>
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="schedule"></ml4u-page-schedule>
@@ -267,7 +267,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
         <ml4u-view-session-and-item id="sessionAndItemView" selected-item="[[selectedItem]]" popup-display-session="[[popupDisplaySession]]"
-          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="{{profileSecret}}">
+          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="{{profileSecret}}" user-likes="{{userLikes}}">
         </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
@@ -295,8 +295,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         profileSecret: {
           type: String,
-          notify: true
+          notify: true,
         },
+        userLikes: {
+          type: Object,
+          notify: true,
+        }, 
         loggedIn: {
           type: Number,
           computed: '__computeLoggedIn(username)'
@@ -313,6 +317,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Number,
           observer: '_ondbProviderReady',
           value: 0
+        },
+        itemsLoading: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -445,11 +453,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u.helpervars.ml4u_app_element = this;
         window.ml4u.helperfunctions = window.ml4u.helperfunctions || {};
         window.ml4u.helperfunctions.bookmarkItem = this.bookmarkItem;
+
       },
 
       bookmarkItem: function() {
 
-      }
+      },
+
     });
   </script>
 </dom-module>
