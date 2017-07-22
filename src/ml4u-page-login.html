@@ -118,13 +118,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         var password = this.$.passwordInput.value;
         var callbackfunction = function(err, response) {
+          console.log("hello");
           loginElements.submitButton.disabled = false;
           if(err) {
             if (err.name === 'unauthorized') {
-              loginElements.loginErrorDiv.innerHTML = "Unauthorized";
+              loginElements.loginErrorDiv.innerHTML = "Invalid username or password.";
             }
             else {
-              loginElements.loginErrorDiv.innerHTML = "Unknown error occurred. Try again.";
+              loginElements.loginErrorDiv.innerHTML = "Unknown error occurred. Please try again.";
             }
           }
           else {

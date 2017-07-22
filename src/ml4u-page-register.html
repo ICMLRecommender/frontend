@@ -67,6 +67,8 @@
         label="Password" reveal prefix strength-meter
         required auto-validate minlength="6" maxlength="24" error-message="Use 6 to 24 characters.">
       </gold-password-input>
+      <br/>
+      <br/>
       <div id="registerErrorDiv" class="errorDiv"></div>
       <br/>
       <br/>
@@ -100,6 +102,13 @@
       _submit: function(e) {
         if(!this.$.registerForm.validate())
           return;
+        var username = this.$.usernameInput.value;
+        var usernamePatt = new RegExp("[^a-z0-9_.]")
+        if(usernamePatt.test(username)) {
+          this.$.registerErrorDiv.innerHTML = "Invalid username. Must contain only lower case letters, numbers and/or _.";
+          return;
+        }
+
         var numOfSelectedTopics = 0;
         var selectedTopics = this.selectedTopics;
         for (var k in selectedTopics) if (selectedTopics.hasOwnProperty(k)) ++numOfSelectedTopics;
@@ -115,7 +124,6 @@
         loginElements.failedRegisterToast = this.$.failedRegisterToast;
         loginElements.submitButton.disabled = true;
 
-        var username = this.$.usernameInput.value;
         var email = this.$.emailInput.value;
         var password = this.$.passwordInput.value;
         loginElements.username = username;
@@ -153,7 +161,7 @@
           console.log(responseText);
           if(status!=200) {
             //loginElements.registerErrorDiv.innerHTML = responseText;
-            loginElements.registerErrorDiv.innerHTML = "An error occurred. Please try again.";
+            loginElements.registerErrorDiv.innerHTML = responseText;
             return;
           }
           console.log(this);

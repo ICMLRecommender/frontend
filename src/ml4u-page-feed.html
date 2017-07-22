@@ -212,6 +212,11 @@
       trendingObjectChanged: function(newVal, oldVal) {
         if(this.trendingObject == undefined || this.trendingObject.trendingids == undefined)
           return;
+
+        if(this.loggedIn && this.profileRecommendations != null && this.profileRecommendations != undefined
+          && this.profileRecommendations.dismissedTrending == undefined) {
+            this.profileRecommendations.dismissedTrending = {};
+        }
         itemIds = this.trendingObject.trendingids;
         newTrendingItemsArray = [];
         for (var i=0, len=itemIds.length; i<len; ++i) {
