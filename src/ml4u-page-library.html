@@ -1,0 +1,68 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-signals/iron-signals.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="ml4u-nav.html">
+<link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
+
+<dom-module id="ml4u-page-library">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        font-family: Effra-Medium;
+        font-size: 16px;
+        color: #A0A0A0;
+        letter-spacing: 0;
+      }
+      .paperList {
+        padding: 10px;
+      }
+    </style>
+    <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
+    <template is="dom-repeat" items="{{_toBookmarksArray(profileData.bookmarks)}}" initialCount="10">
+      <ml4u-research-paper-card
+        paper-id={{item.id}} selected-item={{selectedItem}}
+        title={{item.title}}
+        tags='[{"id": "1", "color": "red", "text": "ML"}]'
+        authors-string='[[item.authorsString]]'
+        is-bookmarked=1
+        profile-data={{profileData}} logged-in=[[loggedIn]]>
+      </ml4u-research-paper-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ml4u-page-library',
+      properties: {
+        loggedIn: Number,
+        profileData: {
+          type: Object,
+          notify: true
+        },
+        selectedItem: {
+          type: String,
+          notify: true
+        },
+        displayedItems: {
+          type: Object
+        }
+      },
+      observers: [
+        //'updateBookmarks(displayedItems, profileData.bookmarks)'
+      ],
+      _toBookmarksArray: function(obj) {
+        keys = Object.keys(obj);
+        array = [];
+        for (var i=0; i<keys.length; ++i) {
+          array.push(window.ml4u.sharedElements.scheduleDataProvider.getItem(keys[i]));
+        }
+        return array;
+      },
+      _onScheduleDataChanged: function() {
+        //TODO: re-calculate the objects when the scheduleData is changed.
+      },
+    });
+  </script>
+</dom-module>

@@ -94,10 +94,24 @@
       .action-like:hover, .liked {
         color: #4dc333;
       }
+      .bookmarked {
+        color: goldenrod;
+      }
       .unliked {
         color: #9b9b9b !important;
       }
       .trending {
+        float:right;
+        background: #F8DA1C;
+        border-radius: 3px;
+        font-family: 'effra', sans-serif;
+        font-size: 12px;
+        color: #958A00;
+        letter-spacing: 0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .recommended {
         float:right;
         background: #F8DA1C;
         border-radius: 3px;
@@ -121,6 +135,9 @@
         <template is="dom-if" if="{{trending}}">
           <span class="trending">TRENDING</span>
         </template>
+        <template is="dom-if" if="{{recommended}}">
+          <span class="recommended">RECOMMENDED</span>
+        </template>
         </div>
         <div class="title">[[title]]</div>
         <div class="authors">
@@ -133,8 +150,10 @@
       </div>
       <div class="card-actions">
         <div class="card-actions-inner">
-          <paper-button class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
-          <paper-button class="action action-bookmark"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
+          <template is="dom-if" if="{{dismissible}}">
+            <paper-button on-tap="_dismissPressed" class="action action-dismiss"><iron-icon class="action-icon" icon="icons:clear"></iron-icon>Dismiss</paper-button>
+          </template>
+          <paper-button on-tap="_toggleBookmark" class$="action action-bookmark [[bookmarkClassString]]"><iron-icon class="action-icon" icon="icons:bookmark"></iron-icon>Bookmark</paper-button>
           <paper-button class$="action action-like {{likedClassString}} {{optimisticLikeString}}" on-click='_toggleLike'><iron-icon class="action-icon" icon="icons:favorite"></iron-icon>Like</paper-button>
         </div>
       </div>
@@ -145,19 +164,30 @@
    Polymer({
       is: 'ml4u-research-paper-card',
       properties: {
-        paperId: {
-          type: String
+        loggedIn: Number,
+        profileData: {
+          type: Object,
+          notify: true
         },
-        title: {
-          type: String
+        isBookmarked: Number,
+        bookmarkClassString: {
+          type: String,
+          computed: 'computeBookmarkClassString(isBookmarked)'
         },
-        authorsString: {
-          type: String
-        },
-        tags: {
-          type: Array
-        },
+        paperId: String,
+        title: String,
+        authorsString: String,
+        tags: Array,
         trending: Boolean,
+        recommended: Boolean,
+        dismissible: {
+          type: Boolean,
+          computed: '_computeDismissible(trending, recommended)'
+        },
+        dismissObject: {
+          type: Object,
+          notify: true
+        },
         selectedItem: {
           type: String,
           notify: true
@@ -192,6 +222,21 @@
           computed: '_hasUserLiked(userLikes, paperId)',
           notify: true
         }
+      },
+      _computeDismissible: function(trending, recommended) {
+        return trending || recommended;
+      },
+      _dismissPressed: function() {
+        console.log("_dismissPressed called");
+        console.log(this.dismissObject);
+        this.dismissObject.trending = this.trending;
+        this.dismissObject.recommended = this.recommended;
+        this.set('dismissObject.itemid', this.paperId);
+      },
+      computeBookmarkClassString: function(isBookmarked) {
+        val = isBookmarked ? "bookmarked" : "";
+        console.log("computeBookmarkClassString called, returning: " + val);
+        return val;
       },
       _changeSelectedItem: function() {
         console.log("CHANGING SELECTED ITEM TO:");
@@ -277,6 +322,36 @@
         xhr.open("POST", "http://localhost:8000/icml/like_paper/", true);
         xhr.send(likeData);
       },
+      _toggleBookmark: function() {
+        console.log("toggleBookmark called");
+        if(!this.loggedIn) {
+          window.ml4u.sharedElements.loginReminderSnackbar1.open();
+          console.log("toggleBookmark called");
+          return;
+        }
+        this.profileData.bookmarks = this.profileData.bookmarks || {};
+        if(this.paperId in this.profileData.bookmarks) {
+            console.log("detected item already bookmarked. trying to un-bookmark it.");
+            delete this.profileData.bookmarks[this.paperId];
+            //this.notifyPath checks for changes and doesn't work for deleting
+            //so we'll set a dummy property
+            newDummyValue = true;
+            if(this.profileData.dummyProperty != undefined) {
+              newDummyValue = !this.profileData.dummyProperty;
+            }
+            this.set('profileData.dummyProperty', newDummyValue);
+            //this.notifyPath('profileData.bookmarks.'+this.paperId);
+            this.bookmarkedClassString = "";
+            console.log("Loggin profile:");
+            console.log(this.profileData);
+        }
+        else {
+          this.set('profileData.bookmarks.'+this.paperId, ''+ this.paperId);
+          //this.profile.favourites[this.articleId] = this.articleId;
+        }
+        console.log("logging this.bookmarkedClassString");
+        console.log(this.bookmarkedClassString)
+      }
       ready: function() {
         console.log(this.liked);
       }

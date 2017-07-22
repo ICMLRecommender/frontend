@@ -13,7 +13,6 @@
         <template is="dom-repeat" items="{{items}}" initialCount="10">
           <div>
             <ml4u-list-item list-item="{{item}}"
-              id="listitem{{idPrefix}}{{item.itemId}}"
               selected-item="{{selectedItem}}" is-paper></ml4u-list-item>
           </div>
         </template>
@@ -22,7 +21,6 @@
         <template is="dom-repeat" items="{{items}}" initialCount="10">
           <div>
             <ml4u-list-item list-item="{{item}}"
-              id="listitem{{idPrefix}}{{item.itemId}}"
               selected-item="{{selectedItem}}"></ml4u-list-item>
           </div>
         </template>
@@ -45,44 +43,7 @@
           type: Boolean,
           value: false
         },
-        /*
-        profileData: {
-          type: Object,
-          notify: true,
-          observer: '_profileDataChanged'
-        },*/
-        //needed so that the item ids don't clash
-        //^...I think
-        idPrefix: String
       },
-/*      observers: [
-        '_userBookmarksChanged(profileData.bookmarks.*)'
-      ],
-      _userBookmarksChanged: function(changeRecord) {*/
-        //console.log(">>>>>>>>>>>>>>_userFavouritesChanged called");
-        /*console.log("_userFavouritesChanged123 called with the following changeRecord:");
-        console.log(changeRecord);
-        var path = changeRecord.path;
-        var changeItemId = path.substr(path.lastIndexOf(".")+1);
-
-        if(changeItemId == "favourites") {
-          //then there was a change with the whole favourites object,
-          //rather than individual items.
-          //TODO:Consider calling "redraw"
-          //so that you can account for users logging in/out
-          return;
-        }
-        console.log("RetrievedId: " + "#listitem"+this.idPrefix + changeItemId);
-        var listElement = this.$$("#listitem"+this.idPrefix + changeItemId);
-        console.log("retrieved listElement: ");
-        console.log(listElement);
-        listElement.setFavourite(changeRecord.value != null);
-        //this.$$("")
-        */
-      /*},
-      _profileDataChanged: function() {
-        //console.log(">>>>>>>_profileDataChanged called");
-      }*/
     });
 
   </script>

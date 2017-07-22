@@ -79,10 +79,39 @@
         }
         return posterSessionsForTheDay;
       },
+      getPerson: function(personId) {
+
+        if(personId==undefined || this.scheduleData == undefined
+          || this.scheduleData.people == undefined
+          || this.scheduleData.items == undefined)
+          return {};
+
+        personObject = {};
+        schedule_personObject = this.scheduleData.people[personId];
+        personObject.name = schedule_personObject.name;
+        personObject.institution = schedule_personObject.institution;
+        personObject.papers = [];
+
+        schedule_personObject_paper_ids = schedule_personObject.paper_ids;
+        if(schedule_personObject_paper_ids == undefined
+          || schedule_personObject_paper_ids == null) {
+          return personObject;
+        }
+        for (var i=0; i<schedule_personObject_paper_ids.length; ++i) {
+          paper = window.ml4u.sharedElements.scheduleDataProvider.getItem(schedule_personObject_paper_ids[i]);
+          personObject.papers.push(paper);
+        }
+        console.log("returning:");
+        console.log(personObject);
+
+        return personObject;
+      },
       getItem: function(itemId) {
         console.log("getItem called with itemId " + itemId);
-        if(this.scheduleData == undefined || this.scheduleData.items == undefined)
+        if(this.scheduleData == undefined || this.scheduleData.items == undefined) {
+          console.log("Returning an empty object =(");
           return {};
+        }
         var orgItem =  this.scheduleData.items[itemId]
         if(orgItem == undefined)
           return {};
@@ -94,6 +123,8 @@
           var person = this.scheduleData.people[authorId];
           item.authors.push(person);
         }
+        console.log("Returning the following object:");
+        console.log(item);
         return item;
       },
       getItemLikes: function(itemId) {

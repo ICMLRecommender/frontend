@@ -82,8 +82,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
     <div>
       <form is="iron-form" id="loginForm" >
-        <paper-input id="usernameInput" label="Username" type="text" required auto-validate></paper-input>
-        <paper-input id="passwordInput" label="Password" type="password" required auto-validate></paper-input>
+        <paper-input id="usernameInput" label="Username" type="text" value="mynewusername" required auto-validate></paper-input>
+        <paper-input id="passwordInput" label="Password" type="password" value="password" required auto-validate></paper-input>
         <div id="loginErrorDiv"></div>
         <br/>
         <br/>
@@ -128,7 +128,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           }
           else {
-            this.username = loginElements.username;
             this.set('route.path', '/');
           }
         }.bind(this);
