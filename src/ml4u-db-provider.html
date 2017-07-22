@@ -127,8 +127,15 @@
         console.log(item);
         return item;
       },
-      addComment: function(itemId, commentAuthor, commentText) {
-        // TODO: query backend to do this
+      getItemLikes: function(itemId) {
+        console.log('Getting likes for item ', itemId);
+        const db = new PouchDB('https://icml.papro.org.uk/couchdb/userlikes');
+        return db.get(itemId).then(doc => {
+          console.log()
+          return doc.likes ? doc.likes : {};
+        }).catch(err => {
+          return {};
+        });
       },
       getItems: function() {
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)

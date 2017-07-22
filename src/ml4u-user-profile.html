@@ -31,6 +31,11 @@
         data="{{profileSecret}}">
       </app-pouchdb-document>
       <app-pouchdb-document
+        db-name="https://icml.papro.org.uk/couchdb/userlikes_reversed"
+        doc-id="{{username}}"
+        data="{{userLikes}}">
+      </app-pouchdb-document>
+      <app-pouchdb-document>
         db-name="{{username}}"
         doc-id="recommendations"
         data="{{profileRecommendations}}">
@@ -68,6 +73,12 @@
         profileSecret: {
           	type: Object,
           	notify: true,
+            observer: '_secretChanged'
+        },
+        userLikes: {
+          type: Object,
+          notify: true,
+          observer: '_userLikesChanged'
         },
         profileRecommendations: {
           	type: Object,
@@ -85,6 +96,15 @@
       _dataChanged: function() {
         console.log("_dataChanged called");
         console.log(this.profileData);
+      },
+      _userLikesChanged: function(newLikes, oldLikes) {
+        console.log('_userLikesChanged called. new likes:', newLikes, 'old likes', oldLikes);
+        if (JSON.stringify(newLikes) === JSON.stringify(oldLikes)) {
+          return
+        }
+      }, 
+      _secretChanged: function(newSecret, oldSecret) {
+        console.log('_secretChanged', newSecret, oldSecret);
       },
       create: function() {
         var PouchDB = require("pouchdb");

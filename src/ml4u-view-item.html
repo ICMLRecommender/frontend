@@ -1,7 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="ml4u-item-user-review.html">
-<link rel="import" href="ml4u-item-review.html">
 <link rel="import" href="ml4u-item-likes.html">
 <link rel="import" href="ml4u-item-comments.html">
 
@@ -116,6 +114,12 @@
   .card-head {
     background: rgb(250,250,250);
   }
+  .liked {
+    color: #4dc333;
+  }
+  .unliked {
+    color: #959595 !important;
+  }
 </style>
 <template>
   <template is="dom-if" if="{{displayedWithinSession}}">
@@ -141,7 +145,7 @@
         </div>
         <div class="actions">
           <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class$="class1 [[bookmarkedClassString]]" on-click='_toggleBookmark'></paper-icon-button>
-          <paper-icon-button icon="icons:favorite" id="likeIcon" class="papericon" on-click='_toggleFavourite'></paper-icon-button>
+          <paper-icon-button icon="icons:favorite" id="likeIcon" class$="papericon [[likedClassString]] [[optimisticLikeString]]" on-click='_toggleLike'></paper-icon-button>
         </div>
     </section>
     <section class="cardBlock">
@@ -218,6 +222,14 @@
       bookmarkedClassString: {
         type: String,
       },
+      likedClassString: {
+        type: String,
+        computed: '_getLikedClassString(userLikes, itemId)'
+      },
+      optimisticLikeString: {
+        type: String,
+        value: ''
+      },
       feedbackRetrieved: {
         type: Boolean,
         value: false
@@ -235,8 +247,8 @@
         type: Array
       },
       abstractVisible: {
-              type: Boolean,
-              value: false
+        type: Boolean,
+        value: false
       },
       abstractIconStr: {
         type: String,
@@ -250,6 +262,15 @@
         type: Number,
         notify: true,
         value: 0
+      },
+      userLikes: {
+        type: Object,
+        notify: true
+      }, 
+      hasUserLiked: {
+        type: Boolean,
+        computed: '_hasUserLiked(userLikes, itemId)',
+        notify: true
       }
       /*displayRateItemButton: {
         type: Boolean,
@@ -267,7 +288,7 @@
       }
       this.feedbackRetrieved = false;
       this.updateItem();
-      this.getFeedback();
+      //this.getFeedback();
       this.getComments();
     },
     updateItem: function() {
@@ -297,6 +318,11 @@
       console.log("computed the following itemObj for itemId " + itemId);
       console.log(item);
       this.itemObject = item;
+      //window.ml4u.sharedElements.scheduleDataProvider.getItemLikes(itemId).then(likes => {
+      //    item.likes = likes;
+      //    this.hasUserLiked = likes.hasOwnProperty(this.username);
+      //    this.itemObject = item;
+      //})
 
       this.bookmarkedClassString = "";
       if(this.loggedIn) {
@@ -337,86 +363,52 @@
       console.log("logging this.bookmarkedClassString");
       console.log(this.bookmarkedClassString)
     },
-
-    /*
-    _toggleFavourite: function() {
+    _toggleLike: function() {
+      // check whether user is logged in
       if(!this.loggedIn) {
-        window.ml4u.sharedElements.papertoast.text = "Please login first.";
-        window.ml4u.sharedElements.papertoast.open();
+        window.ml4u.sharedElements.loginReminderSnackbar.open();
         return;
       }
-
-      console.log("loggin this.profileData from _toggleFavourite");
-      console.log(this.profileData);
-      this.profileData.bookmarks = this.profileData.bookmarks || {};
-      if(this.articleId in this.profileData.bookmarks) {
-          delete this.profileData.bookmarks[this.itemId];
-          this.notifyPath('profileData.bookmarks.'+this.itemId);
+      if (this.hasUserLiked) {
+        // unlike
+        this.optimisticLikeString = 'unliked';
+        setTimeout(() => {
+          if (this.optimisticLikeString == 'unliked') {
+            console.log('timeout optimist reset from unliked');
+            this.optimisticLikeString = ''
+          }
+        }, 2000);
+        console.log('un-liking...')
+        this.set('userLikes.likes.'+this.itemId, null)
+      } else {
+        // like
+        this.optimisticLikeString = 'liked';
+        setTimeout(() => {
+          if (this.optimisticLikeString == 'liked') {
+            console.log('timeout optimist reset from liked');
+            this.optimisticLikeString = ''
+          }
+        }, 2000);
+        console.log('liking...')
       }
-      else {
-        this.set('profileData.bookmarks.'+this.itemId, ''+ this.itemId);
-        //this.profile.favourites[this.articleId] = this.articleId;
-      }
-      this._updateStars();
-    },
+      var likeData = new FormData();
+      likeData.append('username', this.username);
+      likeData.append('secret', this.profileSecret.value);
+      likeData.append('paper_id', 'item'+this.itemId);
 
-    //Updates the class of the star in order to make it gold, if the item has been added to favourites
-    _updateStars : function() {
-      console.log("_updateStars called");
-      console.log(this.profileData);
-      var itemId = this.itemId;
-
-      var isFavourite = this.profileData.bookmarks != undefined && itemId in this.profileData.bookmarks;
-      //console.log("checked if " + itemId + " is in");
-      //console.log(this.profile.favourites);
-      //console.log("result = " + isFavourite);
-      if(isFavourite) {
-        this.$.favouriteIcon.className = "favourite papericon";
-      }
-      else{
-        this.$.favouriteIcon.className = "papericon";
-      }
-    },
-    */
-
-    getFeedback: function() {
-      /*
       var xhr = new XMLHttpRequest();
-      // xhr.addEventListener('load', rq.onLoad.bind(this));
+      xhr.addEventListener('load', res => {
+        console.log(res);
+        if (res.currentTarget.status == 400) {
+          console.log('Error liking paper!', res.currentTarget.responseText);
+        }
+      });
+      xhr.addEventListener('error', err => {
+        console.log('Error liking comment!', err);
+      });
 
-
-      xhr.addEventListener('load', function(e){
-        var madeUpResponse = {
-          comments : [
-            {
-              id: "1",
-              username: "username1",
-              comment: "This paper is actually rather interesting."
-            },
-            {
-              id: "2",
-              username: "myusernamel",
-              comment: "I couldn't understand a single sentence."
-            }
-          ],
-          likes: ["username1", "myusernamela", "myusernamelaz"]
-        };
-        this.feedback = madeUpResponse;
-        this.feedbackRetrieved = true;
-        console.log("!!!!!!!!!!!!!!!!!all is cool!");
-      }.bind(this));
-
-      xhr.addEventListener('error', function(e) {
-        console.log("!!!!!!!!!!!!!!!!!error received!");
-        // for now, no need to do anything
-      }.bind(this));
-
-      xhr.open("POST", "https://leggetter-cors.herokuapp.com/", true);
-      //xhr.open("POST", "http://localhost:8000/icml/registration/", true);
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      // xhr.send(rq.uriEncodedPostData);
-      xhr.send();
-      */
+      xhr.open("POST", "http://localhost:8000/icml/like_paper/", true);
+      xhr.send(likeData);
     },
     _onItemChanged: function(newItemValue) {
       if(newItemValue === undefined)
@@ -427,13 +419,35 @@
       this.abstractVisible = !this.abstractVisible;
       this.abstractIconStr = this.abstractVisible ? "hardware:keyboard-arrow-up" : "hardware:keyboard-arrow-down";
     },
-    /*writeReviewTapped: function() {
-      console.log("writeReviewTapped tapped");
-      this.displayRateItemButton = false;
-    },*/
     _backButtonTapped: function() {
       console.log("_backButtonTapped");
       this.fire('back_button_tapped');
+    },
+    _hasUserLiked: function(userLikes, itemId) {
+      if (this.userLikes) {
+          if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes['item'+itemId] != null){
+            return this.userLikes.likes.hasOwnProperty('item'+itemId);
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+    }, 
+    _getLikedClassString: function(userLikes, itemId) {
+      if (this.userLikes) {
+          if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes['item'+itemId] != null){
+            if (this.userLikes.likes.hasOwnProperty('item'+itemId)) {
+              return 'liked'
+            } else {
+              return ''
+            }
+          } else {
+            return '';
+          }
+        } else {
+          return '';
+        }
     },
     getComments: function() {
         if (this.itemId == undefined) return;
