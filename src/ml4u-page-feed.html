@@ -66,7 +66,7 @@
             paper-id={{item.id}} selected-item={{selectedItem}}
             title={{item.title}}
             profile-secret={{profileSecret}}
-            username={{username}} 
+            username={{username}}
             likes={{item.likes}}
             logged-in=[[loggedIn]]
             tags='[{"id": "1", "color": "red", "text": "ML"}]'
@@ -120,7 +120,7 @@
         userLikes: {
           type: Object,
           notify: true
-        }, 
+        },
         loggedIn: {
           type: Number
         },
@@ -163,7 +163,8 @@
             this.profileRecommendations.dismissedTrending = {};
           }
           //this.set('profileRecommendations.dismissedTrending.' + this.dismissObject.itemid, this.dismissObject.itemid);
-          this.profileRecommendations.dismissedTrending[this.dismissObject.itemid] = this.dismissObject.itemid;
+          //this.profileRecommendations.dismissedTrending[this.dismissObject.itemid] = this.dismissObject.itemid;
+          this.set('profileRecommendations.dismissedTrending.' + this.dismissObject.itemid, this.dismissObject.itemid);
           this.dismissObject.itemid = -1;
           console.log("kewl. added dimissed recommendation");
           this.trendingObjectChanged();
@@ -294,7 +295,7 @@
         } else {
           return false;
         }
-      }, 
+      },
       _keyPressed: function(e) {
         console.log("KEYPRESSED");
         //console.log(e.charCode);
