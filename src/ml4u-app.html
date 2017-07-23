@@ -253,7 +253,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main">
 
           <ml4u-page-feed trending-object={{trending}} name="feed" selected-item={{selectedItem}}
-                          profile-secret={{profileSecret}} username="{{username}}" user-likes="{{userLikes}}"
+                          profile-secret=[[profileSecret]] username="{{username}}" user-likes="{{userLikes}}"
                           profile-data="{{profileData}}" logged-in=[[loggedIn]]
                           profile-recommendations={{profileRecommendations}}></ml4u-page-feed>
 
@@ -281,7 +281,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
         <ml4u-view-session-and-item id="sessionAndItemView" selected-item="[[selectedItem]]" popup-display-session="[[popupDisplaySession]]"
-          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="{{profileSecret}}" user-likes="{{userLikes}}">
+          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="[[profileSecret]]" user-likes="{{userLikes}}">
         </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>

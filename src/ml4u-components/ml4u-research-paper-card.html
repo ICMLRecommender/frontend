@@ -307,11 +307,12 @@
         likeData.append('username', this.username);
         likeData.append('secret', this.profileSecret.value);
         likeData.append('paper_id', 'item'+this.paperId);
+        console.log(likeData);
 
         var xhr = new XMLHttpRequest();
         xhr.addEventListener('load', res => {
           console.log(res);
-          if (res.currentTarget.status == 400) {
+          if (res.currentTarget.status == 400 || res.currentTarget.status == 500) {
             console.log('Error liking paper!', res.currentTarget.responseText);
           }
         });
