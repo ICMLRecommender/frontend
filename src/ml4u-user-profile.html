@@ -102,7 +102,7 @@
         if (JSON.stringify(newLikes) === JSON.stringify(oldLikes)) {
           return
         }
-      }, 
+      },
       _secretChanged: function(newSecret, oldSecret) {
         console.log('_secretChanged', newSecret, oldSecret);
       },
@@ -127,8 +127,8 @@
             console.log("successfully logged in!");
             this.username = username;
             this.$.username_cookie.createCookie();
-            callbackfn(err, response);
           }
+          callbackfn(err, response);
         }.bind(this));
       },
       logout: function() {
@@ -139,10 +139,18 @@
             // network error
             return;
           }
-          this.$.username_cookie.eraseCookie();
-          this.username = null;
+          //destroy the databasse containing user information
+          new PouchDB(this.username).destroy().then(function () {
+            console.log("alright, everything's gucci.");
+            this.$.username_cookie.eraseCookie();
+            this.username = null;
+          }.bind(this)).catch(function (err) {
+            console.log("hm,, some error occurred while triyng to destry database with the following nameL");
+            console.log(this.username);
+            console.log(err);
+            // error occurred while trying to destroy the user database
+          })
         }.bind(this));
-
         //this.$.sync1.cancelSync();
       }
     });
