@@ -249,8 +249,8 @@
       },
       _getLikedClassString: function(userLikes, itemId) {
         if (this.userLikes) {
-            if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes['item'+itemId] != null){
-              if (this.userLikes.likes.hasOwnProperty('item'+itemId)) {
+            if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes[itemId] != null){
+              if (this.userLikes.likes.hasOwnProperty(itemId)) {
                 return 'liked'
               } else {
                 return ''
@@ -264,8 +264,8 @@
       },
       _hasUserLiked: function(userLikes, itemId) {
         if (this.userLikes) {
-            if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes['item'+itemId] != null){
-              return this.userLikes.likes.hasOwnProperty('item'+itemId);
+            if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes[itemId] != null){
+              return this.userLikes.likes.hasOwnProperty(itemId);
             } else {
               return false;
             }
@@ -306,7 +306,7 @@
         var likeData = new FormData();
         likeData.append('username', this.username);
         likeData.append('secret', this.profileSecret.value);
-        likeData.append('paper_id', 'item'+this.paperId);
+        likeData.append('paper_id', this.paperId);
         console.log(likeData);
 
         var xhr = new XMLHttpRequest();
