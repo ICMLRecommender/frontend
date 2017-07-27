@@ -12,12 +12,16 @@
       border-bottom-style: solid;
       border-bottom-width: 1px;
       border-bottom-color: #D0D0D0;
+      cursor: pointer;
     }
     paper-item.child {
       border-left-width: 17px;
     }
     paper-item.break {
       border-left-color: #4990E2;
+    }
+    paper-item:hover {
+      background: #fafafa;
     }
     span.sessiontype {
       color: white;
@@ -115,6 +119,29 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .session-title {
+      font-family: 'effra', sans-serif;
+      font-weight: 500;
+      color: #4a4a4a;
+      font-size: 1.2em;
+    }
+    .session-chair {
+      color: #888888;
+      margin-top: 2px;
+      margin-bottom: 5px;
+      font-weight: 400;
+      font-size: 1em !important;
+      font-family: 'effra', sans-serif !important;
+    }
+    .session-time {
+      color: #888888;
+      font-weight: 400;
+      font-size: 1.2em !important;
+      display: block;
+      margin-top: 6px;
+      margin-bottom: 2px;
+      font-family: 'effra', sans-serif !important;
+    }
 
     </style>
 
@@ -142,11 +169,11 @@
       <paper-item class$="{{listItem.type}}"  on-tap="_changeSelectedItem">
         <paper-item-body three-line>
           <div secondary>
-            <span>{{listItem.session_time_string}} &bull; {{listItem.session_location}}<span>
+            <span class="session-time">{{listItem.session_time_string}} &bull; {{listItem.session_location}}<span>
             <span style="float:right" class$="{{listItem.type}} sessiontype">{{listItem.type}}</span><br/>
           </div>
-          <div>{{listItem.session_title}}</div>
-          <div secondary>Chair: {{listItem.session_chair}}
+          <div class="session-title">{{listItem.session_title}}</div>
+          <div secondary class="session-chair">Chair: {{listItem.session_chair}}
             <span style="float:right" hidden$="true">
               <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
                           icon="icons:bookmark" class="bookmarked">

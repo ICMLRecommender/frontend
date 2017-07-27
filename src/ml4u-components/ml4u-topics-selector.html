@@ -112,7 +112,10 @@
         var path = e.path;
         var topicId = -1;
         var parentDiv;
-        for (var i=0; i < e.path.length; ++i) {
+        console.log(e);
+        console.log(e['_path']);
+        const path_length = e.path ? e.path.length : e._path.length; // safari workaround
+        for (var i=0; i < path_length; ++i) {
           if(e.path[i].id.includes("topic")) {
             parentDiv = e.path[i];
             id = e.path[i].id;

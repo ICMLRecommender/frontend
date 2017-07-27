@@ -135,12 +135,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 0 16px;
         text-decoration: none;
         color: var(--app-secondary-color);
-        line-height: 40px;
+        line-height: 46px;
+        color: #000000 !important;
       }
 
       .drawer-list a.iron-selected {
         color: black;
-        font-weight: bold;
+        font-weight: 500;
       }
 
       /***Styles related to the dialog***/
@@ -179,6 +180,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawerheader > .userdiv {
         position: absolute;
         bottom: 20px;
+        font-weight: 500;
       }
 
       .inner {
@@ -195,6 +197,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           height: 100%;
           @apply(--layout-vertical);
           @apply(--layout-flex);
+      }
+      .logout-wrapper {
+        padding: 0 16px;
+        cursor: pointer;
+      }
+      .nav-separator {
+        border: none;
+        border-top: 1px solid rgb(220,220,220);
+        width: 100%;
+        margin: 0;
+        margin-top: -10px;
+        margin-bottom: 20px;
       }
 
     </style>
@@ -218,13 +232,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!--<app-toolbar>ICML 2017</app-toolbar>-->
         <div class="drawerheader">
           <div class="title">ICML<br/>2017</div>
-          <div class="userdiv"><b>[[username]]</b></div>
+          <div class="userdiv">[[username]]</div>
         </div>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon><span class="menu-category-keyword">Feed</span></a>
           <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon><span class="menu-category-keyword">Schedule</span></a>
           <template is="dom-if" if="{{loggedIn}}">
-            <a name="library" href="/library"><iron-icon icon="image:collections-bookmark"></iron-icon><span class="menu-category-keyword">Library</span></a>
+            <a name="library" href="/library"><iron-icon icon="icons:book"></iron-icon><span class="menu-category-keyword">Library</span></a>
           </template>
           <template is="dom-if" if="{{!loggedIn}}">
             <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Register</span></a>
@@ -232,7 +246,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </iron-selector>
         <div hidden$="[[!loggedIn]]">
-          <button id="logoutbutton" type="button" on-tap="_logout">Logout</button>
+          <hr class="nav-separator"/>
+          <div class="logout-wrapper" on-tap="_logout">
+            <a name="logout"><iron-icon icon="icons:exit-to-app"></iron-icon><span class="menu-category-keyword">Log Out</span></a>
+            <!--<button id="logoutbutton" type="button" on-tap="_logout">Logout</button>-->
+          </div>
         </div>
       </app-drawer>
       <!-- Main content -->
