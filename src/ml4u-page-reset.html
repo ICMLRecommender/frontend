@@ -1,0 +1,246 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu-shared-styles.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu-icons.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="ml4u-page-reset">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+        background-size: cover;
+        background-color: white;
+       /* background: url("/images/sydney.png");
+        background-repeat: no-repeat;
+        background-position: bottom;*/
+        height: 100%;
+      }
+      #loginErrorDiv {
+        font-weight: bold;
+        color: red;
+      }
+      .infoDiv {
+        margin-top: 5px;
+        display: block;
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+        border: 1px solid transparent;
+        border-radius: 4px;
+         text-align: center;
+      }
+      .errorDiv {
+        margin-top: 5px;
+        display: block;
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        border: 1px solid transparent;
+        border-radius: 4px;
+         text-align: center;
+      }
+      form {
+        margin: auto;
+        width: 233.6px;
+      }
+      .cen {
+        margin: auto;
+        width: 20px;
+      }
+      .submitButton {
+        margin: 0 auto;
+        display: block;
+        max-width: 200px;
+        text-align: center;
+        background-color: #4990E2;
+        font-family: 'effra', sans-serif;
+        font-size: 1.1em;
+        font-weight: 500;
+        color: white;
+        letter-spacing: -0.21px;
+        text-transform: none;
+        margin-top: 20px;
+        border-radius: 6px;
+        padding: 10px;
+      }
+      .sydney {
+        width: 100%;
+        height: 300px;
+        background: url('/images/sydney.png');
+        background-size: cover;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        pointer-events: none;
+        margin: 0 auto;
+        max-width: 400px;
+      }
+      #changePassForm {
+        margin-top: 20px;
+      }
+    </style>
+    <div class="logo">
+      ICML<br/>2017
+    </div>
+    <div>
+      <form is="iron-form" id="requestPRForm">
+        <paper-input id="usernameInput" label="Username" type="text" value="mynewusername" required auto-validate></paper-input>
+        <div id="requestPR_infoForm"></div>
+        <paper-button class="submitButton" id="requestPRButton" raised noink on-tap="_requestPR">Request reset</paper-button>
+      </form>
+      <form is="iron-form" id="changePassForm">
+        <paper-input id="passwordInput" label="New Password" type="password" value="password" required auto-validate></paper-input>
+        <paper-input id="secretInput" label="Secret" type="text" value="" required auto-validate></paper-input>
+        <div id="changePass_infoForm"></div>
+        <paper-button class="submitButton" id="changePassButton" raised noink on-tap="_changePass">Change Password</paper-button>
+      </form>
+    </div>
+    <div class="sydney"></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ml4u-page-reset',
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        },
+        username: {
+          type: String,
+          notify: true
+        }
+      },
+      _changePass: function(e) {
+        if(!this.$.requestPRForm.validate() || !this.$.changePassForm.validate())
+          return;
+        prFormElements = new Object();
+        prFormElements.form_reqpr = this.$.requestPRForm;
+        prFormElements.form_passchange = this.$.changePassForm;
+        prFormElements.button_requestreset = this.$.requestPRButton;
+        prFormElements.button_changePass = this.$.changePassButton;
+        prFormElements.infoDiv = this.$.changePass_infoForm;
+
+        prFormElements.infoDiv.innerHTML = "";
+        prFormElements.infoDiv.className = "";
+        prFormElements.button_requestreset.disabled = true;
+        prFormElements.button_changePass.disabled = true;
+        prFormElements.username = this.$.usernameInput;
+        prFormElements.password = this.$.passwordInput;
+        prFormElements.secret = this.$.secretInput;
+
+        var callbackfunction = function(err, response) {
+          prFormElements.button_requestreset.disabled = false;
+          prFormElements.button_changePass.disabled = false;
+
+          var status = err.target.status;
+          var responseText = err.target.responseText;
+
+          if(status!=200) {
+            prFormElements.infoDiv.innerHTML = responseText;
+            prFormElements.infoDiv.className = "errorDiv";
+          }
+          else {
+            prFormElements.infoDiv.innerHTML = "Your password was successfully changed. Please navigate to the login screen and use your new credentials.";
+            prFormElements.infoDiv.className = "infoDiv";
+          }
+        }.bind(this);
+
+        username =  prFormElements.username.value;
+        password =  prFormElements.password.value;
+        secret   =  prFormElements.secret.value;
+
+        var postData = "username=" + username
+                      + "&password=" + password
+                      + "&secret=" + secret;
+        var uriEncodedPostData = encodeURI(postData);
+
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', callbackfunction);
+        xhr.addEventListener('error', function(e) {
+          prFormElements.infoDiv.innerHTML = "Unknown error occurred. Please try again.";
+          prFormElements.infoDiv.className = "errorDiv";
+          prFormElements.button_requestreset.disabled = false;
+          prFormElements.button_changePass.disabled = false;
+        }.bind(this));
+        xhr.open("POST", "http://localhost:8000/icml/reset_password/", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send(uriEncodedPostData);
+      },
+      _requestPR: function(e) {
+        if(!this.$.requestPRForm.validate())
+          return;
+        prFormElements = new Object();
+        prFormElements.form = this.$.requestPRForm;
+        prFormElements.button_requestreset = this.$.requestPRButton;
+        prFormElements.button_changePass = this.$.changePassButton;
+        prFormElements.infoDiv = this.$.requestPR_infoForm;
+
+        prFormElements.infoDiv.innerHTML = "";
+        prFormElements.infoDiv.className = "";
+        prFormElements.button_requestreset.disabled = true;
+        prFormElements.button_changePass.disabled = true;
+        prFormElements.username = this.$.usernameInput;
+
+        var callbackfunction = function(err, response) {
+          prFormElements.button_requestreset.disabled = false;
+          prFormElements.button_changePass.disabled = false;
+
+          var status = err.target.status;
+          var responseText = err.target.responseText;
+          console.log("LOGGING THE STUPID status");
+          console.log(responseText);
+
+          if(status!=200) {
+            prFormElements.infoDiv.innerHTML = responseText;
+            prFormElements.infoDiv.className = "errorDiv";
+          }
+          else {
+            prFormElements.infoDiv.innerHTML = "Password reset request has been sent. Please check your email.";
+            prFormElements.infoDiv.className = "infoDiv";
+          }
+        }.bind(this);
+
+        username = prFormElements.username.value;
+        var postData = "username=" + username;
+        var uriEncodedPostData = encodeURI(postData);
+
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', callbackfunction);
+        xhr.addEventListener('error', function(e) {
+          prFormElements.infoDiv.innerHTML = "Unknown error occurred. Please try again.";
+          prFormElements.infoDiv.className = "errorDiv";
+          prFormElements.button_requestreset.disabled = false;
+          prFormElements.button_changePass.disabled = false;
+        }.bind(this));
+        xhr.open("POST", "http://localhost:8000/icml/request_reset_password/", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send(uriEncodedPostData);
+
+        //console.log("username = ." + this.username + ".");
+        //this.set('route.path', '/home/');
+      }
+    });
+  </script>
+</dom-module>

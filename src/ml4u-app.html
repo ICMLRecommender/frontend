@@ -288,6 +288,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           -->
           <ml4u-page-register username="[[username]]" route="{{route}}" topics="{{topics}}" name="register"></ml4u-page-register>
           <ml4u-page-login class="content" username="[[username]]" route="{{route}}" name="login"></ml4u-page-login>
+          <ml4u-page-reset class="content" username="[[username]]" route="{{route}}" name="reset"></ml4u-page-reset>
           <ml4u-view404 name="view404"></ml4u-view404>
         </iron-pages>
       </app-header-layout>
@@ -331,7 +332,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         userLikes: {
           type: Object,
           notify: true,
-        }, 
+        },
         loggedIn: {
           type: Number,
           computed: '__computeLoggedIn(username)'
