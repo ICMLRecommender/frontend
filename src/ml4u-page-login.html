@@ -110,15 +110,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if(!this.$.loginForm.validate())
           return;
         var loginElements = new Object();
+        loginElements.loginForm = this.$.loginForm;
         loginElements.submitButton = this.$.submitButton;
         loginElements.loginErrorDiv = this.$.loginErrorDiv;
         loginElements.loginErrorDiv.innerHTML = "";
         loginElements.submitButton.disabled = true;
-        loginElements.username = this.$.usernameInput.value;
+        loginElements.username = this.$.usernameInput;
+        loginElements.password = this.$.passwordInput;
 
-        var password = this.$.passwordInput.value;
+        var username = loginElements.username.value;
+        var password = loginElements.password.value;
         var callbackfunction = function(err, response) {
-          console.log("hello");
+          //loginElements.username.value = "";
+          //loginElements.password.value = "";
           loginElements.submitButton.disabled = false;
           if(err) {
             if (err.name === 'unauthorized') {
@@ -129,11 +133,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           }
           else {
+            loginElements.loginForm.reset();
             this.set('route.path', '/');
           }
         }.bind(this);
 
-        window.ml4u.sharedElements.userProfileElement.login(loginElements.username, password, callbackfunction);
+        window.ml4u.sharedElements.userProfileElement.login(username, password, callbackfunction);
 
         //console.log("username = ." + this.username + ".");
         //this.set('route.path', '/home/');
