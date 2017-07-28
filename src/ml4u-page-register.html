@@ -145,7 +145,7 @@
             db = new PouchDB(loginElements.username);
             db.put({
               _id: 'preferred_topics',
-              topicids: selectedTopics
+              topic_cluster_ids: selectedTopics
             });
           }
           //whether successful or not, re-route to home page.

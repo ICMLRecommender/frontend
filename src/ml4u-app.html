@@ -358,7 +358,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       observers: [
         '_routePageChanged(routeData.page)',
-        '_queryItemIdChanged(queryParams.itemid)'
+        '_queryItemIdChanged(queryParams.itemid)',
+        '_pagePermissionCheck(page, loggedIn)'
       ],
 
       listeners : {
@@ -383,6 +384,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         else
           this.selectedItem = newVal;
 
+      },
+
+      _pagePermissionCheck: function() {
+        currentPage = this.page;
+        currentLoggedIn = this.loggedIn;
+        if(currentLoggedIn) {
+          if (currentPage == "login" || currentPage == "register" || currentPage == "reset")
+            this.page = "feed";
+        }
+        else {
+          if (currentPage == "library")
+            this.page = "feed";
+        }
       },
 
       _selectedItemChanged: function(newSelectedItemValue, oldValue) {
