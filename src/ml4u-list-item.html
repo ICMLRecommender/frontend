@@ -55,16 +55,16 @@
     span.poster {
       background-color: #00CC99;
     }
-    paper-item.invited.talk {
+    paper-item.invited_talk {
       border-left-color: #b8cefe;
     }
-    span.invited.talk {
+    span.invited_talk {
       background-color: #b8cefe;
     }
-    paper-item.oral {
+    paper-item.talk {
       border-left-color: #fcb168;
     }
-    span.oral {
+    span.talk {
       background-color: #fcb168;
     }
     paper-item.spotlight {
@@ -149,7 +149,7 @@
       <paper-item class="paper"  on-tap="_changeSelectedItem">
         <paper-item-body three-line>
           <div secondary>
-            <span>{{listItem.session_time}}<span>
+            <span>{{listItem.talk_session.time_start}}<span>
             <span style="float:right" class="paper sessiontype">Paper</span><br/>
           </div>
           <div>{{listItem.title}}</div>
@@ -166,14 +166,14 @@
     </template>
 
     <template is="dom-if" if="{{!isPaper}}">
-      <paper-item class$="{{listItem.type}}"  on-tap="_changeSelectedItem">
+      <paper-item class$="{{listItem.type_code}}"  on-tap="_changeSelectedItem">
         <paper-item-body three-line>
           <div secondary>
-            <span class="session-time">{{listItem.session_time_string}} &bull; {{listItem.session_location}}<span>
-            <span style="float:right" class$="{{listItem.type}} sessiontype">{{listItem.type}}</span><br/>
+            <span class="session-time">{{listItem.session_time_start}} - {{listItem.session_time_end}} &bull; {{listItem.location}}<span>
+            <span style="float:right" class$="{{listItem.type_code}} sessiontype">{{listItem.type}}</span><br/>
           </div>
-          <div class="session-title">{{listItem.session_title}}</div>
-          <div secondary class="session-chair">Chair: {{listItem.session_chair}}
+          <div class="wtf session-title">{{listItem.session}}</div>
+          <div secondary class="session-chair"><!--Chair: {{listItem.session_chair}}-->
             <span style="float:right" hidden$="true">
               <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
                           icon="icons:bookmark" class="bookmarked">
@@ -211,19 +211,26 @@
       },
       _changeSelectedItem: function(event, d, s) {
         console.log("_changeSelectedItem");
-        if(this.listItem.session_id == undefined)
-          return;
-        console.log("1");
+        console.log(this.isPaper);
+        console.log(this.listItem);
+        //if(this.listItem.session_id == undefined)
+        //  return;
         if(this.isPaper) {
           this.selectedItem = this.listItem.id;
           console.log("2");
           console.log(this.selectedItem);
         }
         else {
+          if(this.listItem.type_code != "talk")
+            return;
           this.selectedItem = this.listItem.session_id;
           console.log("3");
           console.log(this.selectedItem);
         }
+      },
+      ready: function() {
+        console.log("Ready called from ml4u-list-item");
+        console.log(this.listItem);
       }
 });
 

@@ -2,8 +2,8 @@
 <script src="../bower_components/pouchdb/dist/pouchdb.min.js"></script>
 <script>
 var sessionsDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule_icml2017');
-var itemsDb = new PouchDB('https://icml.papro.org.uk/couchdb/items');
-var authorsDb = new PouchDB('https://icml.papro.org.uk/couchdb/authors');
+var itemsDb = new PouchDB('https://icml.papro.org.uk/couchdb/papers_icml2017');
+//var authorsDb = new PouchDB('https://icml.papro.org.uk/couchdb/authors');
 var scheduleDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
 
 var allSessionDocs;
@@ -15,7 +15,7 @@ var items = {};
 var types = [];
 //var people = {};
 
-
+//put the session in the correct timeslot
 function sortSession(session, dayIndex) {
   start_time = new Date(session.session_time);
   selectedDaySessionsArray = sessions[dayIndex];
@@ -67,6 +67,13 @@ sessionsDb.allDocs({
       t_doc = allSessionDocs[sessDoc_index].doc;
       t_doc.session_id = t_doc.schedule_id;
 
+      //if this type hasn't been seen before, add it to the types Array
+      if(!types.includes(t_doc.type))
+        types.push(t_doc.type);
+
+      t_doc.type_code = t_doc.type.toLowerCase().replace(" ", "_");
+
+
       var dayIndex = -1;
       if(t_doc.day.substring(0, 3) == "Mon") {
         dayIndex = 0;
@@ -101,12 +108,44 @@ sessionsDb.allDocs({
         });
       }
     }
+
+    // concatenate the smaller slots into 1
+    // or append the break to the end of last slots
+    thresholdSessionCount = 4
+    for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
+      timeslots = sessions[dayIndex];
+      //put the concatenated timeslots here
+      timeslots_new = new Array();
+
+      currentTimeslotIndex = 0;
+      while(currentTimeslotIndex < timeslots.length) {
+        sub_timeslot = new Array();
+        //add the first one, regardless of whether it's above or below the threshold
+        do {
+          sub_timeslot.push(timeslots[currentTimeslotIndex]);
+          ++currentTimeslotIndex;
+        }
+        while(currentTimeslotIndex < timeslots.length && timeslots[currentTimeslotIndex].length < thresholdSessionCount);
+        timeslots_new.push(sub_timeslot);
+        /*if(timeslots[currentTimeslotIndex].length >= thresholdSessionCount) {
+          timeslots_new.push(timeslots[currentTimeslotIndex]);
+
+        }
+
+        while(currentTimeslotIndex < timeslots.length && timeslots[currentTimeslotIndex].length < thresholdSessionCount) {
+          timeslots_new.push(timeslots[currentTimeslotIndex]);
+          ++currentTimeslotIndex;
+        }*/
+      }
+      sessions[dayIndex] = timeslots_new;
+    }
+
     // populate dailySchedule
     for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
       timeslots = sessions[dayIndex];
       //console.log(timeslots);
       for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
-        str_time = timeslots[timeslotIndex][0].session_time;
+        str_time = timeslots[timeslotIndex][0][0].session_time;
         time = new Date(str_time);
         str_time_formatted = getFormattedHourMinute(time);
         dailySchedule[dayIndex].slots.push(str_time_formatted);
@@ -117,19 +156,95 @@ sessionsDb.allDocs({
     for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
       timeslots = sessions[dayIndex];
       for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
-        sessionInThisTimeSlot = timeslots[timeslotIndex];
-        for(var h=0; h<sessionInThisTimeSlot.length; ++h) {
-          t_session = sessionInThisTimeSlot[h];
-          t_session_id = t_session.session_id;
-          sessionIdToIndexMapping[t_session_id] = {"dayIndex" : dayIndex, "timeslotIndex": timeslotIndex, "sub_index": h};
+        subtimeslots = timeslots[timeslotIndex];
+        for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
+          sessionsInThisSubTimeSlot = subtimeslots[subtimeslotIndex];
+          if(sessionsInThisSubTimeSlot==undefined) {
+            var fdgd = 4;
+          }
+          for(var h=0; h<sessionsInThisSubTimeSlot.length; ++h) {
+            t_session = sessionsInThisSubTimeSlot[h];
+            t_session_id = t_session.schedule_id;
+            sessionIdToIndexMapping[t_session_id] = {"dayIndex" : dayIndex, "timeslotIndex": timeslotIndex, "subtimeslotIndex":subtimeslotIndex, "sub_index": h};
+          }
         }
       }
     }
-
     console.log(allSessionDocs);
   }).catch(function (err) {
     console.log(err);
   });
 
+  function transformItem(oldItem) {
+    var newItem = new Object();
+    newItem.id = oldItem.paper_id;
+    newItem.title = oldItem.title;
+    newItem.description = oldItem.abstract;
+    newItem.authors = oldItem.authors;
+    newItem.authorIds = null; //currently unavailable
+    newItem.pdf_url = oldItem.pdf_url;
+
+    if(oldItem.poster_schedule != null && oldItem.poster_schedule != undefined
+      && oldItem.poster_schedule.length == 1) {
+        newItem.poster_session = oldItem.poster_schedule[0];
+    }
+    if(oldItem.talk_schedule != null && oldItem.talk_schedule != undefined
+      && oldItem.talk_schedule.length == 1) {
+        newItem.talk_session = oldItem.talk_schedule[0];
+    }
+    return newItem;
+  }
+
+  itemsDb.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then(function (result) {
+      allOldItems = result.rows;
+      console.log(allOldItems);
+
+      for (var property in allOldItems) {
+        if (!allOldItems.hasOwnProperty(property)) {
+          continue;
+        }
+        newItem = transformItem(allOldItems[property].doc);
+
+        /*add authorsString*/
+        if(newItem.authors != undefined && newItem.authors != null) {
+          if(typeof(newItem.authors) == "string") {
+            console.log("WAAAA?!");
+            console.log(newItem);
+          }
+          newItem.authorsString = newItem.authors.join(", ");
+          console.log("HERE IS THE FUCKING NEW AUTHORSSTRING:");
+          console.log(newItem.authorsString);
+        }
+        else {
+          newItem.authorString = "";
+        }
+
+        items[newItem.id] = newItem;
+      }
+    }).catch(function (err) {
+      console.log(err);
+    });
+
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    async function demo() {
+      await sleep(5000);
+      scheduleDb.put({
+        _id: 'schedule_icml2017',
+        sessions: sessions,
+        dailySchedule: dailySchedule,
+        items: items,
+        sessionIdToIndexMapping: sessionIdToIndexMapping
+
+      });
+      console.log("done");
+    }
+
+//demo();
 </script>
 </html>

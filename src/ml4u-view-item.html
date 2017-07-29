@@ -140,7 +140,8 @@
         <div class="papertitle">[[itemObject.title]]</div>
         <div>
           <template is="dom-repeat" items="{{itemObject.authors}}">
-              <a dialog-confirm href="/person?id=[[item.id]]" class="authorlink">[[item.name]]</a>
+            <!--<a dialog-confirm href="/person?id=[[item.id]]" class="authorlink">[[item.name]]</a>-->
+            <span class="authorlink">[[item]]</span>
           </template>
         </div>
         <div class="actions">
@@ -148,16 +149,26 @@
           <paper-icon-button icon="icons:favorite" id="likeIcon" class$="papericon [[likedClassString]] [[optimisticLikeString]]" on-click='_toggleLike'></paper-icon-button>
         </div>
     </section>
-    <section class="cardBlock">
+<!--    <section class="cardBlock">
       <div class="sectionTitleContainer">
         <span class="sectiontitle">Topics</span><span class="sectionInfo">Stats, ML</span>
       </div>
     </section>
+-->
+  <template is="dom-if" if="[[itemObject.has_talk]]">
     <section class="cardBlock">
       <div class="sectionTitleContainer">
-        <span class="sectiontitle">Session</span><span class="sectionInfo">Sat 2pm, Room 12</span>
+        <span class="sectiontitle">Talk</span><span class="sectionInfo">[[itemObject.talk_string]]</span>
       </div>
     </section>
+  </template>
+  <template is="dom-if" if="[[itemObject.has_poster]]">
+    <section class="cardBlock">
+      <div class="sectionTitleContainer">
+        <span class="sectiontitle">Poster</span><span class="sectionInfo">[[itemObject.poster_string]]</span>
+      </div>
+    </section>
+  </template>
     <section class="cardBlock">
       <div class="sectionTitleContainer">
         <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" on-click='_toggleAbstract'></paper-icon-button></span>
@@ -266,7 +277,7 @@
       userLikes: {
         type: Object,
         notify: true
-      }, 
+      },
       hasUserLiked: {
         type: Boolean,
         computed: '_hasUserLiked(userLikes, itemId)',
@@ -433,7 +444,7 @@
         } else {
           return false;
         }
-    }, 
+    },
     _getLikedClassString: function(userLikes, itemId) {
       if (this.userLikes) {
           if (this.userLikes.hasOwnProperty('likes') && this.userLikes.likes[itemId] != null){

@@ -49,9 +49,9 @@ span.loc {
   </section>
   <section class="container">
     <div id="sessionInfo">
-      <div class="timeandloc"><span>{{session.session_time_string}}</span><span class="loc">{{session.session_location}}</span></div>
-      <div class="sessionTitle">{{session.session_title}}</div>
-      <div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>
+      <div class="timeandloc"><span>{{session.session_time_start}} - {{session.session_time_end}}</span><span class="loc">{{session.location}}</span></div>
+      <div class="sessionTitle">{{session.session}}</div>
+      <!--<div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>-->
     </div>
     <div id="papersDiv">
       <template is="dom-repeat" items="{{papers}}" initialCount="10">
@@ -130,6 +130,8 @@ span.loc {
         return {};
       }
       session = window.ml4u.sharedElements.scheduleDataProvider.getSession(sessionId);
+      console.log("returning session:");
+      console.log(session);
       return session;
     },
     _computePapersList: function(sessionId) {

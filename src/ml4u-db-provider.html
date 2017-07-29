@@ -8,13 +8,13 @@
 
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="schedulenew"
+      doc-id="schedule_icml2017"
       data="{{scheduleData}}">
     </app-pouchdb-document>
 
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="trending"
+      doc-id="trending_2017"
       data="{{trending}}">
     </app-pouchdb-document>
 
@@ -69,6 +69,7 @@
           return [];
         return this.scheduleData.sessions[day][track];
       },
+      //TODO: consider removing.
       getPostersSchedule: function(day) {
         if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
           return [];
@@ -122,12 +123,47 @@
           return {};
 
         var item = orgItem;
+        if(item.talk_session != undefined) {
+          item.has_talk = true;
+
+          var sessionId = item.talk_session.schedule_id;
+          mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
+          session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+
+          dayString= session.day.substring(0, 3);
+          start_time = session. session_time_start;
+          locationString = session.location;
+          item.talk_string = dayString + " " + start_time + ", " + locationString;
+          //item.talk_string = "hello?!";
+        }
+        else {
+          item.has_talk = false;
+        }
+
+        if(item.poster_session != undefined) {
+          item.has_poster = true;
+
+          var sessionId = item.poster_session.schedule_id;
+          mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
+          session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+
+          dayString= session.day.substring(0, 3);
+          start_time = session. session_time_start;
+          locationString = session.location;
+          item.poster_string = dayString + " " + start_time + ", " + locationString;
+          //item.talk_string = "hello?!";
+        }
+        else {
+          item.has_poster = false;
+        }
+
+        /*
         item.authors = new Array();
         for(var i in orgItem.authorIds) {
           var authorId = orgItem.authorIds[i];
           var person = this.scheduleData.people[authorId];
           item.authors.push(person);
-        }
+        }*/
         console.log("Returning the following object:");
         console.log(item);
         return item;
@@ -153,21 +189,27 @@
         mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
         if(mapping == undefined)
           return {};
-        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.sub_index];
+        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
         return session;
       },
       getSessionItems: function(sessionId) {
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)
           return {};
         mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
-        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.sub_index];
-        papers_ids = session.talks;
+        console.log("retrieved mapping:");
+        console.log(mapping);
+        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+        console.log("retrieved session:");
+        console.log(session);
+        papers_ids = session.content;
         items = [];
         for (var i=0; i<papers_ids.length; ++i) {
           itemid = papers_ids[i].paper_id;
           item = this.scheduleData.items[itemid];
           items.push(item);
         }
+        console.log("returning the following items:");
+        console.log(items);
         return items;
       },
       getSessionsDaysArray: function() {

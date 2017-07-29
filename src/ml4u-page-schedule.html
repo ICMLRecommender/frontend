@@ -11,13 +11,22 @@
       .items_list {
         background-color: white;
       }
+      .subtimeslot {
+        border-bottom-style: solid;
+        border-bottom-width: 3px;
+        border-bottom-color: #D0D0D0;
+      }
     </style>
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
     <ml4u-nav selected-index="{{selectedDay}}" selected-sub-index={{selectedTrack}} tabs="[[_tabs]]" ></ml4u-nav>
     <div class="items_list">
-      <template is="dom-repeat" items="{{_items}}" initialCount="10">
-        <ml4u-list-item list-item="{{item}}"
-            selected-item="{{selectedItem}}" is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+      <template is="dom-repeat" items="{{_items}}" as="subtimeslot" initialCount="10">
+        <div class="subtimeslot">
+          <template is="dom-repeat" items="{{subtimeslot}}" as="session" initialCount="10">
+            <ml4u-list-item list-item="{{session}}"
+                selected-item="{{selectedItem}}" is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+          </template>
+        </div>
       </template>
     </div>
   </template>
