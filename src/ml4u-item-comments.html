@@ -237,6 +237,7 @@
         } else {
           this.set('addCommentFlow.succeeded', true);
           this.$$('#commentInput').value = "";
+          newComment['id'] = JSON.parse(res.currentTarget.response).id;
           this.push('commentsArray', newComment);
         }
       });
