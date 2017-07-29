@@ -288,6 +288,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           -->
           <ml4u-page-register username="[[username]]" route="{{route}}" topics="{{topics}}" name="register"></ml4u-page-register>
           <ml4u-page-login class="content" username="[[username]]" route="{{route}}" name="login"></ml4u-page-login>
+          <ml4u-page-reset class="content" username="[[username]]" route="{{route}}" name="reset"></ml4u-page-reset>
           <ml4u-view404 name="view404"></ml4u-view404>
         </iron-pages>
       </app-header-layout>
@@ -303,6 +304,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
+    </paper-dialog>
+
+    <paper-dialog id="wrongBrowser" modal>
+      <p>The browser you are using is not supported. Please use the newest version of either Google Chrome or Safari.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+      </div>
     </paper-dialog>
   </template>
 
@@ -331,7 +339,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         userLikes: {
           type: Object,
           notify: true,
-        }, 
+        },
         loggedIn: {
           type: Number,
           computed: '__computeLoggedIn(username)'
@@ -357,7 +365,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       observers: [
         '_routePageChanged(routeData.page)',
-        '_queryItemIdChanged(queryParams.itemid)'
+        '_queryItemIdChanged(queryParams.itemid)',
+        '_pagePermissionCheck(page, loggedIn)'
       ],
 
       listeners : {
@@ -382,6 +391,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         else
           this.selectedItem = newVal;
 
+      },
+
+      _pagePermissionCheck: function() {
+        currentPage = this.page;
+        currentLoggedIn = this.loggedIn;
+        if(currentLoggedIn) {
+          if (currentPage == "login" || currentPage == "register" || currentPage == "reset")
+            this.page = "feed";
+        }
+        else {
+          if (currentPage == "library")
+            this.page = "feed";
+        }
       },
 
       _selectedItemChanged: function(newSelectedItemValue, oldValue) {
@@ -486,6 +508,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u.helperfunctions = window.ml4u.helperfunctions || {};
         window.ml4u.helperfunctions.bookmarkItem = this.bookmarkItem;
 
+        var isChrome = !!window.chrome && !!window.chrome.webstore;
+        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        if(!isChrome && !isSafari ) {
+          this.$.wrongBrowser.open();
+        }
       },
 
       bookmarkItem: function() {

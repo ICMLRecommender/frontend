@@ -72,7 +72,7 @@
       <div id="registerErrorDiv" class="errorDiv"></div>
       <br/>
       <br/>
-      <ml4u-topics-selector topics={{topics}} selected-topics={{selectedTopics}}></ml4u-topics-selector>
+      <ml4u-topics-selector id="topicsSelector" topics={{topics}} selected-topics={{selectedTopics}}></ml4u-topics-selector>
       <br/>
       <paper-button id="submitButton" raised noink on-tap="_submit">Register</paper-button>
     </form>
@@ -118,6 +118,7 @@
         }
 
         var loginElements = new Object();
+        loginElements.form = this.$.registerForm;
         loginElements.submitButton = this.$.submitButton;
         loginElements.registerErrorDiv = this.$.registerErrorDiv;
         loginElements.registerErrorDiv.innerHTML = "";
@@ -144,7 +145,7 @@
             db = new PouchDB(loginElements.username);
             db.put({
               _id: 'preferred_topics',
-              topicids: selectedTopics
+              topic_cluster_ids: selectedTopics
             });
           }
           //whether successful or not, re-route to home page.
@@ -165,6 +166,8 @@
             return;
           }
           console.log(this);
+          loginElements.form.reset();
+
           window.ml4u.sharedElements.userProfileElement.login(loginElements.username, loginElements.password, callbackfunction_afterLogin);
         }.bind(this);
 
