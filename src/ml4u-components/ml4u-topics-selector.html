@@ -80,14 +80,16 @@
     </div>
     <div style="clear: both;">
     <template is="dom-repeat" items="{{topics.topics}}">
-      <div style="clear:both;" class="topic" on-tap="toggleTopic" id="topic{{index}}">
+      <div style="clear:both;" class$="topic {{selectedClassString(index, recalculate)}}" on-tap="toggleTopic" id="topic{{index}}" data-topicId$="{{index}}">
         <div class="check">
           <iron-icon icon="icons:check"></iron-icon>
         </div>
         <div class="topic-info">
           <span class="topicTitle">{{item.title}}</span><br/>
-          <div class="keywords"><span class="keywordsTitle">Keywords: </span>
-          <span class="keywordsList"><template is="dom-repeat" items={{item.keywords}} as="keyword">{{keyword}} </template></span><div>
+          <div class="keywords">
+            <span class="keywordsTitle">Keywords: </span>
+            <span class="keywordsList"><template is="dom-repeat" items={{item.keywords}} as="keyword">{{keyword}} </template></span>
+          </div>
         </div>
       </div>
     </template>
@@ -102,37 +104,28 @@
           type: Object,
           notify: true
         },
+        recalculate: {
+          type: Boolean
+        }, 
         selectedTopics: {
           type: Object,
           notify: true,
           value: {}
         }
       },
-      toggleTopic: function(e) {
-        var path = e.path;
+      selectedClassString: function(index) {
+        return this.selectedTopics.hasOwnProperty(String(index)) ? 'selected' : '';
+      }, 
+      toggleTopic: function(event) {
         var topicId = -1;
-        var parentDiv;
-        console.log(e);
-        console.log(e['_path']);
-        const path_length = e.path ? e.path.length : e._path.length; // safari workaround
-        for (var i=0; i < path_length; ++i) {
-          if(e.path[i].id.includes("topic")) {
-            parentDiv = e.path[i];
-            id = e.path[i].id;
-            topicId = Number(id.substr(5));
-            break;
-          }
-        }
+        topicId = event.model.__data__.index;
 
-        if(parentDiv.className.includes("selected")) {
-          strIndex_start = parentDiv.className.indexOf("selected");
-          parentDiv.className = parentDiv.className.substr(0, strIndex_start);
-          delete this.selectedTopics[''+topicId];
+        if (this.selectedTopics.hasOwnProperty(String(topicId))) {
+          delete this.selectedTopics[String(topicId)];
+        } else {
+          this.selectedTopics[String(topicId)] = topicId;
         }
-        else {
-          parentDiv.className += " selected";
-          this.selectedTopics[''+topicId] = topicId;
-        }
+        this.recalculate = !this.recalculate; // this forces a recompute of which elements should have .selected
       },
       resetTopics: function(e) {
 

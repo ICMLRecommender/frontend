@@ -71,14 +71,16 @@
           value: []
         },
         profileSecret: {
-          	type: Object,
-          	notify: true,
-            observer: '_secretChanged'
+          type: Object,
+          value: null,
+          notify: true,
+          observer: '_secretChanged'
         },
         userLikes: {
           type: Object,
           notify: true,
-          observer: '_userLikesChanged'
+          value: null,
+          observer: '_userlikesChanged'
         },
         profileRecommendations: {
           	type: Object,
@@ -100,11 +102,14 @@
       _userLikesChanged: function(newLikes, oldLikes) {
         console.log('_userLikesChanged called. new likes:', newLikes, 'old likes', oldLikes);
         if (JSON.stringify(newLikes) === JSON.stringify(oldLikes)) {
-          return
+          return;
         }
       },
       _secretChanged: function(newSecret, oldSecret) {
         console.log('_secretChanged', newSecret, oldSecret);
+        if (JSON.stringify(newSecret) === JSON.stringify(oldSecret)) {
+          return;
+        }
       },
       create: function() {
         var PouchDB = require("pouchdb");

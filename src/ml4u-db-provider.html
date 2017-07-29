@@ -113,7 +113,7 @@
         return personObject;
       },
       getItem: function(itemId) {
-        console.log("getItem called with itemId " + itemId);
+        //console.log("getItem called with itemId " + itemId);
         if(this.scheduleData == undefined || this.scheduleData.items == undefined) {
           console.log("Returning an empty object =(");
           return {};
@@ -163,16 +163,16 @@
           var authorId = orgItem.authorIds[i];
           var person = this.scheduleData.people[authorId];
           item.authors.push(person);
-        }*/
-        console.log("Returning the following object:");
-        console.log(item);
+        }
+        //console.log("Returning the following object:");
+        //console.log(item);
         return item;
       },
       getItemLikes: function(itemId) {
-        console.log('Getting likes for item ', itemId);
+        //console.log('Getting likes for item ', itemId);
         const db = new PouchDB('https://icml.papro.org.uk/couchdb/userlikes');
         return db.get(itemId).then(doc => {
-          console.log()
+          //console.log()
           return doc.likes ? doc.likes : {};
         }).catch(err => {
           return {};
