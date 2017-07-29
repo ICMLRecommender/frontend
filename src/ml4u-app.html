@@ -305,6 +305,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
     </paper-dialog>
+
+    <paper-dialog id="wrongBrowser" modal>
+      <p>The browser you are using is not supported. Please use the newest version of either Google Chrome or Safari.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+      </div>
+    </paper-dialog>
   </template>
 
   <script>
@@ -501,6 +508,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u.helperfunctions = window.ml4u.helperfunctions || {};
         window.ml4u.helperfunctions.bookmarkItem = this.bookmarkItem;
 
+        var isChrome = !!window.chrome && !!window.chrome.webstore;
+        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        if(!isChrome && !isSafari ) {
+          this.$.wrongBrowser.open();
+        }
       },
 
       bookmarkItem: function() {

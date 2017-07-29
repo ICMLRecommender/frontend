@@ -45,20 +45,25 @@
         isReady: {
           type: Number,
           notify: true
+        },
+        scheduleDataDownloaded: {
+          type: Number,
+          value: 0
         }
       },
-      /*
       observers: [
         'scheduleDataChanged(scheduleData.*)'
       ],
       scheduleDataChanged(e) {
         if(this.scheduleData == undefined || this.scheduleData._rev == undefined)
           return;
-
         console.log("scheduleDataChanged called");
-        console.log(this.scheduleData);
-        //this.fire('iron-signal', {name: 'schedule', data: null});
-      },*/
+        if(!this.scheduleDataDownloaded)
+          return;
+        console.log("executing scheduleDataChanged");
+        //console.log(this.scheduleData);
+        this.fire('iron-signal', {name: 'schedule', data: null});
+      },
       getSessionsSchedule: function(day, track) {
         if(this.scheduleData == undefined || this.scheduleData.sessions == undefined)
           return [];
@@ -185,7 +190,9 @@
           if(!this.isReady) {
             this.isReady = 1;
           }
+          //fire from two different places, to make sure we update the feed, whichever ones executes first.
           this.fire('iron-signal', {name: 'schedule', data: null});
+          this.scheduleDataDownloaded = 1;
           window.ml4u.schedDB_local.close();
           window.ml4u.shedDB_remote.close();
         }.bind(this)).on('error', function (err) {
