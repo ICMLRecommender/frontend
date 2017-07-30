@@ -130,7 +130,7 @@
       margin-top: 2px;
       margin-bottom: 5px;
       font-weight: 400;
-      font-size: 1em !important;
+      font-size: 1.1em;
       font-family: 'effra', sans-serif !important;
     }
     .session-time {
@@ -149,12 +149,12 @@
       <paper-item class="paper"  on-tap="_changeSelectedItem">
         <paper-item-body three-line>
           <div secondary>
-            <span>{{listItem.talk_session.time_start}}<span>
+            <span class="session-time">{{listItem.talk_session.time_start}}<span>
             <span style="float:right" class="paper sessiontype">Paper</span><br/>
           </div>
-          <div>{{listItem.title}}</div>
+          <div class="session-title">{{listItem.title}}</div>
           <div secondary>
-            <span id="authorsString">{{listItem.authorsString}}</span>
+            <span id="authorsString" class="session-chair">{{listItem.authorsString}}</span>
             <span style="float:right" hidden$="true">
               <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
                           icon="icons:bookmark" class="bookmarked">
