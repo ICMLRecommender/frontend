@@ -24,7 +24,7 @@
         <div class="subtimeslot">
           <template is="dom-repeat" items="{{subtimeslot}}" as="session" initialCount="10">
             <ml4u-list-item list-item="{{session}}"
-                selected-item="{{selectedItem}}" is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+                selected-item="{{selectedItem}}" is-bookmarked=[[session.isBookmarked]]></ml4u-list-item>
           </template>
         </div>
       </template>
@@ -76,31 +76,55 @@
       '_onSelectedItemsChanged(selectedDay, selectedTrack)',
       'updateBookmarks(_items, profileData.bookmarks)'
     ],
-    updateBookmarks: function(sessions, profileData) {
+    updateBookmarks: function(subtimeslots, profileData) {
       //console.log("updateBookmarks called?! from page-schedule");
-      if(sessions == undefined) {
+      if(subtimeslots == undefined) {
         return;
       }
 
       //performing the if out the for loop, so I don't have to evaluate it N times
       if(this.loggedIn && this.profileData.bookmarks != undefined) {
-        this._items[0].isBookmarked = 1;
-        for(var sessionId=0; sessionId<sessions.length; ++sessionId) {
-          current_session = sessions[sessionId];
-          cs_items = current_session.talks;
-          isBookmarked = false;
-          for (var itemIndex=0; itemIndex<cs_items.length; ++itemIndex) {
-            if(this.profileData.bookmarks[cs_items[itemIndex].paper_id]) {
-              //console.log("success!");
-              isBookmarked = true;
+        //this._items[0].isBookmarked = 1;
+        for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
+          sessions = subtimeslots[subtimeslotIndex];
+          // go through all sessions
+          for(var sessionId=0; sessionId<sessions.length; ++sessionId) {
+            current_session = sessions[sessionId];
+            cs_items = current_session.content;
+            isBookmarked = false;
+
+            if(current_session.type_code != "talk") {
+              console.log("W T W MAN");
+              console.log(current_session);
               break;
             }
+
+            for (var itemIndex=0; itemIndex<cs_items.length; ++itemIndex) {
+              if(this.profileData.bookmarks[cs_items[itemIndex].paper_id]) {
+                //console.log("success!");
+                console.log("AHA! 1 item was found to be bookmarked");
+                isBookmarked = true;
+                break;
+              }
+            }
+            //this._items[subtimeslotIndex][sessionId].isBookmarked = isBookmarked;
+            this.set('_items.' + subtimeslotIndex + "." + sessionId + ".isBookmarked", isBookmarked);
+            //this.set('_items' + '.0.0.isBookmarked', this._items[0][0].isBookmarked);
+            console.log("set the following to :" + isBookmarked);
+            console.log(subtimeslotIndex);
+            console.log(sessionId);
+            console.log(this._items[subtimeslotIndex][sessionId].isBookmarked);
+            //this._items[sessionId].isBookmarked = 1;
           }
-          this.set('_items.' + sessionId + ".isBookmarked", isBookmarked);
-          //this._items[sessionId].isBookmarked = 1;
         }
-        //console.log("loggin sessions afterwards:");
-        //console.log(this._items);
+        /*
+        //this dummyVar is used to trigger reload of the items
+        newDummyVarValue = this._items[0].dummyVar ? false : true;
+        this.set('_items.0.dummyVar', newDummyVarValue);
+        /*TODO: list appears to update w/o the above code.*/
+        //this.set('_items.0.0.isBookmarked', this._items[0][0].isBookmarked);
+        console.log(this._items);
+
       }
       else {
         for(var i=0; i<sessions.length; ++i) {
