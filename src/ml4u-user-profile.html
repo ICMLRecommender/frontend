@@ -100,10 +100,10 @@
         console.log(this.profileData);
       },
       _userLikesChanged: function(newLikes, oldLikes) {
-        console.log('_userLikesChanged called. new likes:', newLikes, 'old likes', oldLikes);
+        /*console.log('_userLikesChanged called. new likes:', newLikes, 'old likes', oldLikes);
         if (JSON.stringify(newLikes) === JSON.stringify(oldLikes)) {
           return;
-        }
+        }*/
       },
       _secretChanged: function(newSecret, oldSecret) {
         console.log('_secretChanged', newSecret, oldSecret);
@@ -150,8 +150,7 @@
             this.$.username_cookie.eraseCookie();
             this.username = null;
           }.bind(this)).catch(function (err) {
-            console.log("hm,, some error occurred while triyng to destry database with the following nameL");
-            console.log(this.username);
+            console.log("hm,, some error occurred while triyng to destry database with the following name:", this.username);
             console.log(err);
             // error occurred while trying to destroy the user database
           })

@@ -271,14 +271,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main">
 
           <ml4u-page-feed trending-object={{trending}} name="feed" selected-item={{selectedItem}}
-                          profile-secret=[[profileSecret]] username="{{username}}" user-likes="{{userLikes}}"
+                          profile-secret=[[profileSecret]] username="{{username}}" user-likes="[[userLikes]]"
                           profile-data="{{profileData}}" logged-in=[[loggedIn]]
                           profile-recommendations={{profileRecommendations}}></ml4u-page-feed>
 
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="[[username]]" profile-data="[[profileData]]" logged-in=[[loggedIn]] name="schedule"></ml4u-page-schedule>
-          <ml4u-page-library name="library" selected-item={{selectedItem}} profile-data="{{profileData}}" logged-in=[[loggedIn]]></ml4u-page-library>
+          <ml4u-page-library name="library" selected-item={{selectedItem}} profile-data="{{profileData}}" logged-in=[[loggedIn]] user-likes="[[userLikes]]" ></ml4u-page-library>
           <ml4u-page-person  name="person" selected-item={{selectedItem}}
           profile-data="{{profileData}}" logged-in=[[loggedIn]]
           route=[[route]] selected-page=[[page]]></ml4u-page-person>
@@ -300,7 +300,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="itemDialog" with-backdrop>
       <paper-dialog-scrollable>
         <ml4u-view-session-and-item id="sessionAndItemView" selected-item="[[selectedItem]]" popup-display-session="[[popupDisplaySession]]"
-          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="[[profileSecret]]" user-likes="{{userLikes}}">
+          profile-data="{{profileData}}" logged-in="[[loggedIn]]" username="{{username}}" profile-secret="[[profileSecret]]" user-likes="[[userLikes]]">
         </ml4u-view-session-and-item>
         <shop-snackbar id="loginReminderSnackbar">Please login first.</shop-snackbar>
       </paper-dialog-scrollable>
@@ -342,7 +342,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         loggedIn: {
           type: Number,
-          computed: '__computeLoggedIn(username)'
+          computed: '__computeLoggedIn(username)',
+          observer: '_loggedInChanged'
         },
         selectedItem: {
           type: String,
@@ -452,7 +453,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           event.preventDefault();
         }
       },
-
+      _loggedInChanged: function(newVal, oldVal) {
+        if (newVal == 0) {
+          this.userLikes = null;
+        }
+      },
       __computeLoggedIn: function(username) {
         return this.username == null ? 0 : 1;
       },

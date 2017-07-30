@@ -21,12 +21,15 @@
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
     <template is="dom-repeat" items="{{_toBookmarksArray(profileData.bookmarks)}}" initialCount="10">
       <ml4u-research-paper-card
-        paper-id={{item.id}} selected-item={{selectedItem}}
+        paper-id={{item.id}} 
+        selected-item={{selectedItem}}
         title={{item.title}}
+        user-likes=[[userLikes]]
         tags='[{"id": "1", "color": "red", "text": "ML"}]'
         authors-string='[[item.authorsString]]'
         is-bookmarked=1
-        profile-data={{profileData}} logged-in=[[loggedIn]]>
+        profile-data={{profileData}} 
+        logged-in=[[loggedIn]]>
       </ml4u-research-paper-card>
     </template>
   </template>

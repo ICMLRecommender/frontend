@@ -62,7 +62,7 @@
     <div class="paperList">
         <template is="dom-repeat" items="{{displayedItems}}" initialCount="10">
           <ml4u-research-paper-card
-            user-likes={{userLikes}}
+            user-likes=[[userLikes]]
             paper-id={{item.id}} selected-item={{selectedItem}}
             title={{item.title}}
             profile-secret=[[profileSecret]]
@@ -122,7 +122,6 @@
         },
         userLikes: {
           type: Object,
-          notify: true
         },
 /*        loggedIn: {
           type: Number
@@ -154,6 +153,9 @@
             this.setDisplayedItems();
             //^ if this doesn't work, I can just set the recommendations to null and call the rest myself!
           }
+        }
+        if (newVal == 0) {
+          //this.userLikes = null;
         }
       },
       dismissObjectChanged: function() {
