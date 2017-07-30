@@ -84,7 +84,10 @@
     Polymer({
       is: 'ml4u-page-feed',
       properties: {
-        loggedIn: Number,
+        loggedIn: {
+          type: Number,
+          observer: '_loggedInChanged'
+        },
         profileData: {
           type: Object,
           notify: true
@@ -121,9 +124,9 @@
           type: Object,
           notify: true
         },
-        loggedIn: {
+/*        loggedIn: {
           type: Number
-        },
+        },*/
         profileRecommendations: {
           type: Object,
           notify: true,
@@ -138,6 +141,21 @@
         'updateRecommendations(profileRecommendations)',
         'dismissObjectChanged(dismissObject.itemid)'
       ],
+      _loggedInChanged: function(newVal, oldVal) {
+        console.log("_loggedInChanged called");
+        console.log(newVal);
+        console.log(oldVal);
+        if(oldVal && !newVal) {
+          console.log("inside first if-statement");
+          if(!this.showingSearchResults) {
+            console.log("inside second if-statement");
+            //this.updateRecommendations();
+            this.recommendedItems = null;
+            this.setDisplayedItems();
+            //^ if this doesn't work, I can just set the recommendations to null and call the rest myself!
+          }
+        }
+      },
       dismissObjectChanged: function() {
         if(this.dismissObject.recommended) {
           if(!this.loggedIn || this.profileRecommendations == null || this.profileRecommendations == undefined) {
@@ -172,8 +190,8 @@
         //console.log("DismissObjectChangedCalled");
       },
       updateRecommendations: function() {
-        console.log("hello");
         if(this.profileRecommendations == null || this.profileRecommendations == undefined || this.profileRecommendations.papers == undefined) {
+          this.recommendedItems = null;
           return;
         }
         if(this.profileRecommendations.latestdismissed == undefined) {
@@ -202,12 +220,17 @@
         if(this.showingSearchResults) {
           return;
         }
+        console.log(this.recommendedItems);
+        console.log("^ those were the recommended items");
         if(this.recommendedItems == null || this.recommendedItems == undefined) {
+          console.log("setting dispalyed items to treding items");
           this.displayedItems = this.trendingItems;
+          console.log(this.displayedItems);
         }
         else {
           this.displayedItems = this.trendingItems.concat(this.recommendedItems);
         }
+        this.updateBookmarks(this.displayedItems, this.profileData);
       },
       trendingObjectChanged: function(newVal, oldVal) {
         if(this.trendingObject == undefined || this.trendingObject.trendingids == undefined)
@@ -265,7 +288,8 @@
         searchString = searchString.trim();
         if(searchString.length == 0) {
           this.showingSearchResults = false;
-          this.displayedItems = this.trendingItems;
+          //this.displayedItems = this.trendingItems;
+          this.setDisplayedItems();
           return;
         }
         this.showingSearchResults = true;
