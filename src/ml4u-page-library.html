@@ -19,7 +19,7 @@
       }
     </style>
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
-    <template is="dom-repeat" items="{{_toBookmarksArray(profileData.bookmarks)}}" initialCount="10">
+    <template is="dom-repeat" items="{{_getLibraryItems(profileData.bookmarks, userLikes.likes)}}" initialCount="10">
       <ml4u-research-paper-card
         paper-id={{item.id}} 
         selected-item={{selectedItem}}
@@ -27,7 +27,7 @@
         user-likes=[[userLikes]]
         tags='[{"id": "1", "color": "red", "text": "ML"}]'
         authors-string='[[item.authorsString]]'
-        is-bookmarked=1
+        is-bookmarked="{{_isBookmarked(profileData.bookmarks, item.id)}}"
         profile-data={{profileData}} 
         logged-in=[[loggedIn]]>
       </ml4u-research-paper-card>
@@ -49,11 +49,19 @@
         },
         displayedItems: {
           type: Object
+        },
+        userLikes: {
+          type: Object
         }
       },
       observers: [
         //'updateBookmarks(displayedItems, profileData.bookmarks)'
       ],
+      _getLibraryItems: function(likes, bookmarks) {
+        const likedItems = this._toBookmarksArray(likes);
+        const bookmarkedItems = this._toBookmarksArray(bookmarks);
+        return bookmarkedItems.concat(likedItems);
+      },
       _toBookmarksArray: function(obj) {
         if(obj==null || obj==undefined)
           return [];
@@ -67,6 +75,13 @@
       _onScheduleDataChanged: function() {
         //TODO: re-calculate the objects when the scheduleData is changed.
       },
+      _isBookmarked: function(bookmarks, itemId) {
+        return bookmarks.hasOwnProperty(String(itemId));
+      },
+      ready: function() {
+       console.log('librarys userlikes', this.userLikes); 
+       console.log('librarys bokomarks', this.profileData);
+      }
     });
   </script>
 </dom-module>
