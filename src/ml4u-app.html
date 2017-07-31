@@ -163,6 +163,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-color: #EFEFEF;
         }
       }
+      @media (max-width: 700px) {
+        paper-dialog {
+          margin: 0;
+          height: 100%;
+        }
+        paper-dialog paper-dialog-scrollable {
+          height: 100% !important;
+          --paper-dialog-scrollable: {
+            width: 100%;
+            padding-left: 0;
+            padding-right: 0;
+            height: 100%;
+            max-height: none;
+            background-color: #EFEFEF;
+          }
+        }
+      }
 
       .drawerheader {
         color: #fff;
@@ -333,7 +350,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         },
         profileSecret: {
-          type: String,
+          type: Object,
           notify: true,
         },
         userLikes: {

@@ -115,7 +115,7 @@
           value: false
         },
         profileSecret: {
-          type: String
+          type: Object
         },
         username: {
           type: String,
@@ -337,6 +337,7 @@
       },
       ready: function() {
         console.log('user likes', this.userLikes);
+        console.log('secret from page feed', this.profileSecret);
       }
     });
   </script>
