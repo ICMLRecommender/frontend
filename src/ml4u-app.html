@@ -40,6 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../bower_components/webcomponentsjs/webcomponents-lite.min.js">
 
 <link rel="import" href="ml4u-components/shop-snackbar.html">
 
@@ -508,12 +509,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return;
         this.$.userProfileElement.logout();
       },
-
       created: function() {
         this.removeAttribute('hidden');
         document.getElementById("splashscreen").setAttribute("hidden", "true");
       },
-
       ready: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.sharedElements = window.ml4u.sharedElements || {};
@@ -530,13 +529,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.ml4u.helperfunctions = window.ml4u.helperfunctions || {};
         window.ml4u.helperfunctions.bookmarkItem = this.bookmarkItem;
 
-        var isChrome = !!window.chrome && !!window.chrome.webstore;
-        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
-        if(!isChrome && !isSafari ) {
+        //var isChrome = !!window.chrome && !!window.chrome.webstore;
+        //var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        if(!window.safari && !window.chrome) {
           this.$.wrongBrowser.open();
         }
       },
-
       bookmarkItem: function() {
 
       },
