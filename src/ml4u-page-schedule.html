@@ -91,7 +91,7 @@
       //performing the if out the for loop, so I don't have to evaluate it N times
       if(this.loggedIn && this.profileData.bookmarks != undefined) {
         //this._items[0].isBookmarked = 1;
-        subtimeslots.forEach((sessions, subtimeslotIndex) => {
+        /*subtimeslots.forEach((sessions, subtimeslotIndex) => {
           sessions.forEach((session, sessionIndex) => {
             cs_items = session.content;
             isBookmarked = false;
@@ -120,7 +120,7 @@
   
             });
           });
-        });
+        });*/
         for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
           sessions = subtimeslots[subtimeslotIndex];
           // go through all sessions
