@@ -170,8 +170,8 @@
     </section>
   </template>
     <section class="cardBlock">
-      <div class="sectionTitleContainer">
-        <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" on-click='_toggleAbstract'></paper-icon-button></span>
+      <div class="sectionTitleContainer" on-click='_toggleAbstract'>
+        <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" ></paper-icon-button></span>
       </div>
       <div hidden$="{{!abstractVisible}}" class="abstract-text">[[itemObject.description]]</div>
     </section>
@@ -259,11 +259,11 @@
       },
       abstractVisible: {
         type: Boolean,
-        value: false
+        value: true
       },
       abstractIconStr: {
         type: String,
-        value: "hardware:keyboard-arrow-down"
+        value: "hardware:keyboard-arrow-up"
       },
       displayedWithinSession: {
         type: Number,
@@ -293,7 +293,7 @@
       if(this.itemId == undefined)
         return;
 
-      if(this.abstractVisible) {
+      if(!this.abstractVisible) {
         this._toggleAbstract();
       }
       this.feedbackRetrieved = false;
