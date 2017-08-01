@@ -110,8 +110,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button class="submitButton" id="requestPRButton" raised noink on-tap="_requestPR">Request reset</paper-button>
       </form>
       <form is="iron-form" id="changePassForm">
-        <paper-input id="passwordInput" label="New Password" type="password" value="password" required auto-validate></paper-input>
         <paper-input id="secretInput" label="Secret" type="text" value="" required auto-validate></paper-input>
+        <paper-input id="passwordInput" label="New Password" type="password" value="password" required auto-validate></paper-input>
         <div id="changePass_infoForm"></div>
         <paper-button class="submitButton" id="changePassButton" raised noink on-tap="_changePass">Change Password</paper-button>
       </form>
@@ -130,6 +130,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         username: {
           type: String,
           notify: true
+        },
+        queryParams: {
+          type: Object
+        }
+      },
+      observers: [
+        '_queryParamsChanged(queryParams.*)'
+      ],
+      _queryParamsChanged: function() {
+        console.log("_queryParamsChanged called");
+        console.log(this.queryParams.secret);
+        console.log(this.queryParams.username);
+        queryParams = this.queryParams;
+        if(queryParams.secret != undefined || queryParams.secret != null) {
+          console.log("success1!");
+          this.$.secretInput.value = queryParams.secret;
+        }
+        if(queryParams.username != undefined || queryParams.username != null) {
+          this.$.usernameInput.value = queryParams.username;
+          console.log("success2!");
         }
       },
       _changePass: function(e) {
