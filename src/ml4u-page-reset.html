@@ -170,6 +170,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         prFormElements.password = this.$.passwordInput;
         prFormElements.secret = this.$.secretInput;
 
+        username =  prFormElements.username.value;
+        password =  prFormElements.password.value;
+        secret   =  prFormElements.secret.value;
+
+        var callbackfunction_afterLogin = function(err, response) {
+          if(!err) {
+            this.set('route.path', '/');
+          }
+        }.bind(this);
+
         var callbackfunction = function(err, response) {
           prFormElements.button_requestreset.disabled = false;
           prFormElements.button_changePass.disabled = false;
@@ -184,12 +194,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           else {
             prFormElements.infoDiv.innerHTML = "Your password was successfully changed. Please navigate to the login screen and use your new credentials.";
             prFormElements.infoDiv.className = "infoDiv";
+            window.ml4u.sharedElements.userProfileElement.login(username, password, callbackfunction_afterLogin);
           }
         }.bind(this);
 
-        username =  prFormElements.username.value;
-        password =  prFormElements.password.value;
-        secret   =  prFormElements.secret.value;
+
 
         var postData = "username=" + username
                       + "&password=" + password
