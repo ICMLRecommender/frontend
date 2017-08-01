@@ -208,7 +208,7 @@
         },
         userLikes: {
           type: Object,
-        }, 
+        },
         optimisticLikeString: {
           type: String,
           value: ''
@@ -235,7 +235,7 @@
       },
       computeBookmarkClassString: function(isBookmarked) {
         val = isBookmarked ? "bookmarked" : "";
-        console.log("computeBookmarkClassString called, returning: " + val);
+        //console.log("computeBookmarkClassString called, returning: " + val);
         return val;
       },
       _changeSelectedItem: function() {
@@ -272,7 +272,7 @@
           } else {
             return false;
           }
-      }, 
+      },
       _toggleLike: function() {
         console.log('optimistic like string', this.optimisticLikeString);
         // check whether user is logged in
@@ -354,7 +354,7 @@
         console.log(this.bookmarkedClassString)
       },
       ready: function() {
-        console.log(this.liked);
+        //console.log(this.liked);
       }
     });
   </script>

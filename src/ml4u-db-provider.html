@@ -148,22 +148,23 @@
           session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
 
           dayString= session.day.substring(0, 3);
-          start_time = session. session_time_start;
-          locationString = session.location;
+          start_time = item.poster_session.time_start;
+          locationString = item.poster_session.poster_location;
           item.poster_string = dayString + " " + start_time + ", " + locationString;
           //item.talk_string = "hello?!";
         }
         else {
           item.has_poster = false;
         }
-
-        /**/
+        item.authors = orgItem.authors;
+        /*
         item.authors = new Array();
         for(var i in orgItem.authorIds) {
           var authorId = orgItem.authorIds[i];
           var person = this.scheduleData.people[authorId];
           item.authors.push(person);
         }
+        */
         //console.log("Returning the following object:");
         //console.log(item);
         return item;

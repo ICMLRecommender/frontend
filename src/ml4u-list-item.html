@@ -149,7 +149,12 @@
       <paper-item class="paper"  on-tap="_changeSelectedItem">
         <paper-item-body three-line>
           <div secondary>
+            <template is="dom-if" if="{{isTalk}}">
             <span class="session-time">{{listItem.talk_session.time_start}}<span>
+            </template>
+            <template is="dom-if" if="{{!isTalk}}">
+              <span class="session-time">{{listItem.poster_session.time_start}} - {{listItem.poster_session.time_end}} &bull; {{listItem.poster_session.poster_location}}<span>
+            </template>
             <span style="float:right" class="paper sessiontype">Paper</span><br/>
           </div>
           <div class="session-title">{{listItem.title}}</div>
@@ -193,6 +198,13 @@
           type: Boolean,
           value: false
         },
+        encompassingSessionType: {
+          type: String,
+        },
+        isTalk: {
+          type: Boolean,
+          computed: 'computeIsTalk(encompassingSessionType)'
+        },
         selectedItem: {
           type: String,
           notify: true
@@ -203,6 +215,9 @@
             value: 'none',
             computed: 'computeBookmarkDisplayString(isBookmarked)'
         },
+      },
+      computeIsTalk: function() {
+        return this.encompassingSessionType == "talk";
       },
       computeBookmarkDisplayString: function(isBookmarked) {
         val = isBookmarked ? "inline" : "none";
@@ -221,7 +236,7 @@
           console.log(this.selectedItem);
         }
         else {
-          if(this.listItem.type_code != "talk")
+          if(this.listItem.type_code != "talk" && this.listItem.type_code != "poster")
             return;
           this.selectedItem = this.listItem.session_id;
           console.log("3");

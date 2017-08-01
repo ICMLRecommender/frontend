@@ -65,7 +65,8 @@ span.loc {
       <template is="dom-repeat" items="{{papers}}" initialCount="10">
         <div>
           <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
-           is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+            encompassing-session-type="[[session.type_code]]"
+            is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
         </div>
       </template>
 <!--      <ml4u-list items="[[papers]]"
