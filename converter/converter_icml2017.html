@@ -125,7 +125,9 @@ sessionsDb.allDocs({
           sub_timeslot.push(timeslots[currentTimeslotIndex]);
           ++currentTimeslotIndex;
         }
-        while(currentTimeslotIndex < timeslots.length && timeslots[currentTimeslotIndex].length < thresholdSessionCount);
+        while(currentTimeslotIndex < timeslots.length && timeslots[currentTimeslotIndex].length < thresholdSessionCount
+         && timeslots[currentTimeslotIndex][0].type_code != "poster"
+         && (timeslots[currentTimeslotIndex][0].type_code != "invited_talk" || timeslots[currentTimeslotIndex][0].session_time_start == "09:00 AM")); //this is added so that Posters and Invited Talks are in separate timeslots
         timeslots_new.push(sub_timeslot);
         /*if(timeslots[currentTimeslotIndex].length >= thresholdSessionCount) {
           timeslots_new.push(timeslots[currentTimeslotIndex]);
@@ -148,7 +150,15 @@ sessionsDb.allDocs({
         str_time = timeslots[timeslotIndex][0][0].session_time;
         time = new Date(str_time);
         str_time_formatted = getFormattedHourMinute(time);
+        if(str_time_formatted == "07:00") {
+          str_time_formatted = "09:00";
+        }
         dailySchedule[dayIndex].slots.push(str_time_formatted);
+        /*str_time_formatted = timeslots[timeslotIndex][0][0].session_time_start;
+        if(str_time_formatted == "07:00 AM") {
+          str_time_formatted = "09:00 AM";
+        }
+        dailySchedule[dayIndex].slots.push(str_time_formatted);*/
       }
     }
 
@@ -215,8 +225,8 @@ sessionsDb.allDocs({
             console.log(newItem);
           }
           newItem.authorsString = newItem.authors.join(", ");
-          console.log("HERE IS THE FUCKING NEW AUTHORSSTRING:");
-          console.log(newItem.authorsString);
+          //console.log("HERE IS THE FUCKING NEW AUTHORSSTRING:");
+          //console.log(newItem.authorsString);
         }
         else {
           newItem.authorString = "";
