@@ -146,7 +146,6 @@
           }
           //destroy the databasse containing user information
           new PouchDB(this.username).destroy().then(function () {
-            console.log("alright, everything's gucci.");
             this.$.username_cookie.eraseCookie();
             this.username = null;
           }.bind(this)).catch(function (err) {
