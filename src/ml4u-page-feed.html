@@ -202,6 +202,13 @@
         itemIds = this.profileRecommendations.papers;
         newRecommendedItemsArray = [];
         for (var i=0, len=itemIds.length; i<len; ++i) {
+          t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i].paper_id);
+          t_item.trending = 0;
+          t_item.recommended = 1;
+          newRecommendedItemsArray.push(t_item);
+        }
+        /*
+        for (var i=0, len=itemIds.length; i<len; ++i) {
           if(this.profileRecommendations.latestdismissed.hasOwnProperty(itemIds[i])) {
             continue;
           }
@@ -210,6 +217,7 @@
           t_item.recommended = 1;
           newRecommendedItemsArray.push(t_item);
         }
+        */
         this.recommendedItems = newRecommendedItemsArray;
         console.log("LOGGING RECOMMENDED ITEMS");
         console.log(this.recommendedItems);
