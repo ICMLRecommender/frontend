@@ -99,9 +99,7 @@
             cs_items = current_session.content;
             isBookmarked = false;
 
-            if(current_session.type_code != "talk") {
-              console.log("W T W MAN");
-              console.log(current_session);
+            if(current_session.type_code != "talk" && current_session.type_code != "poster") {
               break;
             }
 
