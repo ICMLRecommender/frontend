@@ -35,7 +35,8 @@
     "pouchdb-authentication": "^0.5.5",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
-    "polymer-cookie": "^1.1.1"
+    "polymer-cookie": "^1.1.1",
+    "katex": "^0.7.1"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

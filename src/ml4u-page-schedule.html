@@ -91,6 +91,36 @@
       //performing the if out the for loop, so I don't have to evaluate it N times
       if(this.loggedIn && this.profileData.bookmarks != undefined) {
         //this._items[0].isBookmarked = 1;
+        subtimeslots.forEach((sessions, subtimeslotIndex) => {
+          sessions.forEach((session, sessionIndex) => {
+            cs_items = session.content;
+            isBookmarked = false;
+
+            if(session.type_code != "talk") {
+              console.log("W T W MAN");
+              console.log(current_session);
+              break;
+            }
+
+            cs_items.forEach((cs_item, index) => {
+              if (this.profileData.bookmarks[cs_item.paper_id]) {
+                console.log("AHA! 1 item was found to be bookmarked");
+                isBookmarked = true;
+                break;
+              }
+
+              //this._items[subtimeslotIndex][sessionId].isBookmarked = isBookmarked;
+              this.set('_items.' + subtimeslotIndex + "." + sessionId + ".isBookmarked", isBookmarked);
+              //this.set('_items' + '.0.0.isBookmarked', this._items[0][0].isBookmarked);
+              console.log("set the following to :" + isBookmarked);
+              console.log(subtimeslotIndex);
+              console.log(sessionId);
+              console.log(this._items[subtimeslotIndex][sessionId].isBookmarked);
+              //this._items[sessionId].isBookmarked = 1;
+  
+            });
+          });
+        });
         for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
           sessions = subtimeslots[subtimeslotIndex];
           // go through all sessions

@@ -1,0 +1,153 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="ml4u-nav.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+
+
+<dom-module id="ml4u-page-about">
+  <template>
+    <style is="custom-style">
+    :host {
+        display: block;
+        height: 100%;
+    }
+    .header {
+        background: #C80000;
+        height: 200px;
+        width: 100%;
+    }
+    .content {
+        width: 90%;
+        border-radius: 7px;
+        margin: 0 auto;
+        max-width: 480px;
+        display: block;
+        min-height: 400px;
+        margin-top: -140px;
+        margin-bottom: 50px;
+    }
+    .inner {
+        padding: 32px;
+        padding-bottom: 10px;
+    }
+    h1 {
+        font-family: 'effra', sans-serif;
+        font-weight: 400;
+        font-size: 1.4em;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        color: #151515;
+    }
+    p {
+        color: #333333;
+        margin-top: 0;
+    }
+    hr {
+        border: 0;
+        border-top: 1px solid rgb(215,215,215);
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .team {
+        background: #f3f3f3;
+        padding: 25px;
+        min-height: 200px;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        font-family: 'effra', sans-serif;
+    }
+    .picture {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        margin-right: 25px;
+        border-radius: 60px;
+        background: lightgray;
+        float: left;
+        margin-top: 10px;
+    }
+    .person {
+        display: block;
+        height: 90px;
+        margin-bottom: 10px;
+    }
+    .details {
+        display: inline-block;
+        float: left;
+        line-height: 1.4;
+    }
+    .name {
+        font-size: 1.3em;
+        color: #222222;
+    }
+    .affiliation {
+        color: #555555;
+    }
+    .person-link {
+        margin-right: 8px;
+        color: #C80000;
+        border-bottom: 1px solid #C80000;
+        display: inline-block;
+    }
+    @media(max-width: 360px) {
+        .picture {
+            display: none;
+        }
+        .details {
+            padding-left: 7px;
+        }
+    }
+    </style>
+    <div class="header"></div>
+    <paper-card class="content">
+        <div class="inner">
+            <h1>What is this app?</h1>
+            <p>This is a short description of the app. This is a short description of the app. This is a short description of the app.</p>
+            <hr/>
+            <h1>What is this app?</h1>
+            <p>This is a short description of the app. This is a short description of the app. This is a short description of the app.</p>
+            <hr/>
+            <h1>Who built this?</h1>
+            <p>This app was built by a team of talented volunteers:</p>
+        </div>
+        <div class="team">
+            <div class="person">
+                <div class="picture"></div>
+                <div class="details">
+                    <div class="name">Lazar Valkov</div>
+                    <div class="affiliation">University of Edinburgh</div>
+                    <div class="links">
+                        <a class="person-link">Website</a>
+                        <a class="person-link">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="person">
+                <div class="picture"></div>
+                <div class="details">
+                    <div class="name">Lazar Valkov</div>
+                    <div class="affiliation">University of Edinburgh</div>
+                    <div class="links">
+                        <a class="person-link">Website</a>
+                        <a class="person-link">Twitter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </paper-card>
+  </template>
+
+  <script>
+  Polymer({
+    is: 'ml4u-page-about',
+    properties: {
+        route: {
+            type: Object,
+            notify: true
+        }
+    },
+    ready: function() {
+    },
+  });
+
+  </script>
+</dom-module>

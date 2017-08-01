@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="katex.html">
+<link rel="stylesheet" type="css" href="../../bower_components/katex/dist/katex.css">
+
+<dom-module id="latex-view">
+  :host {
+    display: inline;
+  }
+</dom-module>
+
+<script>
+(function() {
+  Polymer({
+    is: 'latex-view',
+    properties: {
+      content : {
+        type: String,
+        observer: 'renderLatex'
+      },
+      delimiter: {
+          type: String,
+          value: '$'
+      }
+    },
+    renderLatex: function(newContent, oldContent) {
+      console.group('Latex');
+      console.log(newContent)
+      const chunks = newContent.split(this.delimiter);
+      console.log(chunks);
+      chunks.forEach((chunk, index) => {
+        if (index % 2) { // this will be a latex element
+          let span = document.createElement('span');
+          let id = 'content-' + index;
+          span.className = 'text';
+          span.id = id;
+          Polymer.dom(this.root).appendChild(span);
+          const element = Polymer.dom(this.root).querySelector('#'+id);
+          console.log('eeeeee', element);
+          katex.render(chunk, element);
+        } else { // this will be a text element
+          let span = document.createElement('span');
+          let id = 'content-' + index;
+          span.className = 'text';
+          span.id = id;
+          span.innerHTML = chunk;
+          Polymer.dom(this.root).appendChild(span);
+        }
+      });
+      console.groupEnd();
+    },
+    ready() {
+     
+     //this.$$('#'+id).node.innerHTML = this.content;
+     //katex.render(textContent, Polymer.dom(this.root));
+    },
+  });
+})();
+</script>

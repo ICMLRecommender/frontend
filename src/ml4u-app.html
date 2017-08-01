@@ -35,7 +35,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="ml4u-view-session-and-item.html">
 
-
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
@@ -225,8 +224,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         border-top: 1px solid rgb(220,220,220);
         width: 100%;
         margin: 0;
-        margin-top: -10px;
-        margin-bottom: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
 
     </style>
@@ -262,9 +261,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <a name="register" href="/register"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Register</span></a>
             <a name="login" href="/login"><iron-icon icon="social:person"></iron-icon><span class="menu-category-keyword">Login</span></a>
           </template>
-        </iron-selector>
-        <div hidden$="[[!loggedIn]]">
           <hr class="nav-separator"/>
+          <a name="about" href="/about"><iron-icon icon="icons:info"></iron-icon><span class="menu-category-keyword">About</span></a>
+        </iron-selector>
+        
+        <div hidden$="[[!loggedIn]]">
           <div class="logout-wrapper" on-tap="_logout">
             <a name="logout"><iron-icon icon="icons:exit-to-app"></iron-icon><span class="menu-category-keyword">Log Out</span></a>
             <!--<button id="logoutbutton" type="button" on-tap="_logout">Logout</button>-->
@@ -307,6 +308,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <ml4u-page-register username="[[username]]" route="{{route}}" topics="{{topics}}" name="register"></ml4u-page-register>
           <ml4u-page-login class="content" username="[[username]]" route="{{route}}" name="login"></ml4u-page-login>
           <ml4u-page-reset class="content" username="[[username]]" route="{{route}}" name="reset"></ml4u-page-reset>
+          <ml4u-page-about name="about"></ml4u-page-about>
           <ml4u-view404 name="view404"></ml4u-view404>
         </iron-pages>
       </app-header-layout>
