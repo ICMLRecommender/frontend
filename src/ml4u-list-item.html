@@ -142,7 +142,10 @@
       margin-bottom: 2px;
       font-family: 'effra', sans-serif !important;
     }
-
+    .bookmarked {
+      float: right;
+      display: inline;
+    }
     </style>
 
     <template is="dom-if" if="{{isPaper}}">
@@ -160,11 +163,9 @@
           <div class="session-title">{{listItem.title}}</div>
           <div secondary>
             <span id="authorsString" class="session-chair">{{listItem.authorsString}}</span>
-            <span style="float:right" hidden$="true">
-              <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
-                          icon="icons:bookmark" class="bookmarked">
-              </iron-icon>
-            </span>
+            <template is="dom-if" if="{{isBookmarked}}">
+              <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
+            </template>
           </div>
         </paper-item-body>
       </paper-item>
@@ -179,11 +180,9 @@
           </div>
           <div class="wtf session-title">{{listItem.session}}</div>
           <div secondary class="session-chair"><!--Chair: {{listItem.session_chair}}-->
-            <span style="float:right" hidden$="true">
-              <iron-icon style="float:right; display:[[bookmarkDisplayString]];"
-                          icon="icons:bookmark" class="bookmarked">
-              </iron-icon>
-            </span>
+          <template is="dom-if" if="{{isBookmarked}}">
+              <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
+          </template>
           </div>
         </paper-item-body>
       </paper-item>
@@ -244,8 +243,7 @@
         }
       },
       ready: function() {
-        console.log("Ready called from ml4u-list-item");
-        console.log(this.listItem);
+        console.log('is this bookmarked?', this.isBookmarked);
       }
 });
 
