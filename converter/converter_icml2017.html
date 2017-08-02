@@ -65,7 +65,7 @@ sessionsDb.allDocs({
     // Put the sessions into Daily slots
     for(var sessDoc_index=0; sessDoc_index<allSessionDocs.length; ++sessDoc_index){
       t_doc = allSessionDocs[sessDoc_index].doc;
-      t_doc.session_id = t_doc.schedule_id;
+      t_doc.session_id = t_doc.session_id;
 
       //if this type hasn't been seen before, add it to the types Array
       if(!types.includes(t_doc.type))
@@ -112,7 +112,6 @@ sessionsDb.allDocs({
       timeSlotsWithinThisDay = sessions[i];
       for(var j=0; j<timeSlotsWithinThisDay.length; j++) {
         toSort = timeSlotsWithinThisDay[j];
-        console.log("well hello there");
         //user Room order only for timeslots with multiple talks
         useRoomOrder = toSort.length > thresholdSessionCount;
         toSort.sort(function(a,b){
@@ -194,7 +193,7 @@ sessionsDb.allDocs({
           }
           for(var h=0; h<sessionsInThisSubTimeSlot.length; ++h) {
             t_session = sessionsInThisSubTimeSlot[h];
-            t_session_id = t_session.schedule_id;
+            t_session_id = t_session.session_id;
             sessionIdToIndexMapping[t_session_id] = {"dayIndex" : dayIndex, "timeslotIndex": timeslotIndex, "subtimeslotIndex":subtimeslotIndex, "sub_index": h};
           }
         }
@@ -244,8 +243,15 @@ sessionsDb.allDocs({
             console.log("WAAAA?!");
             console.log(newItem);
           }
-          newItem.authorsString = newItem.authors.join(", ");
-          //console.log("HERE IS THE FUCKING NEW AUTHORSSTRING:");
+          authors = newItem.authors;
+          authorsString = authors[0].author;
+          for(var a=1; a<authors.length; ++a) {
+            authorsString += ", " + authors[a].author;
+          }
+          newItem.authorsString = authorsString;
+          //newItem.authorsString = newItem.authors.join(", ");
+          //authors = newItem.authors;
+
           //console.log(newItem.authorsString);
         }
         else {
@@ -258,14 +264,52 @@ sessionsDb.allDocs({
       console.log(err);
     });
 
+    function addContentIndex() {
+      for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
+        timeslots = sessions[dayIndex];
+        for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
+          subtimeslots = timeslots[timeslotIndex];
+          for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
+            sessionsInThisSubTimeSlot = subtimeslots[subtimeslotIndex];
+            for(var h=0; h<sessionsInThisSubTimeSlot.length; ++h) {
+              t_session = sessionsInThisSubTimeSlot[h];
+              t_session_id = t_session.session_id;
+              if(t_session.type_code=="poster" || t_session.type_code=="talk") {
+                s_content = t_session.content;
+                for(var ci=0; ci<s_content.length; ++ci) {
+                  content_item = s_content[ci];
+                  if(content_item == null) {
+                    continue;
+                  }
+                  paper_id = s_content[ci].paper_id;
+                  if(t_session.type_code=="poster") {
+                    paper = items[paper_id];
+                    if(paper == undefined) {
+                      continue;
+                    }
+                    items[paper_id].poster_session.content_index = ci;
+                  }
+                  else {
+                    items[paper_id].talk_session.content_index = ci;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
     async function demo() {
       await sleep(5000);
+
+      addContentIndex();
+
       scheduleDb.put({
-        _id: 'schedule_icml2017',
+        _id: 'schedule_icml2017_1',
         sessions: sessions,
         dailySchedule: dailySchedule,
         items: items,

@@ -8,7 +8,7 @@
 
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="schedule_icml2017"
+      doc-id="schedule_icml2017_1"
       data="{{scheduleData}}">
     </app-pouchdb-document>
 
@@ -126,7 +126,7 @@
         if(item.talk_session != undefined) {
           item.has_talk = true;
 
-          var sessionId = item.talk_session.schedule_id;
+          var sessionId = item.talk_session.session_id;
           mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
           session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
 
@@ -143,7 +143,7 @@
         if(item.poster_session != undefined) {
           item.has_poster = true;
 
-          var sessionId = item.poster_session.schedule_id;
+          var sessionId = item.poster_session.session_id;
           mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
           session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
 
