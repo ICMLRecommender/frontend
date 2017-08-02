@@ -103,7 +103,10 @@
       color:black;
     }
     iron-icon.bookmarked {
-      color:GoldenRod;
+      color: GoldenRod;
+    }
+    iron-icon.liked {
+      color: #4dc333;
     }
     /*.author {
       width: 2px;
@@ -146,6 +149,10 @@
       float: right;
       display: inline;
     }
+    .liked {
+      float:right;
+      display: inline;
+    }
     </style>
 
     <template is="dom-if" if="{{isPaper}}">
@@ -166,6 +173,9 @@
             <span id="authorsString" class="session-chair">{{listItem.authorsString}}</span>
             <template is="dom-if" if="{{isBookmarked}}">
               <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
+            </template>
+            <template is="dom-if" if="{{isLiked}}">
+              <iron-icon icon="icons:favorite" class="liked"></iron-icon>
             </template>
           </div>
         </paper-item-body>
@@ -210,6 +220,7 @@
           notify: true
         },
         isBookmarked: Number,
+        isLiked: Number,
         bookmarkDisplayString: {
             type: String,
             value: 'none',

@@ -100,6 +100,8 @@
         console.log(this.profileData);
       },
       _userLikesChanged: function(newLikes, oldLikes) {
+        console.log("_userLikesChanged called");
+        console.log(this.userLikes);
         /*console.log('_userLikesChanged called. new likes:', newLikes, 'old likes', oldLikes);
         if (JSON.stringify(newLikes) === JSON.stringify(oldLikes)) {
           return;

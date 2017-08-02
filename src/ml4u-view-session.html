@@ -62,11 +62,11 @@ span.loc {
       <!--<div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>-->
     </div>
     <div id="papersDiv">
-      <template is="dom-repeat" items="{{papers_top}}" initialCount="10">
+      <template id="papersTopList" is="dom-repeat" items="{{papers_top}}"  initialCount="10">
         <div>
           <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
             encompassing-session-type="[[session.type_code]]"
-            is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+            is-paper is-bookmarked=[[item.isBookmarked]] is-liked=[[item.isLiked]]></ml4u-list-item>
         </div>
       </template>
       <template is="dom-repeat" items="{{papers}}" initialCount="10">
@@ -74,7 +74,7 @@ span.loc {
           <div>
             <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
               encompassing-session-type="[[session.type_code]]"
-              is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+              is-paper is-bookmarked=[[item.isBookmarked]] is-liked=[[item.isLiked]]></ml4u-list-item>
           </div>
         </template>
       </template>
@@ -116,20 +116,26 @@ span.loc {
       },
       loggedIn: {
         type: Number
+      },
+      userLikes: {
+        type: Object
       }
     },
     observers: [
       /*'updateBookmarks(papers, profileData.bookmarks)'*/
       '_onPapersChanged(papers)',
       '_onBookmarksChanged(profileData.bookmarks)',
+      '_onUserLikesChanged(userLikes.likes)'
     ],
     _onPapersChanged: function() {
-      //TODO: call only if session,type_code=poster
       this.updatePaperOrder();
     },
     _onBookmarksChanged: function() {
       console.log("_onBookmarksChanged called");
-      //TODO: call only if session,type_code=poster
+      this.updatePaperOrder();
+    },
+    _onUserLikesChanged: function() {
+      console.log("_onUserLikesChanged called");
       this.updatePaperOrder();
     },
     updatePaperOrder: function() {
@@ -137,54 +143,72 @@ span.loc {
       if(papers == undefined) {
         return;
       }
+      placeOnTop = this.session.type_code == "poster";
       hasBookmarks = this.loggedIn && this.profileData.bookmarks != undefined;
-      bookmarks = hasBookmarks ? this.profileData.bookmarks : {};
+      hasLikes = this.loggedIn && this.userLikes != undefined && this.userLikes != null && this.userLikes.likes != undefined && this.userLikes.likes != null;
+
+      console.log("updatePaperOrder called");
+      console.log("hasLikes: " + hasLikes);
+      console.log("userLikes:");
+      console.log(this.userLikes);
 
       papers_top = new Array();
       /*first, iterate all papers and set hidden to false*/
       for(var paperIndex=0; paperIndex<papers.length; ++paperIndex) {
-        selectedAsTop = false;
         currentPaper = papers[paperIndex];
+        selectedAsTop = false;
+        isBookmarked = 0;
+        isLiked = 0;
+        isRecommended = 0;
+
+        //check if this paper is bookmarked/liked/recommended
         if(this.loggedIn) {
           //first check for bookmarks
-          isBookmarked = this.profileData.bookmarks[items[paperIndex].id] != undefined ? 1 : 0;
+          if(hasBookmarks)
+            isBookmarked = this.profileData.bookmarks[papers[paperIndex].id] != undefined ? 1 : 0;
+
           if(isBookmarked) {
-            selectedAsTop = true;
-            currentPaper.isBookmarked = isBookmarked;
+            console.log("Yes! It's bookmarked!");
+            console.log(papers[paperIndex].id);
           }
+
+          if(hasLikes)
+            isLiked = this.userLikes.likes[papers[paperIndex].id] != undefined ? 1 : 0;
+
+
         }
-        if(selectedAsTop) {
+
+        if(isBookmarked || isLiked || isRecommended)
+          selectedAsTop = true;
+
+        //"A: there should be no items on top" or "B: there should be, but doesn't include this item"
+        if(!placeOnTop || !selectedAsTop) {
+          this.set('papers.' + paperIndex + ".isHidden", 0);
+          this.set('papers.' + paperIndex + ".isBookmarked", isBookmarked);
+          this.set('papers.' + paperIndex + ".isLiked", isLiked);
+          this.set('papers.' + paperIndex + ".isRecommended", isRecommended);
+        }
+        else {
+          currentPaper.isBookmarked = isBookmarked;
+          currentPaper.isLiked = isLiked;
+          currentPaper.isRecommended = isRecommended;
+
           papers_top.push(currentPaper);
           this.set('papers.' + paperIndex + ".isHidden", 1);
         }
-        else {
-          this.set('papers.' + paperIndex + ".isHidden", 0);
-          this.set('papers.' + paperIndex + ".isBookmarked", 0);
-        }
-        //papers[paperIndex].hidden = false;
-        //papers[paperIndex].isBookmarked = 0;
       }
+      if(placeOnTop) {
+        this.papers_top = new Array();
+        this.$.papersTopList.render();
+        this.papers_top = papers_top;
+      }
+      /*
       this.papers_top = papers_top;
-
-      /*add bookmarks to papers1_top
-      if(this.loggedIn && this.profileData.bookmarks != undefined) {
-        numberOfPapers = paper.length;
-        bookmarked_array = Object.keys(this.profileData.bookmarks);
-        numberOfBookmarks = bookmarked_array.length;
-        if(numberOfPapers > numberOfBookmarks) {
-          for(var i=0; i<numberOfBookmarks; ++i) {
-
-          }
-        }
-
-        for(var i=0; i<items.length; ++i) {
-
-          isBookmarked = this.profileData.bookmarks[items[i].id] != undefined ? 1 : 0;
-
-          this.set('papers.' + i + ".isBookmarked", isBookmarked);
-        }
-      }*/
-
+      console.log("trying to call this.$.papersTopList.render");
+      console.log(this.$.papersTopList.render);
+      console.log(papers_top);
+      this.$.papersTopList.render();
+      */
     },
     updateBookmarks: function(items, profileData) {
       console.log("updateBookmarks called?! from view-session");
