@@ -154,11 +154,12 @@
           <div secondary>
             <template is="dom-if" if="{{isTalk}}">
             <span class="session-time">{{listItem.talk_session.time_start}}<span>
+            <span style="float:right" class="paper sessiontype">Paper</span><br/>
             </template>
             <template is="dom-if" if="{{!isTalk}}">
               <span class="session-time">{{listItem.poster_session.time_start}} - {{listItem.poster_session.time_end}} &bull; {{listItem.poster_session.poster_location}}<span>
+              <span style="float:right" class="paper sessiontype">Paper</span><br/>
             </template>
-            <span style="float:right" class="paper sessiontype">Paper</span><br/>
           </div>
           <div class="session-title">{{listItem.title}}</div>
           <div secondary>

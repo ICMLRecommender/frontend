@@ -62,12 +62,21 @@ span.loc {
       <!--<div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>-->
     </div>
     <div id="papersDiv">
-      <template is="dom-repeat" items="{{papers}}" initialCount="10">
+      <template is="dom-repeat" items="{{papers_top}}" initialCount="10">
         <div>
           <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
             encompassing-session-type="[[session.type_code]]"
             is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
         </div>
+      </template>
+      <template is="dom-repeat" items="{{papers}}" initialCount="10">
+        <template is="dom-if" if="[[!item.isHidden]]"
+          <div>
+            <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
+              encompassing-session-type="[[session.type_code]]"
+              is-paper is-bookmarked=[[item.isBookmarked]]></ml4u-list-item>
+          </div>
+        </template>
       </template>
 <!--      <ml4u-list items="[[papers]]"
           selected-item={{selectedPaper}} id-prefix="sched" is-paper-list></ml4u-list>-->
@@ -88,6 +97,10 @@ span.loc {
         type: Object,
         computed: '_computePapersList(sessionId)'
       },
+      papers_top: {
+        type: Array,
+        value: []
+      },
       selectedPaper: {
         type: String,
         notify: true
@@ -106,8 +119,73 @@ span.loc {
       }
     },
     observers: [
-      'updateBookmarks(papers, profileData.bookmarks)'
+      /*'updateBookmarks(papers, profileData.bookmarks)'*/
+      '_onPapersChanged(papers)',
+      '_onBookmarksChanged(profileData.bookmarks)',
     ],
+    _onPapersChanged: function() {
+      //TODO: call only if session,type_code=poster
+      this.updatePaperOrder();
+    },
+    _onBookmarksChanged: function() {
+      console.log("_onBookmarksChanged called");
+      //TODO: call only if session,type_code=poster
+      this.updatePaperOrder();
+    },
+    updatePaperOrder: function() {
+      papers = this.papers;
+      if(papers == undefined) {
+        return;
+      }
+      hasBookmarks = this.loggedIn && this.profileData.bookmarks != undefined;
+      bookmarks = hasBookmarks ? this.profileData.bookmarks : {};
+
+      papers_top = new Array();
+      /*first, iterate all papers and set hidden to false*/
+      for(var paperIndex=0; paperIndex<papers.length; ++paperIndex) {
+        selectedAsTop = false;
+        currentPaper = papers[paperIndex];
+        if(this.loggedIn) {
+          //first check for bookmarks
+          isBookmarked = this.profileData.bookmarks[items[paperIndex].id] != undefined ? 1 : 0;
+          if(isBookmarked) {
+            selectedAsTop = true;
+            currentPaper.isBookmarked = isBookmarked;
+          }
+        }
+        if(selectedAsTop) {
+          papers_top.push(currentPaper);
+          this.set('papers.' + paperIndex + ".isHidden", 1);
+        }
+        else {
+          this.set('papers.' + paperIndex + ".isHidden", 0);
+          this.set('papers.' + paperIndex + ".isBookmarked", 0);
+        }
+        //papers[paperIndex].hidden = false;
+        //papers[paperIndex].isBookmarked = 0;
+      }
+      this.papers_top = papers_top;
+
+      /*add bookmarks to papers1_top
+      if(this.loggedIn && this.profileData.bookmarks != undefined) {
+        numberOfPapers = paper.length;
+        bookmarked_array = Object.keys(this.profileData.bookmarks);
+        numberOfBookmarks = bookmarked_array.length;
+        if(numberOfPapers > numberOfBookmarks) {
+          for(var i=0; i<numberOfBookmarks; ++i) {
+
+          }
+        }
+
+        for(var i=0; i<items.length; ++i) {
+
+          isBookmarked = this.profileData.bookmarks[items[i].id] != undefined ? 1 : 0;
+
+          this.set('papers.' + i + ".isBookmarked", isBookmarked);
+        }
+      }*/
+
+    },
     updateBookmarks: function(items, profileData) {
       console.log("updateBookmarks called?! from view-session");
       if(items == undefined) {

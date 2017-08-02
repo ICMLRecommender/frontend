@@ -75,7 +75,7 @@
     },
     observers: [
       '_onSelectedItemsChanged(selectedDay, selectedTrack)',
-      'updateBookmarks(_items, profileData.bookmarks)'
+      'updateBookmarks(_items, profileData.bookmarks, loggedIn)'
     ],
     _loggedInChanged: function(newVal, oldVal) {
       console.log("_loggedInChanged caled");
@@ -83,13 +83,14 @@
         this.updateBookmarks(this._items, this.profileData);
       }
     },
-    updateBookmarks: function(subtimeslots, profileData) {
+    updateBookmarks: function(subtimeslots, profileData, loggedIn) {
       if(subtimeslots == undefined) {
         return;
       }
-
+      console.log("ml4u-page-schedule/updateBookmarks called");
       //performing the if out the for loop, so I don't have to evaluate it N times
       if(this.loggedIn && this.profileData.bookmarks != undefined) {
+        console.log("ENTERING IF 1 ");
         //this._items[0].isBookmarked = 1;
         for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
           sessions = subtimeslots[subtimeslotIndex];
@@ -130,6 +131,7 @@
 
       }
       else {
+        console.log("ENTERING IF 2 ");
         for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
           sessions = subtimeslots[subtimeslotIndex];
           for(var sessionId=0; sessionId<sessions.length; ++sessionId) {
