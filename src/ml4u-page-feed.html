@@ -296,6 +296,7 @@
         console.log("searching for items");
         searchString = this.$.searchBarInput.value;
         searchString = searchString.trim();
+        searchString = searchString.toLowerCase();
         if(searchString.length == 0) {
           this.showingSearchResults = false;
           //this.displayedItems = this.trendingItems;
@@ -315,7 +316,7 @@
             //console.log("trying to read:");
             //console.log(item_t);
             //if (object.hasOwnProperty(property)) {
-            if(item_t.title.includes(searchString) || item_t.description.includes(searchString) || item_t.authorsString.includes(searchString)) {
+            if(item_t.title.toLowerCase().includes(searchString) || item_t.description.toLowerCase().includes(searchString) || item_t.authorsString.toLowerCase().includes(searchString)) {
               // need to call getItem, so that I can compute the authors properly...
               this.push('displayedItems', window.ml4u.sharedElements.scheduleDataProvider.getItem(key_t));
               console.log(item_t);
