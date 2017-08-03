@@ -212,6 +212,7 @@ sessionsDb.allDocs({
     newItem.authors = oldItem.authors;
     newItem.authorIds = null; //currently unavailable
     newItem.pdf_url = oldItem.pdf_url;
+    newItem.session_labels = oldItem.session_labels;
 
     if(oldItem.poster_schedule != null && oldItem.poster_schedule != undefined
       && oldItem.poster_schedule.length == 1) {

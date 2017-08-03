@@ -97,6 +97,7 @@
     }
     span.paper {
       background-color: #BC0000;
+      margin-left: 2px;
     }
     paper-item.award {
       border-left-color: #C80000;
@@ -167,11 +168,16 @@
           <div secondary>
             <template is="dom-if" if="{{isTalk}}">
             <span class="session-time">{{listItem.talk_session.time_start}}<span>
-            <span style="float:right" class="paper sessiontype">Paper</span><br/>
+              <template is="dom-repeat" items="{{listItem.session_labels}}">
+                <span style="float:right" class="paper sessiontype">[[item]]</span>
+              </template>
             </template>
             <template is="dom-if" if="{{!isTalk}}">
               <span class="session-time">{{listItem.poster_session.time_start}} - {{listItem.poster_session.time_end}} &bull; {{listItem.poster_session.poster_location}}<span>
-              <span style="float:right" class="paper sessiontype">Paper</span><br/>
+                <template is="dom-repeat" items=[[listItem.session_labels]]>
+                  <span style="float:right" class="paper sessiontype">[[item]]</span>
+                </template>
+                <!--<span style="float:right" class="paper sessiontype">[[listItem.session_labels.0]]</span><br/>-->
             </template>
           </div>
           <div class="session-title">{{listItem.title}}</div>
@@ -261,7 +267,9 @@
         }
       },
       ready: function() {
-        console.log('is this bookmarked?', this.isBookmarked);
+        //console.log('is this bookmarked?', this.isBookmarked);
+        //console.log("ml4u-list-item/listItem:");
+        //console.log(this.listItem);
       }
 });
 

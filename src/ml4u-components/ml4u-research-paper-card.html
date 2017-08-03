@@ -131,7 +131,7 @@
       <div class="card-content" on-tap="_changeSelectedItem">
         <div>
         <template is="dom-repeat" items="[[tags]]">
-          <div class="tag">{{item.text}}</div>
+          <div class="tag">[[item]]</div>
         </template>
         <template is="dom-if" if="{{trending}}">
           <span class="trending">TRENDING</span>
