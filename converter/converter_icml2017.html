@@ -3,7 +3,7 @@
 <script>
 var sessionsDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule_icml2017');
 var itemsDb = new PouchDB('https://icml.papro.org.uk/couchdb/papers_icml2017');
-//var authorsDb = new PouchDB('https://icml.papro.org.uk/couchdb/authors');
+var authorsDb = new PouchDB('https://icml.papro.org.uk/couchdb/authors_icml2017');
 var scheduleDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
 
 var allSessionDocs;
@@ -13,7 +13,7 @@ var sessionIdToIndexMapping = {};
 var dailySchedule = [ {"dayString":"Monday", "slots":[]}, {"dayString":"Tuesday", "slots":[]}, {"dayString":"Wednesday", "slots":[]} ];
 var items = {};
 var types = [];
-//var people = {};
+var people = {};
 
 //put the session in the correct timeslot
 function sortSession(session, dayIndex) {
@@ -300,6 +300,31 @@ sessionsDb.allDocs({
       }
     }
 
+    function transformAuthor(oldAuthor) {
+      var newAuthor = new Object();
+      newAuthor.id = oldAuthor.author_id;
+      newAuthor.name = oldAuthor.author;
+      newAuthor.institution = oldAuthor.affiliation;
+      newAuthor.paper_ids = oldAuthor.paper_ids;
+      newAuthor.bio = oldAuthor.bio;
+      return newAuthor;
+    }
+
+    authorsDb.allDocs({
+        include_docs: true,
+        attachments: true
+      }).then(function (result) {
+        allOldAuthors = result.rows;
+
+        for (var property in allOldAuthors) {
+          if (!allOldAuthors.hasOwnProperty(property)) { continue; }
+          newAuthor = transformAuthor(allOldAuthors[property].doc);
+          people[newAuthor.id] = newAuthor;
+        }
+      }).catch(function (err) {
+        console.log(err);
+      });
+
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -313,8 +338,8 @@ sessionsDb.allDocs({
         sessions: sessions,
         dailySchedule: dailySchedule,
         items: items,
-        sessionIdToIndexMapping: sessionIdToIndexMapping
-
+        sessionIdToIndexMapping: sessionIdToIndexMapping,
+        people: people
       });
       console.log("done");
     }

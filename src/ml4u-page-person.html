@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-signals/iron-signals.html">
-<link rel="import" href="ml4u-list-item.html">
 <link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
 
 <dom-module id="ml4u-page-person">
@@ -23,26 +22,43 @@
         font-size: 20px;
         color: #989898;
       }
+      .personInfo > .bio {
+        margin-top: 15px;
+      }
       .paperList {
         padding: 10px;
       }
     </style>
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
     <div class="personInfo">
-      <span class="name">{{selectedPerson.name}}</span><br/>
-      <span class="university">{{selectedPerson.institution}}</span>
+      <span class="name">[[selectedPerson.name]]</span><br/>
+      <span class="university">[[selectedPerson.institution]]</span>
+      <div class="bio">[[selectedPerson.bio]]</div>
     </div>
 
     <div class="paperList">
         <template is="dom-repeat" items="{{selectedPerson.papers}}" initialCount="10">
-          <ml4u-research-paper-card
+          <!--<ml4u-research-paper-card
             paper-id={{item.id}} selected-item={{selectedItem}}
             title={{item.title}}
             tags='[{"id": "1", "color": "red", "text": "ML"}]'
             authors-string='[[item.authorsString]]'
-            is-bookmarked=[[item.isBookmarked]] trending
+            is-bookmarked=[[item.isBookmarked]]
             profile-data={{profileData}} logged-in=[[loggedIn]]
             dismissible
+          ></ml4u-research-paper-card>-->
+          <ml4u-research-paper-card
+            user-likes=[[userLikes]]
+            paper-id={{item.id}} selected-item={{selectedItem}}
+            title={{item.title}}
+            profile-secret=[[profileSecret]]
+            username={{username}}
+            likes={{item.likes}}
+            logged-in=[[loggedIn]]
+            tags='[{"id": "1", "color": "red", "text": "ML"}]'
+            authors-string='[[item.authorsString]]'
+            is-bookmarked=[[item.isBookmarked]]
+            profile-data={{profileData}} logged-in=[[loggedIn]]
           ></ml4u-research-paper-card>
         </template>
     </div>
@@ -69,6 +85,15 @@
         },
         selectedPerson: {
           type: Object
+        },
+        profileSecret: {
+          type: Object
+        },
+        username: {
+          type: String,
+        },
+        userLikes: {
+          type: Object,
         },
       },
       observers: [

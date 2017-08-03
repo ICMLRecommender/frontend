@@ -264,7 +264,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <hr class="nav-separator"/>
           <a name="about" href="/about"><iron-icon icon="icons:info"></iron-icon><span class="menu-category-keyword">About</span></a>
         </iron-selector>
-        
+
         <div hidden$="[[!loggedIn]]">
           <div class="logout-wrapper" on-tap="_logout">
             <a name="logout"><iron-icon icon="icons:exit-to-app"></iron-icon><span class="menu-category-keyword">Log Out</span></a>
@@ -298,9 +298,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             selected-item={{selectedItem}}
             username="[[username]]" profile-data="[[profileData]]" logged-in=[[loggedIn]] name="schedule"></ml4u-page-schedule>
           <ml4u-page-library name="library" selected-item={{selectedItem}} profile-data="{{profileData}}" user-likes="[[userLikes]]" logged-in=[[loggedIn]]></ml4u-page-library>
-          <ml4u-page-person  name="person" selected-item={{selectedItem}}
-          profile-data="{{profileData}}" logged-in=[[loggedIn]]
-          route=[[route]] selected-page=[[page]]></ml4u-page-person>
+          <ml4u-page-person   name="person" selected-item={{selectedItem}}
+                              profile-data="{{profileData}}" logged-in=[[loggedIn]]
+                              profile-secret=[[profileSecret]] username="{{username}}" user-likes="[[userLikes]]"
+                              route=[[route]] selected-page=[[page]]></ml4u-page-person>
           <!--<ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="{{username}}" profile-data="{{profileData}}" name="posters" show-posters></ml4u-page-schedule>

@@ -140,8 +140,8 @@
         <div class="papertitle">[[itemObject.title]]</div>
         <div>
           <template is="dom-repeat" items="{{itemObject.authors}}">
-            <!--<a dialog-confirm href="/person?id=[[item.id]]" class="authorlink">[[item.name]]</a>-->
-            <span class="authorlink">[[item.author]]</span>
+            <a dialog-confirm href="/person?id=[[item.author_id]]" class="authorlink">[[item.author]]</a>
+            <!--<span class="authorlink">[[item.author]]</span>-->
           </template>
         </div>
         <div class="actions">
