@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="ml4u-item-likes.html">
 <link rel="import" href="ml4u-item-comments.html">
-<link rel="import" href="ml4u-components/ml4u-latex-view.html">
+<!--<link rel="import" href="ml4u-components/ml4u-latex-view.html">-->
 
 <dom-module id="ml4u-view-item">
 
@@ -174,7 +174,8 @@
         <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" ></paper-icon-button></span>
       </div>
       <div hidden$="{{!abstractVisible}}" id="abstract" class="abstract-text">
-        <latex-view content="[[itemObject.description]]"></latex-view>
+        [[itemObject.description]]
+        <!--<latex-view content="[[itemObject.description]]"></latex-view>-->
       </div>
     </section>
   </section>
