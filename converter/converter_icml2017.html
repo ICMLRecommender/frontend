@@ -5,6 +5,7 @@ var sessionsDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule_icml201
 var itemsDb = new PouchDB('https://icml.papro.org.uk/couchdb/papers_icml2017');
 var authorsDb = new PouchDB('https://icml.papro.org.uk/couchdb/authors_icml2017');
 var scheduleDb = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
+var topicClustersDb = new PouchDB('https://icml.papro.org.uk/couchdb/topic_clusters_icml2017');
 
 var allSessionDocs;
 // 1 array for each day - Monday, Tuesday, Wednesday
@@ -14,6 +15,7 @@ var dailySchedule = [ {"dayString":"Monday", "slots":[]}, {"dayString":"Tuesday"
 var items = {};
 var types = [];
 var people = {};
+var topics = [];
 
 //put the session in the correct timeslot
 function sortSession(session, dayIndex) {
@@ -326,6 +328,31 @@ sessionsDb.allDocs({
         console.log(err);
       });
 
+      topicClustersDb.allDocs({
+          include_docs: true,
+          attachments: true
+      }).then(function (result) {
+        allTopicClusters = result.rows;
+
+        for (var property in allTopicClusters) {
+          if (!allTopicClusters.hasOwnProperty(property)) { continue; }
+
+          oldCluster = allTopicClusters[property];
+          console.log(oldCluster);
+          newTopic = {};
+          newTopic.id = oldCluster.doc.topic_cluster_id;
+          newTopic.title = oldCluster.doc.label;
+          newTopic.keywords = [];
+          words = oldCluster.doc.words;
+          for(var i=0; i<words.length; ++i) {
+            newTopic.keywords.push(words[i].word);
+          }
+          topics.push(newTopic);
+        }
+      }).catch(function (err) {
+        console.log(err);
+      });
+
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -334,13 +361,17 @@ sessionsDb.allDocs({
 
       addContentIndex();
 
-      scheduleDb.put({
+      /*scheduleDb.put({
         _id: 'schedule_icml2017_1',
         sessions: sessions,
         dailySchedule: dailySchedule,
         items: items,
         sessionIdToIndexMapping: sessionIdToIndexMapping,
         people: people
+      });*/
+      scheduleDb.put({
+        _id: 'topics',
+        topics: topics
       });
       console.log("done");
     }

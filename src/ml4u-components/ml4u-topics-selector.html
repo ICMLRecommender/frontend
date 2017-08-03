@@ -86,10 +86,11 @@
         </div>
         <div class="topic-info">
           <span class="topicTitle">{{item.title}}</span><br/>
-          <div class="keywords">
+          <!--<div class="keywords">
             <span class="keywordsTitle">Keywords: </span>
             <span class="keywordsList"><template is="dom-repeat" items={{item.keywords}} as="keyword">{{keyword}} </template></span>
           </div>
+          -->
         </div>
       </div>
     </template>
@@ -106,19 +107,26 @@
         },
         recalculate: {
           type: Boolean
-        }, 
+        },
         selectedTopics: {
           type: Object,
           notify: true,
           value: {}
         }
       },
-      selectedClassString: function(index) {
-        return this.selectedTopics.hasOwnProperty(String(index)) ? 'selected' : '';
-      }, 
+      selectedClassString: function(topic_arrayIndex) {
+        topicId = topic_arrayIndex > -1 ? this.topics.topics[topic_arrayIndex].id : -1;
+        return this.selectedTopics.hasOwnProperty(String(topicId)) ? 'selected' : '';
+      },
       toggleTopic: function(event) {
+        console.log("logging topics first:");
+        console.log(this.topics);
         var topicId = -1;
-        topicId = event.model.__data__.index;
+        topic_arrayIndex = event.model.__data__.index;
+        topicId = topic_arrayIndex > -1 ? this.topics.topics[topic_arrayIndex].id : -1;
+        console.log(topic_arrayIndex);
+        console.log(topicId);
+
 
         if (this.selectedTopics.hasOwnProperty(String(topicId))) {
           delete this.selectedTopics[String(topicId)];
@@ -126,6 +134,8 @@
           this.selectedTopics[String(topicId)] = topicId;
         }
         this.recalculate = !this.recalculate; // this forces a recompute of which elements should have .selected
+        console.log("loggin selectedTopics");
+        console.log(this.selectedTopics);
       },
       resetTopics: function(e) {
 
