@@ -349,6 +349,11 @@ sessionsDb.allDocs({
           }
           topics.push(newTopic);
         }
+        topics.sort(function(a,b){
+          int_a = parseInt(a.id);
+          int_b = parseInt(b.id);
+          return int_a - int_b;
+        });
       }).catch(function (err) {
         console.log(err);
       });
