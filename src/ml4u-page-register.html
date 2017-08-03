@@ -109,9 +109,10 @@
         if(!this.$.registerForm.validate())
           return;
         var username = this.$.usernameInput.value;
-        var usernamePatt = new RegExp("[^a-z0-9_.]")
-        if(usernamePatt.test(username)) {
-          this.$.registerErrorDiv.innerHTML = "Invalid username. Must contain only lower case letters, numbers and/or _.";
+        //var usernamePatt = new RegExp("[^a-z][^a-z0-9_.]");
+        var usernamePatt = new RegExp("[a-z][a-z0-9_.]");
+        if(!usernamePatt.test(username)) {
+          this.$.registerErrorDiv.innerHTML = "Invalid username. Must contain only lower case letters, numbers and/or _, and start with a lower case letter.";
           return;
         }
 
