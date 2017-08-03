@@ -297,7 +297,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}}
             username="[[username]]" profile-data="[[profileData]]" logged-in=[[loggedIn]] name="schedule"></ml4u-page-schedule>
-          <ml4u-page-library name="library" selected-item={{selectedItem}} profile-data="{{profileData}}" user-likes="[[userLikes]]" logged-in=[[loggedIn]]></ml4u-page-library>
+          <ml4u-page-library  name="library" selected-item={{selectedItem}} profile-data="{{profileData}}"
+                              profile-secret=[[profileSecret]] username="{{username}}" user-likes="[[userLikes]]"
+                              user-likes="[[userLikes]]" logged-in=[[loggedIn]]></ml4u-page-library>
           <ml4u-page-person   name="person" selected-item={{selectedItem}}
                               profile-data="{{profileData}}" logged-in=[[loggedIn]]
                               profile-secret=[[profileSecret]] username="{{username}}" user-likes="[[userLikes]]"

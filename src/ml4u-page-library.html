@@ -19,17 +19,20 @@
       }
     </style>
     <iron-signals on-iron-signal-schedule="_onScheduleDataChanged"><iron-signals>
-    <template is="dom-repeat" items="{{_getLibraryItems(profileData.bookmarks, userLikes.likes)}}" initialCount="10">
+    <!--<template is="dom-repeat" items="{{_getLibraryItems(profileData.bookmarks, userLikes.likes)}}" initialCount="10">-->
+    <template is="dom-repeat" items="[[items]]" initialCount="10">
       <ml4u-research-paper-card
-        paper-id={{item.id}} 
-        selected-item={{selectedItem}}
-        title={{item.title}}
         user-likes=[[userLikes]]
-        tags='[{"id": "1", "color": "red", "text": "ML"}]'
+        paper-id={{item.id}} selected-item={{selectedItem}}
+        title={{item.title}}
+        profile-secret=[[profileSecret]]
+        username={{username}}
+
+        logged-in=[[loggedIn]]
+        tags=[[item.session_labels]]
         authors-string='[[item.authorsString]]'
         is-bookmarked="{{_isBookmarked(profileData.bookmarks, item.id)}}"
-        profile-data={{profileData}} 
-        logged-in=[[loggedIn]]>
+        profile-data={{profileData}}>
       </ml4u-research-paper-card>
     </template>
   </template>
@@ -47,31 +50,71 @@
           type: String,
           notify: true
         },
-        displayedItems: {
+        items: {
+          type: Array,
+          value: []
+        },
+        profileSecret: {
           type: Object
         },
+        username: {
+          type: String,
+        },
         userLikes: {
-          type: Object
+          type: Object,
         }
       },
       observers: [
         //'updateBookmarks(displayedItems, profileData.bookmarks)'
+        '_onBookmarksChanged(profileData.bookmarks)',
+        '_onLikesChanged(userLikes.likes)'
       ],
-      _getLibraryItems: function(likes, bookmarks) {
-        const likedItems = this._toBookmarksArray(likes);
-        const bookmarkedItems = this._toBookmarksArray(bookmarks);
-        return bookmarkedItems.concat(likedItems);
+      _onBookmarksChanged(bookmarks) {
+        /*console.log("_onBookmarksChanged called with the following bookmarks");
+        console.log(bookmarks);
+        console.log(this.profileData);*/
+        likes = this.userLikes ? this.userLikes.likes : null;
+        this._setLibraryItems(likes, bookmarks);
       },
-      _toBookmarksArray: function(obj) {
+      _onLikesChanged(likes) {
+        console.log("_onLikesChanged called");
+        bookmarks = this.profileData ? this.profileData.bookmarks : null;
+        console.log("likes:");
+        console.log(likes);
+        /*console.log("calling _setLibraryItems with the following bookmarks:");
+        console.log(bookmarks);
+        console.log(this.profileData);*/
+        this._setLibraryItems(likes, bookmarks);
+      },
+      _setLibraryItems: function(likes, bookmarks) {
+        console.log("_setLibraryItems called with following likes and bookmarks:");
+        console.log(likes);
+        console.log(bookmarks);
+        resultingArray = [];
+        addedIds = {};
+        this._addtoArray(bookmarks, resultingArray, addedIds);
+        console.log("addedIds after adding bookmarks:");
+        console.log(addedIds);
+        this._addtoArray(likes, resultingArray, addedIds);
+        console.log("addedIds after adding likes:");
+        console.log(addedIds);
+        this.items = resultingArray;
+        console.log("resulting items:");
+        console.log(this.items);
+      },
+      _addtoArray(obj, array, addedIds) {
         if(obj==null || obj==undefined)
-          return [];
+          return;
         keys = Object.keys(obj);
-        array = [];
         for (var i=0; i<keys.length; ++i) {
-          array.push(window.ml4u.sharedElements.scheduleDataProvider.getItem(keys[i]));
+          if(addedIds[keys[i]] == undefined) {
+            addedIds[keys[i]] = keys[i];
+            array.push(window.ml4u.sharedElements.scheduleDataProvider.getItem(keys[i]));
+          }
         }
         return array;
       },
+
       _onScheduleDataChanged: function() {
         //TODO: re-calculate the objects when the scheduleData is changed.
       },
@@ -79,7 +122,7 @@
         return bookmarks.hasOwnProperty(String(itemId));
       },
       ready: function() {
-       console.log('librarys userlikes', this.userLikes); 
+       console.log('librarys userlikes', this.userLikes);
        console.log('librarys bokomarks', this.profileData);
       }
     });
