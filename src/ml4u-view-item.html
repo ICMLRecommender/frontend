@@ -155,6 +155,13 @@
       </div>
     </section>
 -->
+<template is="dom-if" if="[[itemObject.pdf_url]]">
+  <section class="cardBlock">
+    <div class="sectionTitleContainer">
+      <span class="sectiontitle">PDF</span><span class="sectionInfo"><a target="_blank" href="[[itemObject.pdf_url]]" class="authorlink">View PDF</a></span>
+    </div>
+  </section>
+</template>
   <template is="dom-if" if="[[itemObject.has_talk]]">
     <section class="cardBlock">
       <div class="sectionTitleContainer">
