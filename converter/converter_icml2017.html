@@ -303,6 +303,67 @@ sessionsDb.allDocs({
       }
     }
 
+    function transformItem(oldItem) {
+      var newItem = new Object();
+      newItem.id = oldItem.paper_id;
+      newItem.title = oldItem.title;
+      newItem.description = oldItem.abstract;
+      newItem.authors = oldItem.authors;
+      newItem.authorIds = null; //currently unavailable
+      newItem.pdf_url = oldItem.pdf_url;
+      newItem.session_labels = oldItem.session_labels;
+
+      if(oldItem.poster_schedule != null && oldItem.poster_schedule != undefined
+        && oldItem.poster_schedule.length == 1) {
+          newItem.poster_session = oldItem.poster_schedule[0];
+      }
+      if(oldItem.talk_schedule != null && oldItem.talk_schedule != undefined
+        && oldItem.talk_schedule.length == 1) {
+          newItem.talk_session = oldItem.talk_schedule[0];
+      }
+      return newItem;
+    }
+
+    function addInvitedTalksAsPapers() {
+      invitedTalksAdded = 0;
+      invitedTalksIdStart = 1000;
+      for(var dayIndex=0; dayIndex<sessions.length; ++dayIndex) {
+        timeslots = sessions[dayIndex];
+        for (var timeslotIndex=0; timeslotIndex<timeslots.length; ++timeslotIndex) {
+          subtimeslots = timeslots[timeslotIndex];
+          for (var subtimeslotIndex=0; subtimeslotIndex<subtimeslots.length; ++subtimeslotIndex) {
+            sessionsInThisSubTimeSlot = subtimeslots[subtimeslotIndex];
+            for(var h=0; h<sessionsInThisSubTimeSlot.length; ++h) {
+              t_session = sessionsInThisSubTimeSlot[h];
+              t_session_id = t_session.session_id;
+              if(t_session.type_code=="invited_talk") {
+                //console.log(t_session);
+                s_content = t_session.content[0];
+
+                newItem = {};
+                newItem.id = invitedTalksIdStart + invitedTalksAdded++;
+                t_session.paper_id = newItem.id;
+
+                newItem.title = s_content.title;
+                newItem.description = s_content.abstract;
+                newItem.authors = s_content.authors;
+                console.log(s_content.authors);
+                newItem.authorsString = s_content.authors[0].author;
+
+                newItem.talk_session = {};
+                newItem.talk_session.type = "Invited Talk";
+                newItem.talk_session.session_id = t_session.session_id;
+                newItem.talk_session.time_start = t_session.session_time_start;
+                newItem.talk_session.time_end = t_session.session_time_end;
+
+                items[newItem.id] = newItem;
+              }
+            }
+          }
+        }
+      }
+    }
+
     function transformAuthor(oldAuthor) {
       var newAuthor = new Object();
       newAuthor.id = oldAuthor.author_id;
@@ -364,20 +425,21 @@ sessionsDb.allDocs({
     async function demo() {
       await sleep(5000);
 
-      addContentIndex();
+      //addContentIndex();
+      addInvitedTalksAsPapers();
 
-      /*scheduleDb.put({
+      scheduleDb.put({
         _id: 'schedule_icml2017_1',
         sessions: sessions,
         dailySchedule: dailySchedule,
         items: items,
         sessionIdToIndexMapping: sessionIdToIndexMapping,
         people: people
-      });*/
+      });/*
       scheduleDb.put({
         _id: 'topics',
         topics: topics
-      });
+      });*/
       console.log("done");
     }
 

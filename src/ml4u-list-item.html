@@ -240,6 +240,10 @@
             value: 'none',
             computed: 'computeBookmarkDisplayString(isBookmarked)'
         },
+        popupDisplaySession: {
+          type: Number,
+          notify: true
+        }
       },
       computeIsTalk: function() {
         return this.encompassingSessionType == "talk";
@@ -261,9 +265,22 @@
           console.log(this.selectedItem);
         }
         else {
-          if(this.listItem.type_code != "talk" && this.listItem.type_code != "poster")
+          if(this.listItem.type_code != "talk" && this.listItem.type_code != "poster" && this.listItem.type_code != "invited_talk")
             return;
-          this.selectedItem = this.listItem.session_id;
+
+          console.log("_changeSelectedItem called");
+          console.log(this.listItem.type_code);
+
+          if(this.listItem.type_code == "invited_talk") {
+            this.popupDisplaySession = 0;
+            this.selectedItem = this.listItem.paper_id;
+          }
+          else {
+            this.popupDisplaySession = 1;
+            this.selectedItem = this.listItem.session_id;
+          }
+
+
           console.log("3");
           console.log(this.selectedItem);
         }

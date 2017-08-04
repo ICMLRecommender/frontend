@@ -72,6 +72,9 @@
       'updatePopup(selectedItem, popupDisplaySession)'
     ],
     updatePopup: function(selectedItem, popupDisplaySession) {
+      console.log("updatePopup called");
+      console.log(selectedItem);
+      console.log(popupDisplaySession);
       if(popupDisplaySession == undefined)
         return;
       if(popupDisplaySession == 0) {

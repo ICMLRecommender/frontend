@@ -23,7 +23,7 @@
       <template is="dom-repeat" items="{{_items}}" as="subtimeslot" initialCount="10">
         <div class="subtimeslot">
           <template is="dom-repeat" items="{{subtimeslot}}" as="session" initialCount="10">
-            <ml4u-list-item list-item="{{session}}"
+            <ml4u-list-item list-item="{{session}}" popup-display-session={{popupDisplaySession}}
                 selected-item="{{selectedItem}}" is-bookmarked=[[session.isBookmarked]]></ml4u-list-item>
           </template>
         </div>
@@ -71,6 +71,10 @@
       showPosters: {
         type: Boolean,
         value: false
+      },
+      popupDisplaySession: {
+        type: Number,
+        notify: true
       }
     },
     observers: [
