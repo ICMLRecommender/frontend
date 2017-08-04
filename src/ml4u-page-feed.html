@@ -164,12 +164,12 @@
             this.dismissObject.itemid = -1;
             return;
           }
-          if(this.profileRecommendations.latestdismissed == undefined) {
-            this.profileRecommendations.latestdismissed = {};
+          if(this.profileRecommendations.dismissed == undefined) {
+            this.profileRecommendations.dismissed = {};
           }
-          console.log("logging profileRecommendations.latestdismissed");
-          console.log(this.profileRecommendations.latestdismissed);
-          this.set('profileRecommendations.latestdismissed.' + this.dismissObject.itemid, this.dismissObject.itemid);
+          console.log("logging profileRecommendations.dismissed");
+          console.log(this.profileRecommendations.dismissed);
+          this.set('profileRecommendations.dismissed.' + this.dismissObject.itemid, this.dismissObject.itemid);
           this.dismissObject.itemid = -1;
           console.log("kewl. added dimissed recommendation");
         }
@@ -196,12 +196,15 @@
           this.recommendedItems = null;
           return;
         }
-        if(this.profileRecommendations.latestdismissed == undefined) {
-          this.profileRecommendations.latestdismissed = {};
+        if(this.profileRecommendations.dismissed == undefined) {
+          this.profileRecommendations.dismissed = {};
         }
         itemIds = this.profileRecommendations.papers;
         newRecommendedItemsArray = [];
         for (var i=0, len=itemIds.length; i<len; ++i) {
+          if(this.profileRecommendations.dismissed.hasOwnProperty(itemIds[i].paper_id)) {
+            continue;
+          }
           t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i].paper_id);
           t_item.trending = 0;
           t_item.recommended = 1;
@@ -209,7 +212,7 @@
         }
         /*
         for (var i=0, len=itemIds.length; i<len; ++i) {
-          if(this.profileRecommendations.latestdismissed.hasOwnProperty(itemIds[i])) {
+          if(this.profileRecommendations.dismissed.hasOwnProperty(itemIds[i])) {
             continue;
           }
           t_item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemIds[i]);
