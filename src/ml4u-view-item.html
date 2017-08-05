@@ -120,11 +120,14 @@
   .unliked {
     color: #959595 !important;
   }
+  .back-icon {
+    color: white;
+  }
 </style>
 <template>
   <template is="dom-if" if="{{displayedWithinSession}}">
     <section class="itemViewHeader">
-      <paper-icon-button on-tap='_backButtonTapped' icon="icons:arrow-back"></paper-icon-button>
+      <paper-icon-button on-tap='_backButtonTapped' icon="icons:arrow-back" class="back-icon"></paper-icon-button>
       <span class="modal-heading">Paper</span>
     </section>
   </template>

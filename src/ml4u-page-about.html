@@ -38,7 +38,7 @@
         color: #151515;
     }
     p {
-        color: #333333;
+        color: #5a5a5a;
         margin-top: 0;
     }
     hr {
@@ -101,37 +101,29 @@
     <paper-card class="content">
         <div class="inner">
             <h1>What is this app?</h1>
-            <p>This is a short description of the app. This is a short description of the app. This is a short description of the app.</p>
-            <hr/>
-            <h1>What is this app?</h1>
-            <p>This is a short description of the app. This is a short description of the app. This is a short description of the app.</p>
+            <p>
+                This app helps navigate the rich program of ICML 2017.  The app enables users to quickly find interesting papers, publicly comment them, register their interest using 'like' and 'bookmark', and browse what others are interested in. In addition, users' preferences feed a personalized paper recommendation engine.
+                <br><br>
+                The recommendation engine is based on the <a href="http://www.cs.columbia.edu/~blei/papers/WangBlei2011.pdf" target="_blank">collaborative topic regression (CTR) model</a> of C. Wang and D. Blei.
+            </p>
             <hr/>
             <h1>Who built this?</h1>
-            <p>This app was built by a team of talented volunteers:</p>
+            <p>The app was designed and built by a team of machine learning students and researchers spread across England, France, and Canada.</p>
         </div>
         <div class="team">
+            <template is="dom-repeat" items="[[team]]" as="person">
             <div class="person">
                 <div class="picture"></div>
                 <div class="details">
-                    <div class="name">Lazar Valkov</div>
-                    <div class="affiliation">University of Edinburgh</div>
+                    <div class="name">[[person.name]]</div>
+                    <div class="affiliation">[[person.affiliation]]</div>
                     <div class="links">
                         <a class="person-link">Website</a>
                         <a class="person-link">Twitter</a>
                     </div>
                 </div>
             </div>
-            <div class="person">
-                <div class="picture"></div>
-                <div class="details">
-                    <div class="name">Lazar Valkov</div>
-                    <div class="affiliation">University of Edinburgh</div>
-                    <div class="links">
-                        <a class="person-link">Website</a>
-                        <a class="person-link">Twitter</a>
-                    </div>
-                </div>
-            </div>
+            </template>
         </div>
     </paper-card>
   </template>
@@ -143,6 +135,47 @@
         route: {
             type: Object,
             notify: true
+        },
+        team: {
+            type: Array,
+            value: [
+                {
+                    'name': 'Adrien Todeschini',
+                    'affiliation': ''
+                },
+                {
+                    'name': 'Hoai Phuoc Truong',
+                    'affiliation': ''
+                },
+                {
+                    'name': 'James Ravenscroft',
+                    'affiliation': ''
+                },
+                {
+                    'name': 'Laurent Charlin',
+                    'affiliation': ''
+                },
+                {
+                    'name': 'Lazar Valkov',
+                    'affiliation': 'University of Edinburgh'
+                },
+                {
+                    'name': 'Maria Liakata',
+                    'affiliation': ''
+                },
+                {
+                    'name': 'Taimur Abdaal',
+                    'affiliation': 'University of Oxford'
+                },
+                {
+                    'name': 'Valerio Perrone',
+                    'affiliation': ''
+                },
+                {
+                    'name': 'Yee Whye Teh',
+                    'affiliation': 'University of Oxford'
+                },
+            ]
         }
     },
     ready: function() {
