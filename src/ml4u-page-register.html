@@ -7,6 +7,7 @@
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="ml4u-components/ml4u-topics-selector.html">
 <link rel="import" href="../bower_components/app-pouchdb/pouchdb.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -22,17 +23,31 @@
       background-position: bottom;*/
       height: 100%;
     }
+    .header {
+        background: #C80000;
+        height: 200px;
+        width: 100%;
+    }
+    .content {
+        width: 90%;
+        border-radius: 7px;
+        margin: 0 auto;
+        max-width: 480px;
+        display: block;
+        min-height: 400px;
+        margin-top: -190px;
+        margin-bottom: 50px;
+        padding-bottom: 1px;
+        padding-top: 40px;
+    }
     .errorDiv {
       font-weight: bold;
       color: red;
     }
     #registerForm {
-      margin: auto;
-      width: 433.6px;
     }
     @media (max-width: 640px){
       #registerForm {
-        width: 80%;
       }
     }
     .cen {
@@ -52,28 +67,46 @@
       letter-spacing: -0.21px;
       text-align: center;
       text-transform: none;
-      margin-bottom: 30px;
-      margin-top: 20px;
+      margin: 20px;
+      margin-top: 0;
     }
     .registration-info {
       max-width: 435px;
       margin: 0 auto;
       margin-top: 10px;
+      margin-left: 22px;
+      margin-right: 22px;
       margin-bottom: 10px;
+      text-align: center;
+      color: rgb(60,60,60);
     }
     .beta {
+      font-size: 0.6em;
       color:#C80000;
     }
+    .form-fields {
+      margin: 0 auto;
+      padding-left: 25px;
+      padding-right: 25px;
+      max-width: 350px;
+    }
+    .register-logo {
+      font-size: 2.4em;
+      margin-top: 0;
+      letter-spacing: -0.01em;
+    }
   </style>
-  <div class="logo">
-    ICML 2017<br/> <span class="beta">(Beta)</span>
+  <div class="header"></div>
+    <paper-card class="content">
+  <div class="logo register-logo">
+    ICML 2017<div class="beta">(Beta)</div>
   </div>
   <div class="registration-info">
-    Creating an account lets you save papers to read later, and get personalised paper recommendations using
-    our very own recommender system built for this year's conference!
+    Create an account to save papers to read later, and get personalised paper recommendations!
   </div>
   <div>
     <form is="iron-form" id="registerForm" >
+      <div class="form-fields">
       <paper-input id="usernameInput" label="Username" type="text" required auto-validate></paper-input>
       <gold-email-input id="emailInput" label="Email" auto-validate required></gold-email-input>
       <gold-password-input id="passwordInput"
@@ -81,11 +114,13 @@
         required auto-validate minlength="6" maxlength="24" error-message="Use 6 to 24 characters.">
       </gold-password-input>
       <div id="registerErrorDiv" class="errorDiv"></div>
+      </div>
       <ml4u-topics-selector id="topicsSelector" topics={{topics}} selected-topics={{selectedTopics}}></ml4u-topics-selector>
       <br/>
       <paper-button id="submitButton" raised noink on-tap="_submit">Register</paper-button>
     </form>
   </div>
+    </paper-card>
   </template>
   <script>
     Polymer({
