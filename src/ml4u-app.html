@@ -127,7 +127,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .drawer-list {
-        margin: 0 20px;
+        margin: 0;
       }
 
       .drawer-list a {
@@ -187,6 +187,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         min-height: 135px;
         padding: 20px;
         position: relative;
+        margin-bottom: 12px;
       }
 
       /*.drawerheader > .title {
@@ -217,6 +218,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .logout-wrapper {
         padding: 0 16px;
+        margin-top: 12px;
         cursor: pointer;
       }
       .nav-separator {
@@ -535,7 +537,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         //var isChrome = !!window.chrome && !!window.chrome.webstore;
         //var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
-        if(!window.safari && !window.chrome) {
+        const UA = window.navigator.userAgent.toLowerCase();
+        if (UA.includes('chrome') || UA.includes('safari') && !UA.includes('firefox')) {
+        } else {
           this.$.wrongBrowser.open();
         }
       },
