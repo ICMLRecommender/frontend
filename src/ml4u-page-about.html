@@ -66,7 +66,8 @@
     }
     .person {
         display: block;
-        height: 90px;
+        min-height: 60px;
+        height: auto;
         margin-bottom: 10px;
     }
     .details {
@@ -85,7 +86,7 @@
     .person-link {
         margin-right: 8px;
         color: #C80000;
-        border-bottom: 1px solid #C80000;
+        /*border-bottom: 1px solid #C80000;*/
         display: inline-block;
     }
     @media(max-width: 360px) {
@@ -100,20 +101,38 @@
     <div class="header"></div>
     <paper-card class="content">
         <div class="inner">
+            <p>
+              <b>Note:</b> This app is in pre-release mode for ICML 2017. Please send feedback and bug reports to <a href="mailto:icml17app@gmail.com" target="_top">icml17app@gmail.com</a> or file an issue on our <a target="_blank" href="https://github.com/ICMLRecommender/frontend/issues">github project page</a>.
+            </p>
             <h1>What is this app?</h1>
             <p>
-                This app helps navigate the rich program of ICML 2017.  The app enables users to quickly find interesting papers, publicly comment them, register their interest using 'like' and 'bookmark', and browse what others are interested in. In addition, users' preferences feed a personalized paper recommendation engine.
-                <br><br>
+              This app helps navigate the rich program of ICML 2017. The app provides an easily
+              navigable schedule, enables users to quickly find interesting papers, publicly
+              comment them, register their interest using 'like' and 'bookmark', and browse what
+              others are interested in. In addition, users' preferences feed a personalized paper
+              recommendation engine.
+<!--            <br><br>
                 The recommendation engine is based on the <a href="http://www.cs.columbia.edu/~blei/papers/WangBlei2011.pdf" target="_blank">collaborative topic regression (CTR) model</a> of C. Wang and D. Blei.
-            </p>
+            </p>-->
             <hr/>
-            <h1>Who built this?</h1>
+            <h1>Bookmarks and Likes</h1>
+            <p>Papers you choose to bookmark or like are made available through your "Library" page.</p>
+            <p>The difference between bookmarks and likes is that liked papers are fed into the recommendation engine.</p>
+            <hr/>
+            <h1>Recommendations</h1>
+            <p>Recommendations are available through the "Feed" page and are updated every two minutes. On that page recommended papers are preceded by trending papers which shows some of the most popular papers.</p>
+            <p>The recommendation engine is based on the <a href="http://www.cs.columbia.edu/~blei/papers/WangBlei2011.pdf" target="_blank">collaborative topic regression (CTR) model</a> of C. Wang and D. Blei.</p>
+            <hr/>
+            <h1>Why are we building it?</h1>
+            <p>There are a few reasons one of which is that it can be challenging to keep up with all of the great work published at conferences. We believe that an easy to use app and a good recommendation engine can help surface interesting papers.</p>
+            <p>Moreover, we built this app as a service to the community, we will open source the app. We would like others to use and even build on it. We believe that the app can also be used as a test bed for recommender engines. As such the app keeps detailed (and anonymous) logs for future offline analysis and model comparisons.</p>
+            <hr/>
+            <h1>Who is involved?</h1>
             <p>The app was designed and built by a team of machine learning students and researchers spread across England, France, and Canada.</p>
         </div>
         <div class="team">
             <template is="dom-repeat" items="[[team]]" as="person">
             <div class="person">
-                <div class="picture"></div>
                 <div class="details">
                     <div class="name">[[person.name]]</div>
                     <div class="affiliation">[[person.affiliation]]</div>
@@ -137,19 +156,19 @@
             value: [
                 {
                     'name': 'Adrien Todeschini',
-                    'affiliation': ''
+                    'affiliation': 'Scorelab.io'
                 },
                 {
                     'name': 'Hoai Phuoc Truong',
-                    'affiliation': ''
+                    'affiliation': 'McGill University'
                 },
                 {
                     'name': 'James Ravenscroft',
-                    'affiliation': ''
+                    'affiliation': 'University of Warwick'
                 },
                 {
                     'name': 'Laurent Charlin',
-                    'affiliation': ''
+                    'affiliation': 'Université de Montréal (HEC)'
                 },
                 {
                     'name': 'Lazar Valkov',
@@ -157,7 +176,7 @@
                 },
                 {
                     'name': 'Maria Liakata',
-                    'affiliation': ''
+                    'affiliation': 'University of Warwick, Alan Turing Institute'
                 },
                 {
                     'name': 'Taimur Abdaal',
@@ -165,11 +184,11 @@
                 },
                 {
                     'name': 'Valerio Perrone',
-                    'affiliation': ''
+                    'affiliation': 'University of Warwick'
                 },
                 {
                     'name': 'Yee Whye Teh',
-                    'affiliation': 'University of Oxford'
+                    'affiliation': 'University of Oxford, DeepMind, Alan Turing Institute'
                 },
             ]
         }
