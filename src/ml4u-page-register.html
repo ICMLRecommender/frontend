@@ -157,7 +157,7 @@
         var numOfSelectedTopics = 0;
         var selectedTopics = this.selectedTopics;
         for (var k in selectedTopics) if (selectedTopics.hasOwnProperty(k)) ++numOfSelectedTopics;
-        if(numOfSelectedTopics<2) {
+        if(numOfSelectedTopics<2 && this.topics != undefined && this.topics != null && this.topics.topics != undefined && this.topics.topics != null && this.topics.topics.length > 0) {
           this.$.registerErrorDiv.innerHTML = "Please select at least two topics.";
           return;
         }
