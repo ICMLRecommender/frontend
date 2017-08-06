@@ -66,13 +66,12 @@
     }
     .person {
         display: block;
-        min-height: 60px;
         height: auto;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
+        padding-left: 10px;
     }
     .details {
-        display: inline-block;
-        float: left;
+        display: block;
         line-height: 1.4;
         margin-top: 3px;
     }
@@ -83,19 +82,9 @@
     .affiliation {
         color: #555555;
     }
-    .person-link {
-        margin-right: 8px;
+    .person-link, a {
         color: #C80000;
         /*border-bottom: 1px solid #C80000;*/
-        display: inline-block;
-    }
-    @media(max-width: 360px) {
-        .picture {
-            display: none;
-        }
-        .details {
-            padding-left: 7px;
-        }
     }
     </style>
     <div class="header"></div>
@@ -135,7 +124,14 @@
             <div class="person">
                 <div class="details">
                     <div class="name">[[person.name]]</div>
-                    <div class="affiliation">[[person.affiliation]]</div>
+                    <template is="dom-if" if="{{person.link}}">
+                        <div>
+                            <a class="person-link" href="{{person.link}}" target="_blank">[[person.affiliation]]</a>
+                        </div>
+                    </template>
+                    <template is="dom-if" if="{{!person.link}}">
+                        <div class="affiliation">[[person.affiliation]]</div>
+                    </template>
                 </div>
             </div>
             </template>
@@ -156,7 +152,8 @@
             value: [
                 {
                     'name': 'Adrien Todeschini',
-                    'affiliation': 'Scorelab.io'
+                    'affiliation': 'Scorelab.io',
+                    'link': 'http://www.scorelab.io'
                 },
                 {
                     'name': 'Hoai Phuoc Truong',
