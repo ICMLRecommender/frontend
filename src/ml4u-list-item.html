@@ -61,17 +61,17 @@
     span.invited_talk {
       background-color: #C80000;
     }
-    paper-item.oral {
-      border-left-color: #fcb168;
-    }
-    span.oral {
-      background-color: #fcb168;
-    }
     paper-item.talk {
       border-left-color: #174b6e;
     }
     span.talk {
       background-color: #174b6e;
+    }
+    paper-item.oral {
+      border-left-color: #fcb168;
+    }
+    span.oral {
+      background-color: #fcb168;
     }
     paper-item.spotlight {
       border-left-color: #df8095;
@@ -188,14 +188,20 @@
                 <paper-item class="paper"  on-tap="_changeSelectedItem">
                     <paper-item-body three-line>
                         <div secondary>
-                            <template is="dom-if" if="{{isTalk}}">
-                                <span class="session-time">{{listItem.talk_session.time_start}}<span>
+                            <template is="dom-if" if="{{isOral}}">
+                                <span class="session-time">{{listItem.oral_session.time_start}}<span>
                                 <template is="dom-repeat" items="{{listItem.session_labels}}">
                                     <span style="float:right" class="paper sessiontype">[[item]]</span>
                                 </template>
                             </template>
-                            <template is="dom-if" if="{{!isTalk}}">
-                                <span class="session-time">{{listItem.poster_session.time_start}} - {{listItem.poster_session.time_end}} &bull; {{listItem.poster_session.location}}<span>
+                                <template is="dom-if" if="{{isSpotlight}}">
+                                    <span class="session-time">{{listItem.spotlight_session.time_start}}<span>
+                                    <template is="dom-repeat" items="{{listItem.session_labels}}">
+                                        <span style="float:right" class="paper sessiontype">[[item]]</span>
+                                    </template>
+                                </template>
+                            <template is="dom-if" if="{{isPoster}}">
+                                <span class="session-time">{{listItem.poster_session.location}}<span>
                                 <template is="dom-repeat" items=[[listItem.session_labels]]>
                                     <span style="float:right" class="paper sessiontype">[[item]]</span>
                                 </template>
@@ -258,9 +264,17 @@
         encompassingSessionType: {
           type: String,
         },
-        isTalk: {
+        isOral: {
           type: Boolean,
-          computed: 'computeIsTalk(encompassingSessionType)'
+          computed: 'computeIsOral(encompassingSessionType)'
+        },
+        isSpotlight: {
+          type: Boolean,
+          computed: 'computeIsSpotlight(encompassingSessionType)'
+        },
+        isPoster: {
+          type: Boolean,
+          computed: 'computeIsPoster(encompassingSessionType)'
         },
         selectedItem: {
           type: String,
@@ -278,8 +292,14 @@
           notify: true
         }
       },
-      computeIsTalk: function() {
-        return this.encompassingSessionType == "talk";
+      computeIsOral: function() {
+        return this.encompassingSessionType == "oral";
+      },
+      computeIsSpotlight: function() {
+        return this.encompassingSessionType == "spotlight";
+      },
+      computeIsPoster: function() {
+        return this.encompassingSessionType == "poster";
       },
       computeBookmarkDisplayString: function(isBookmarked) {
         val = isBookmarked ? "inline" : "none";

@@ -187,10 +187,17 @@
     </div>
   </section>
 </template>
-  <template is="dom-if" if="[[itemObject.has_talk]]">
+  <template is="dom-if" if="[[itemObject.has_oral]]">
     <section class="cardBlock">
       <div class="sectionTitleContainer">
-        <span class="sectiontitle">Talk</span><span class="sectionInfo">[[itemObject.talk_string]]</span>
+        <span class="sectiontitle">Oral</span><span class="sectionInfo">[[itemObject.oral_string]]</span>
+      </div>
+    </section>
+  </template>
+  <template is="dom-if" if="[[itemObject.has_spotlight]]">
+    <section class="cardBlock">
+      <div class="sectionTitleContainer">
+        <span class="sectiontitle">Spotlight</span><span class="sectionInfo">[[itemObject.spotlight_string]]</span>
       </div>
     </section>
   </template>
@@ -368,7 +375,7 @@
       console.log("computed the following itemObj for itemId " + itemId);
       console.log(item);
       this.itemObject = item;
-      this.itemTitle = this._getItemTitle();      
+      this.itemTitle = this._getItemTitle();
       //window.ml4u.sharedElements.scheduleDataProvider.getItemLikes(itemId).then(likes => {
       //    item.likes = likes;
       //    this.hasUserLiked = likes.hasOwnProperty(this.username);
