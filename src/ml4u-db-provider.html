@@ -198,6 +198,24 @@
         */
         //console.log("Returning the following object:");
         //console.log(item);
+
+				item.has_links = false;
+				if(orgItem.paper_url != null && orgItem.paper_url != undefined) {
+				    item.has_links = true;
+				}
+				if(orgItem.poster_url != null && orgItem.poster_url != undefined) {
+				    item.has_links = true;
+				}
+				if(orgItem.code_url != null && orgItem.code_url != undefined) {
+				    item.has_links = true;
+				}
+				if(orgItem.video_url != null && orgItem.video_url != undefined) {
+				    item.has_links = true;
+				}
+				//if(orgItem.homepage_url != null && orgItem.homepage_url != undefined) {
+				//    item.has_links = true;
+				//}
+
         return item;
       },
       getItemLikes: function(itemId) {
