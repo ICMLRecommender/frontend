@@ -164,8 +164,9 @@ span.loc {
         //check if this paper is bookmarked/liked/recommended
         if(this.loggedIn) {
           //first check for bookmarks
-          if(hasBookmarks)
-            isBookmarked = this.profileData.bookmarks[papers[paperIndex].id] != undefined ? 1 : 0;
+          if(hasBookmarks) {
+            isBookmarked = (papers && papers[paperIndex] && papers[paperIndex].id && this.profileData.bookmarks[papers[paperIndex].id]) ? 1 : 0;
+          }
 
           if(isBookmarked) {
             console.log("Yes! It's bookmarked!");
