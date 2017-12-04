@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="ml4u-list.html">
 
-<dom-module id="ml4u-view-session">
+<dom-module id="ml4u-view-demo">
 
 <style>
 :host {
@@ -53,7 +53,7 @@ span.loc {
 <template>
   <section class="itemViewHeader">
     <paper-icon-button dialog-confirm icon="icons:close"></paper-icon-button>
-    <span>Session</span>
+    <span>Demonstrations</span>
   </section>
   <section class="container">
     <div id="sessionInfo">
@@ -62,21 +62,12 @@ span.loc {
       <!--<div class="bottomSessionInfo"><span style="color: #989898;">Chair: </span><span style="color: #000000;">{{session.session_chair}}</span></div>-->
     </div>
     <div id="papersDiv">
-      <template id="papersTopList" is="dom-repeat" items="{{papers_top}}"  initialCount="10">
-        <div>
-          <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
-            encompassing-session-type="[[session.type_code]]"
-            is-paper is-bookmarked=[[item.isBookmarked]] is-liked=[[item.isLiked]]></ml4u-list-item>
-        </div>
-      </template>
-      <template is="dom-repeat" items="{{papers}}" initialCount="10">
-        <template is="dom-if" if="[[!item.isHidden]]"
+      <template is="dom-repeat" items="{{session.content}}" initialCount="10">
           <div>
-            <ml4u-list-item list-item="{{item}}" selected-item="{{selectedPaper}}"
-              encompassing-session-type="[[session.type_code]]"
-              is-paper is-bookmarked=[[item.isBookmarked]] is-liked=[[item.isLiked]]></ml4u-list-item>
+            <ml4u-list-item list-item="{{item}}" selected-item="{{selectedEvent}}"
+              encompassing-session-type="[[session.type_code]]" is-event
+              is-bookmarked=[[item.isBookmarked]] is-liked=[[item.isLiked]]></ml4u-list-item>
           </div>
-        </template>
       </template>
 <!--      <ml4u-list items="[[papers]]"
           selected-item={{selectedPaper}} id-prefix="sched" is-paper-list></ml4u-list>-->
@@ -86,22 +77,14 @@ span.loc {
 
 <script>
   Polymer({
-    is: 'ml4u-view-session',
+    is: 'ml4u-view-demo',
     properties: {
       sessionId: String,
       session: {
         type: Object,
         computed: '_computeSession(sessionId)'
       },
-      papers: {
-        type: Object,
-        computed: '_computePapersList(sessionId)'
-      },
-      papers_top: {
-        type: Array,
-        value: []
-      },
-      selectedPaper: {
+      selectedEvent: {
         type: String,
         notify: true
       },
@@ -123,7 +106,7 @@ span.loc {
     },
     observers: [
       /*'updateBookmarks(papers, profileData.bookmarks)'*/
-      '_onPapersChanged(papers)',
+      //'_onPapersChanged(papers)',
       '_onBookmarksChanged(profileData.bookmarks)',
       '_onUserLikesChanged(userLikes.likes)'
     ],
@@ -244,21 +227,7 @@ span.loc {
       console.log("returning session:");
       console.log(session);
       return session;
-    },
-    _computePapersList: function(sessionId) {
-      if(sessionId == undefined || sessionId=="") {
-        return [];
-      }
-      if(window.ml4u == undefined || window.ml4u.sharedElements == undefined
-        || window.ml4u.sharedElements.scheduleDataProvider == undefined) {
-        //postpone the reloading for later.
-        this.needsReload = 1;
-        return [];
-      }
-      papers = window.ml4u.sharedElements.scheduleDataProvider.getSessionItems(sessionId);
-      return papers;
     }
-
   });
   </script>
 </dom-module>

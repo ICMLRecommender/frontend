@@ -3,7 +3,8 @@
 
 <link rel="import" href="ml4u-view-session.html">
 <link rel="import" href="ml4u-view-item.html">
-
+<link rel="import" href="ml4u-view-event.html">
+<link rel="import" href="ml4u-view-demo.html">
 
 <dom-module id="ml4u-view-session-and-item">
 
@@ -19,7 +20,14 @@
       needs-reload={{itemViewNeedsReload}} profile-data="{{profileData}}" logged-in="[[loggedIn]]"
       username="{{username}}" profile-secret="[[profileSecret]]" user-likes="[[userLikes]]" abstract-visible>
     </ml4u-view-item>
-  </iron-pages>
+    <ml4u-view-event id="viewEvent" event-id="[[sessionId]]"
+        profile-data="{{profileData}}" logged-in="[[loggedIn]]"
+        username="{{username}}" profile-secret="[[profileSecret]]" user-likes="[[userLikes]]" abstract-visible>
+    </ml4u-view-event>
+    <ml4u-view-demo id="viewDemo" session-id="[[sessionId]]" selected-event={{selectedEvent}}
+        needs-reload={{sessionViewNeedsReload}}  user-likes="[[userLikes]]"
+        profile-data="{{profileData}}" logged-in="[[loggedIn]]"></ml4u-view-demo>
+</iron-pages>
 </template>
 
 <script>
@@ -38,7 +46,13 @@
       },
       selectedView: {
         type: Number,
-        value: 0
+        value: 0,
+        observer: '_selectedChanged'
+      },
+      selectedEvent: {
+        type: Number,
+        value: 0,
+        notify: true
       },
       sessionId: {
         type: String
@@ -72,19 +86,57 @@
       'updatePopup(selectedItem, popupDisplaySession)'
     ],
     updatePopup: function(selectedItem, popupDisplaySession) {
-      console.log("updatePopup called");
-      console.log(selectedItem);
-      console.log(popupDisplaySession);
-      if(popupDisplaySession == undefined)
-        return;
-      if(popupDisplaySession == 0) {
-        this.selectedPaper = selectedItem;
-        this.selectedView = 1;
+        var session;
+
+        console.log("updatePopup called");
+        console.log(selectedItem);
+        console.log(popupDisplaySession);
+      
+        switch(popupDisplaySession) {
+            case 0:
+                this.selectedPaper = selectedItem;
+                this.selectedView = 1;
+                break;
+            case 1: 
+                this.sessionId = selectedItem;
+                this.selectedView = 0;
+                break;
+            case 2:
+                this.sessionId = selectedItem;
+                session = this._getSession(selectedItem);
+                switch(session.type_code) {
+                    case "tutorial":
+                    case "workshop":
+                    case "symposium":
+                        this.selectedView = 2;
+                        break;
+                    case "demonstration":
+                        this.selectedEvent = 0;
+                        this.selectedView = 3;
+                        break;
+                    default:
+                        this.selectedView = 0;
+                }
+            default:
+                return;
+        }
+    },
+    _getSession: function(sessionId) {
+      console.log("hello from _computeSession, where sessionId is:");
+      console.log(sessionId);
+      if(sessionId == undefined || sessionId=="") {
+        return {};
       }
-      else {
-        this.sessionId = selectedItem;
-        this.selectedView = 0;
+      if(window.ml4u == undefined || window.ml4u.sharedElements == undefined
+        || window.ml4u.sharedElements.scheduleDataProvider == undefined) {
+        //postpone the reloading for later.
+        //this.needsReload = 1;
+        return {};
       }
+      session = window.ml4u.sharedElements.scheduleDataProvider.getSession(sessionId);
+      console.log("returning session:");
+      console.log(session);
+      return session;
     },
     preload: function() {
       if(this.sessionViewNeedsReload) {
@@ -100,6 +152,7 @@
 
     },
     _onSelectedPaperChanged: function(newVal, oldVal) {
+        console.log("SELECTED PAPER: newVal");
       if(newVal == undefined)
         return;
       this.selectedView = 1;
@@ -117,6 +170,9 @@
     },
     ready: function() {
       this.listen(this.$.viewItem, 'back_button_tapped', 'onBackButtonTapped');
+    },
+    _selectedChanged: function(newPage, oldPage) {
+      console.log('<iron-pages>.selected', 'new', newPage, 'old', oldPage);
     }
   });
   </script>

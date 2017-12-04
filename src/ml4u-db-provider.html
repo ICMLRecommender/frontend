@@ -8,19 +8,19 @@
 
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="schedule_icml2017_1"
+      doc-id="{{scheduleDatabase}}"
       data="{{scheduleData}}">
     </app-pouchdb-document>
 
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="trending_2017"
+      doc-id="{{trendingDatabase}}"
       data="{{trending}}">
     </app-pouchdb-document>
 
     <app-pouchdb-document
       db-name="schedule"
-      doc-id="topics"
+      doc-id="{{topicsDatabase}}"
       data="{{topics}}">
     </app-pouchdb-document>
 
@@ -29,15 +29,27 @@
     Polymer({
       is: 'ml4u-db-provider',
       properties: {
+        scheduleDatabase: {
+            type: String,
+            value: window.global.databases.schedule
+        },
         scheduleData: {
           type: Object,
           notify: true,
           value: null
         },
+        trendingDatabase: {
+            type: String,
+            value: window.global.databases.trending
+        },
         trending: {
           type: Object,
           notify: true,
           value: null
+        },
+        topicsDatabase: {
+            type: String,
+            value: window.global.databases.topics
         },
         topics: {
           type: Object,
@@ -174,7 +186,7 @@
       },
       getItemLikes: function(itemId) {
         //console.log('Getting likes for item ', itemId);
-        const db = new PouchDB('https://icml.papro.org.uk/couchdb/userlikes');
+        const db = new PouchDB(window.global.serverBaseUrl + window.global.url.userLikes);
         return db.get(itemId).then(doc => {
           //console.log()
           return doc.likes ? doc.likes : {};
@@ -183,6 +195,8 @@
         });
       },
       getItems: function() {
+          console.log("getItems......");
+          console.log("ScheduledData: ", this.scheduleData);
         if(this.scheduleData == undefined || this.scheduleData.items == undefined)
           return {};
         return this.scheduleData.items;
@@ -224,7 +238,7 @@
       created: function() {
         window.ml4u = window.ml4u || {};
         window.ml4u.schedDB_local = new PouchDB('schedule');
-        window.ml4u.shedDB_remote = new PouchDB('https://icml.papro.org.uk/couchdb/schedule');
+        window.ml4u.shedDB_remote = new PouchDB(window.global.serverBaseUrl + window.global.url.schedule);
 
         window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};

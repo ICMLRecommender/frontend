@@ -320,7 +320,7 @@
           console.log('Error liking comment!', err);
         });
 
-        xhr.open("POST", "http://localhost:8000/icml/like_paper/", true);
+        xhr.open("POST", window.global.backendBaseUrl + "/like_paper/", true);
         xhr.send(likeData);
       },
       _toggleBookmark: function() {

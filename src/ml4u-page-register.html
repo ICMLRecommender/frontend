@@ -99,7 +99,7 @@
   <div class="header"></div>
     <paper-card class="content">
   <div class="logo register-logo">
-    ICML 2017<div class="beta">(Beta)</div>
+    NIPS 2017<div class="beta">(Beta)</div>
   </div>
   <div class="registration-info">
     Create an account to save papers to read later, and get personalised paper recommendations!
@@ -180,6 +180,7 @@
         var uriEncodedPostData = encodeURI(postData);
 
         var callbackfunction_afterLogin = function(err, response) {
+            console.log("callbackfunction_afterLogin: ", err, response);
           loginElements.submitButton.disabled = false;
           if(err) {
 
@@ -187,6 +188,8 @@
           else {
             //this.username = loginElements.username;
             //add selected topics
+            console.log("loginElements.username = ", loginElements.username);
+            console.log("selectedTopics: ", selectedTopics);
             db = new PouchDB(loginElements.username);
             db.put({
               _id: 'preferred_topics',
@@ -198,6 +201,7 @@
         }.bind(this);
 
         var callbackfunction_afterRegistration = function(e) {
+            console.log("callbackfunction_afterRegistration");
           loginElements.submitButton.disabled = false;
           var status = e.target.status;
           var responseText = e.target.responseText;
@@ -222,7 +226,7 @@
           loginElements.registerErrorDiv.innerHTML = "An error occurred. Please try again.";
           loginElements.submitButton.disabled = false;
         }.bind(this));
-        xhr.open("POST", "http://localhost:8000/icml/registration/", true);
+        xhr.open("POST", window.global.backendBaseUrl + "/registration/", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.send(uriEncodedPostData);
       },

@@ -4,7 +4,7 @@
 <link rel="import" href="ml4u-item-comments.html">
 <!--<link rel="import" href="ml4u-components/ml4u-latex-view.html">-->
 
-<dom-module id="ml4u-view-item">
+<dom-module id="ml4u-view-event">
 
 <style>
 
@@ -25,14 +25,14 @@
     border-bottom: 1px solid #e0e0e0 !important;
     padding: 10px 24px 10px 24px;
   }
-  section.itemViewHeader {
+  section.eventViewHeader {
     color: white;
     background-color: var(--app-primary-color);
     padding: 5px;
     font-weight: bold;
     font-size: 20px;
   }
-  section.itemViewHeader > span {
+  section.eventViewHeader > span {
     text-align: center;
   }
   .styledbulletpoint {
@@ -123,137 +123,50 @@
   .back-icon {
     color: white;
   }
-  .tag {
-        display: inline-block;
-        border-radius: 3px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-        background: gray;
-        color: white;
-        font-size: 0.9em;
-        font-weight: 500;
-        margin-right: 5px;
-      }
 </style>
 <template>
-  <template is="dom-if" if="{{displayedWithinSession}}">
-    <section class="itemViewHeader">
-      <paper-icon-button on-tap='_backButtonTapped' icon="icons:arrow-back" class="back-icon"></paper-icon-button>
-      <span class="modal-heading">Paper</span>
+    <section class="eventViewHeader">
+        <paper-icon-button dialog-confirm class="close-button" icon="icons:close"></paper-icon-button>
+        <span class="modal-heading">{{session.type}}</span>
     </section>
-  </template>
-  <template is="dom-if" if="{{!displayedWithinSession}}">
-    <section class="itemViewHeader">
-      <paper-icon-button dialog-confirm class="close-button" icon="icons:close"></paper-icon-button>
-      <span class="modal-heading">[[itemTitle]]</span>
-    </section>
-  </template>
 
-  <section class="container">
-    <section class="cardBlock card-head">
-        <template is="dom-if" if="[[itemObject.session_labels]]">
-            <div class="labels">
-                <template is="dom-repeat" items="[[itemObject.session_labels]]">
-                    <div class="tag">[[item]]</div>
+    <section class="container">
+        <section class="cardBlock card-head">
+            <div class="papertitle">[[session.session]]</div>
+            <div>
+                <template is="dom-repeat" items="{{session.content.0.authors}}" >
+                    <a dialog-confirm href="/person?id=[[item.author_id]]" class="authorlink">[[item.author]]</a>
                 </template>
             </div>
-        </template>
-        <div class="papertitle">[[itemObject.title]]</div>
-        <div>
-          <template is="dom-repeat" items="{{itemObject.authors}}">
-            <a dialog-confirm href="/person?id=[[item.author_id]]" class="authorlink">[[item.author]]</a>
-            <!--<span class="authorlink">[[item.author]]</span>-->
-          </template>
-        </div>
-        <template is="dom-if" if="[[!isInvitedTalk(itemObject)]]">
-            <div class="actions">
-            <paper-icon-button icon="icons:bookmark" id="bookmarkButton" class$="class1 [[bookmarkedClassString]]" on-click='_toggleBookmark'></paper-icon-button>
-            <paper-icon-button icon="icons:favorite" id="likeIcon" class$="papericon [[likedClassString]] [[optimisticLikeString]]" on-click='_toggleLike'></paper-icon-button>
-            </div>
-        </template>
-    </section>
+        </section>
 <!--    <section class="cardBlock">
-      <div class="sectionTitleContainer">
-        <span class="sectiontitle">Topics</span><span class="sectionInfo">Stats, ML</span>
-      </div>
-    </section>
+            <div class="sectionTitleContainer">
+                <span class="sectiontitle">Topics</span><span class="sectionInfo">Stats, ML</span>
+            </div>
+        </section>
 -->
-<template is="dom-if" if="[[itemObject.pdf_url]]">
-  <section class="cardBlock">
-    <div class="sectionTitleContainer">
-      <span class="sectiontitle">PDF</span><span class="sectionInfo"><a target="_blank" href="[[itemObject.pdf_url]]" class="authorlink">View PDF</a></span>
-    </div>
-  </section>
-</template>
-  <template is="dom-if" if="[[itemObject.has_talk]]">
-    <section class="cardBlock">
-      <div class="sectionTitleContainer">
-        <span class="sectiontitle">Talk</span><span class="sectionInfo">[[itemObject.talk_string]]</span>
-      </div>
+        <section class="cardBlock">
+            <div class="sectionTitleContainer" on-click='_toggleAbstract'>
+                <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" ></paper-icon-button></span>
+            </div>
+            <div hidden$="{{!abstractVisible}}" id="abstract" class="abstract-text">
+                {{session.content.0.abstract}}
+            </div>
+        </section>
     </section>
-  </template>
-  <template is="dom-if" if="[[itemObject.has_poster]]">
-    <section class="cardBlock">
-      <div class="sectionTitleContainer">
-        <span class="sectiontitle">Poster</span><span class="sectionInfo">[[itemObject.poster_string]]</span>
-      </div>
-    </section>
-  </template>
-    <section class="cardBlock">
-      <div class="sectionTitleContainer" on-click='_toggleAbstract'>
-        <span class="sectiontitle">Abstract</span><span class="sectionInfo"><paper-icon-button icon="{{abstractIconStr}}" class="papericon" ></paper-icon-button></span>
-      </div>
-      <div hidden$="{{!abstractVisible}}" id="abstract" class="abstract-text">
-        [[itemObject.description]]
-        <!--<latex-view content="[[itemObject.description]]"></latex-view>-->
-      </div>
-    </section>
-  </section>
-  <section class="item-comments">
-    <ml4u-item-comments comments-array={{comments}} logged-in="[[loggedIn]]" item-id="[[itemId]]" username="[[username]]" profile-secret="[[profileSecret]]"></ml4u-item-comments>
-  </section>
-  <!--
-  <paper-button raised class="writeReview" on-tap="writeReviewTapped" hidden$="{{!displayRateItemButton}}">Rate item</paper-button>
-  <section class="itemViewUserReview" hidden="{{displayRateItemButton}}">
-    <div class="cardBlock">
-      <ml4u-item-review  display-rate-item-button="{{displayRateItemButton}}" ></ml4u-item-review>
-    </div>
-  </section>
-  -->
-  <section class="itemViewReviews container" hidden="{{!feedbackRetrieved}}">
-    <!--
-    <div>
-      <b>Likes:</b>
-      <ml4u-item-likes likes-array={{feedback.likes}}></ml4u-item-likes>
-    </div>
-
-    <h3>Comments</h3>
-    -->
-
-      <!--
-      <ml4u-user-review author-name="Author Name1" author-institution="Author Institution1" review="Item review1"></ml4u-user-review>
-      <ml4u-user-review author-name="Author Name2" author-institution="Author Institution2" review="Item review2"></ml4u-user-review>
-          <template is="dom-repeat" items="{{articleObject.reviews}}">
-          <ml4u-user-review author-name="[[item.authorName]]" author-institution="[[item.institution]]" review="[[item.review]]"></ml4u-user-view>
-          </template>
-        -->
-
-  </section>
 </template>
 
 <script>
   Polymer({
-    is: 'ml4u-view-item',
+    is: 'ml4u-view-event',
     properties: {
-      itemId : {
+      eventId : {
         type: Object,
-        observer: '_onItemIdChanged'
+        observer: '_onEventIdChanged'
       },
-      itemObject: {
+      session: {
         type: Object,
-        observer: '_onItemChanged'
+        observer: '_onSessionChanged'
       },
       profileData: {
         type: Object,
@@ -270,7 +183,7 @@
       },
       likedClassString: {
         type: String,
-        computed: '_getLikedClassString(userLikes, itemId)'
+        //computed: '_getLikedClassString(userLikes, itemId)'
       },
       optimisticLikeString: {
         type: String,
@@ -288,9 +201,6 @@
       },
       feedback: {
         type: Object
-      },
-      comments: {
-        type: Array
       },
       abstractVisible: {
         type: Boolean,
@@ -316,33 +226,22 @@
         type: Boolean,
         computed: '_hasUserLiked(userLikes, itemId)',
         notify: true
-      },
-      itemTitle: {
-          type: String,
-          value: "",
-          notify: true
       }
-      /*displayRateItemButton: {
-        type: Boolean,
-        value: true
-      },*/
-
     },
 
-    _onItemIdChanged: function() {
-      if(this.itemId == undefined)
+    _onEventIdChanged: function() {
+      if(this.eventId == undefined)
         return;
 
       if(!this.abstractVisible) {
-        this._toggleAbstract();
+            this._toggleAbstract();
       }
       this.feedbackRetrieved = false;
-      this.updateItem();
+      this.updateSession();
       //this.getFeedback();
-      this.getComments();
     },
-    updateItem: function() {
-      if(this.itemId == undefined)
+    updateSession: function() {
+      if(this.eventId == undefined)
         return;
 
       if(window.ml4u == undefined || window.ml4u.sharedElements == undefined
@@ -351,12 +250,13 @@
           this.needsReload = 1;
           return;
       }
-      var itemId = this.itemId;
-      item = window.ml4u.sharedElements.scheduleDataProvider.getItem(itemId);
+      var session = window.ml4u.sharedElements.scheduleDataProvider.getSession(this.eventId);
       //check if item is empty
+      console.log("SESSION: ", session);
       isItemEmpty = true;
-      for(var prop in item) {
-        if(item.hasOwnProperty(prop)) {
+      for(var prop in session) {
+          console.log("test prop: ", prop);
+        if(session.hasOwnProperty(prop)) {
           isItemEmpty = false;
           break;
         }
@@ -365,10 +265,10 @@
         this.needsReload = 1;
         return;
       }
-      console.log("computed the following itemObj for itemId " + itemId);
-      console.log(item);
-      this.itemObject = item;
-      this.itemTitle = this._getItemTitle();      
+      console.log("computed the following session for sessionId " + this.eventId);
+      console.log(session);
+      this.session = session;
+      //this.itemTitle = this._getItemTitle();      
       //window.ml4u.sharedElements.scheduleDataProvider.getItemLikes(itemId).then(likes => {
       //    item.likes = likes;
       //    this.hasUserLiked = likes.hasOwnProperty(this.username);
@@ -378,7 +278,7 @@
       this.bookmarkedClassString = "";
       if(this.loggedIn) {
         this.profileData.bookmarks = this.profileData.bookmarks || {};
-        if(this.itemId in this.profileData.bookmarks) {
+        if(this.eventId in this.profileData.bookmarks) {
           this.bookmarkedClassString = "bookmarked";
         }
       }
@@ -461,10 +361,10 @@
       xhr.open("POST", window.global.backendBaseUrl + "/like_paper/", true);
       xhr.send(likeData);
     },
-    _onItemChanged: function(newItemValue) {
-      if(newItemValue === undefined)
-        return;
-      //this._updateStars();
+    _onSessionChanged: function(newItemValue) {
+    //   if(newItemValue === undefined)
+    //     return;
+    //   //this._updateStars();
     },
     _toggleAbstract: function() {
       this.abstractVisible = !this.abstractVisible;
@@ -500,35 +400,9 @@
           return '';
         }
     },
-    getComments: function() {
-        if (this.itemId == undefined) return;
-        const url = window.global.serverBaseUrl + window.global.url.userComments + '/item' + this.itemId;
-        fetch(url).then(res => {
-          return res.json();
-        }).then(json => {
-          if (json.comments) {
-            this.comments = json.comments;
-          } else {
-            this.comments = [];
-          }
-          return true;
-        }).catch(error => {
-          console.error('Error getting item comments:', error);
-        });
-    },
-    _getItemTitle: function() {
-        if(this.isInvitedTalk(this.itemObject)) {
-            return "Invited Talk";
-        }
-        else {
-            return "Paper";
-        }
-    },
-    isInvitedTalk: function(item) {
-        return item && item.oral_session && item.oral_session.type.startsWith("Invited Talk");
-    },
+    
     ready: function() {
-      this.getComments();
+      //this.getComments();
     }
   });
   </script>

@@ -248,9 +248,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <app-drawer-layout id="drawer_layout" fullbleed>
       <!-- Drawer content -->
       <app-drawer id="drawer" swipe-open>
-        <!--<app-toolbar>ICML 2017</app-toolbar>-->
+        <!--<app-toolbar>NIPS 2017</app-toolbar>-->
         <div class="drawerheader">
-          <div class="title">ICML 2017 (Beta)</div>
+          <div class="title">NIPS 2017 (Beta)</div>
           <div class="userdiv">[[username]]</div>
         </div>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
@@ -396,7 +396,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       listeners : {
         'iron-overlay-closed':'_itemDialogClosed',
-        'iron-overlay-canceled':'_itemDialogCanceled'
+        'iron-overlay-canceled':'_itemDialogCanceled',
+        'iron-overlay-opened':"_itemDialogOpened"
       },
 
       _ondbProviderReady: function(newVal, oldVal) {
@@ -475,6 +476,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (target.localName === 'paper-toast') {
           console.log("BEING CLOSED BY THE TOAST!!!!");
           event.preventDefault();
+        }
+      },
+      _itemDialogOpened: function(event) {
+        console.log("_itemDialogOpened CALLED");
+        var target = Polymer.dom(event).rootTarget;
+        var scrollable = target.querySelector("paper-dialog-scrollable .scrollable");
+        if(scrollable) {
+            scrollable.scrollTop = 0;
         }
       },
       _loggedInChanged: function(newVal, oldVal) {

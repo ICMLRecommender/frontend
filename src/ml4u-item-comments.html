@@ -6,7 +6,7 @@
 
 <dom-module id="ml4u-item-comments">
 
-<style is="custom-style">
+<style>
 .not-logged-in {
   background: #FAFAFA;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.45);
@@ -246,7 +246,7 @@
         this.set('addCommentFlow.error', err);
       });
 
-      xhr.open("POST", "http://localhost:8000/icml/post_comment/", true);
+      xhr.open("POST", window.global.backendBaseUrl + "/post_comment/", true);
       xhr.send(newCommentData);
     },
     resetCommentFlow: function() {

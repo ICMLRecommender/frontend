@@ -12,7 +12,7 @@
   <template>
     <ml4u-pouchdb-sync
         id="sync1"
-        source="https://icml.papro.org.uk/couchdb/{{username}}"
+        source="{{userDatabase}}"
         target="{{username}}"
         bidirectional>
     </ml4u-pouchdb-sync>
@@ -21,22 +21,22 @@
     </app-pouchdb-conflict-resolution>
     <template is="dom-repeat" items="{{collectonOfDocumentsToRetrieve}}">
       <app-pouchdb-document
-        db-name="{{username}}"
+        db-name="{{userDatabase}}"
         doc-id="data"
         data="{{profileData}}">
       </app-pouchdb-document>
       <app-pouchdb-document
-        db-name="{{username}}"
+        db-name="{{userDatabase}}"
         doc-id="secret"
         data="{{profileSecret}}">
       </app-pouchdb-document>
       <app-pouchdb-document
-        db-name="https://icml.papro.org.uk/couchdb/userlikes_reversed"
+        db-name="{{userLikesDatabase}}"
         doc-id="{{username}}"
         data="{{userLikes}}">
       </app-pouchdb-document>
       <app-pouchdb-document
-        db-name="{{username}}"
+        db-name="{{userDatabase}}"
         doc-id="recommendations"
         data="{{profileRecommendations}}">
       </app-pouchdb-document>
@@ -53,6 +53,15 @@
     Polymer({
       is: 'ml4u-user-profile',
       properties: {
+          userDatabase: {
+            type: String,
+            notify: true,
+            value: window.global.serverBaseUrl
+          },
+          userLikesDatabase: {
+            type: String,
+            value: window.global.serverBaseUrl + window.global.url.userLikesReversed
+          },
         username : {
           type: String,
           notify: true,
@@ -88,9 +97,12 @@
         },
       },
       _usernameChanged: function() {
-        if(this.username  != null)
+        if(this.username  != null) {
+            this.userDatabase = window.global.serverBaseUrl + "/" + this.username;
           this.collectonOfDocumentsToRetrieve = ["data"];
+        }
         else {
+            this.userDatabase = window.global.serverBaseUrl;
           this.collectonOfDocumentsToRetrieve = [];
           this.profileData = {};
         }
@@ -118,7 +130,7 @@
         PouchDB.plugin(require('pouchdb-authentication'));
       },
       ready: function() {
-        this.authDatabase = new PouchDB('https://icml.papro.org.uk/couchdb/basic', {skipSetup: true});
+        this.authDatabase = new PouchDB(window.global.serverBaseUrl + window.global.url.basic, {skipSetup: true});
         var cookie_value = this.$.username_cookie.readCookie();
         console.log("cookie_value");
         console.log(cookie_value);

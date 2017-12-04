@@ -61,11 +61,17 @@
     span.invited_talk {
       background-color: #C80000;
     }
-    paper-item.talk {
+    paper-item.oral {
       border-left-color: #fcb168;
     }
-    span.talk {
+    span.oral {
       background-color: #fcb168;
+    }
+    paper-item.talk {
+      border-left-color: #174b6e;
+    }
+    span.talk {
+      background-color: #174b6e;
     }
     paper-item.spotlight {
       border-left-color: #df8095;
@@ -80,10 +86,10 @@
       background-color: #b7b2ed;
     }
     paper-item.symposium {
-      border-left-color: #60F0F0;
+      border-left-color: #1a943c;
     }
     span.symposium {
-      background-color: #60F0F0;
+      background-color: #1a943c;
     }
     paper-item.workshop {
       border-left-color: #fd9edf;
@@ -162,57 +168,76 @@
     }
     </style>
 
-    <template is="dom-if" if="{{isPaper}}">
-      <paper-item class="paper"  on-tap="_changeSelectedItem">
-        <paper-item-body three-line>
-          <div secondary>
-            <template is="dom-if" if="{{isTalk}}">
-            <span class="session-time">{{listItem.talk_session.time_start}}<span>
-              <template is="dom-repeat" items="{{listItem.session_labels}}">
-                <span style="float:right" class="paper sessiontype">[[item]]</span>
-              </template>
+        <template is="dom-if" if="{{isEvent}}">
+            <paper-item class="event demonstration"  on-tap="_changeSelectedItem">
+                <paper-item-body three-line>
+                    <div secondary>
+                        <span class="session-time">{{listItem.time_start}} - {{listItem.time_end}} &bull; {{listItem.location}}<span>
+                    </div>
+                    <div class="session-title">{{listItem.title}}</div>
+                    <div secondary>
+                        <span id="authorsString" class="session-chair">
+                            {{authorsString}}
+                        </span>
+                    </div>
+                </paper-item-body>
+            </paper-item>
+        </template>
+        <template is="dom-if" if="{{!isEvent}}">
+            <template is="dom-if" if="{{isPaper}}">
+                <paper-item class="paper"  on-tap="_changeSelectedItem">
+                    <paper-item-body three-line>
+                        <div secondary>
+                            <template is="dom-if" if="{{isTalk}}">
+                                <span class="session-time">{{listItem.talk_session.time_start}}<span>
+                                <template is="dom-repeat" items="{{listItem.session_labels}}">
+                                    <span style="float:right" class="paper sessiontype">[[item]]</span>
+                                </template>
+                            </template>
+                            <template is="dom-if" if="{{!isTalk}}">
+                                <span class="session-time">{{listItem.poster_session.time_start}} - {{listItem.poster_session.time_end}} &bull; {{listItem.poster_session.location}}<span>
+                                <template is="dom-repeat" items=[[listItem.session_labels]]>
+                                    <span style="float:right" class="paper sessiontype">[[item]]</span>
+                                </template>
+                            </template>
+                        </div>
+                        <div class="session-title">{{listItem.title}}</div>
+                        <div secondary>
+                            <span id="authorsString" class="session-chair">{{authorsString}}</span>
+                            <template is="dom-if" if="{{isBookmarked}}">
+                            <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
+                            </template>
+                            <template is="dom-if" if="{{isLiked}}">
+                            <iron-icon icon="icons:favorite" class="liked"></iron-icon>
+                            </template>
+                        </div>
+                    </paper-item-body>
+                </paper-item>
             </template>
-            <template is="dom-if" if="{{!isTalk}}">
-              <span class="session-time">{{listItem.poster_session.time_start}} - {{listItem.poster_session.time_end}} &bull; {{listItem.poster_session.poster_location}}<span>
-                <template is="dom-repeat" items=[[listItem.session_labels]]>
-                  <span style="float:right" class="paper sessiontype">[[item]]</span>
-                </template>
-                <!--<span style="float:right" class="paper sessiontype">[[listItem.session_labels.0]]</span><br/>-->
-            </template>
-          </div>
-          <div class="session-title">{{listItem.title}}</div>
-          <div secondary>
-            <span id="authorsString" class="session-chair">{{listItem.authorsString}}</span>
-            <template is="dom-if" if="{{isBookmarked}}">
-              <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
-            </template>
-            <template is="dom-if" if="{{isLiked}}">
-              <iron-icon icon="icons:favorite" class="liked"></iron-icon>
-            </template>
-          </div>
-        </paper-item-body>
-      </paper-item>
-    </template>
 
-    <template is="dom-if" if="{{!isPaper}}">
-      <paper-item class$="{{listItem.type_code}}"  on-tap="_changeSelectedItem">
-        <paper-item-body three-line>
-          <div secondary>
-            <span class="session-time">{{listItem.session_time_start}} - {{listItem.session_time_end}} &bull; {{listItem.location}}<span>
-            <span style="float:right" class$="{{listItem.type_code}} sessiontype">{{listItem.type}}</span><!--<br/>-->
-          </div>
-          <div class="wtf session-title">
-            {{listItem.session}}
-            <template is="dom-if" if="{{isBookmarked}}">
-                <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
+            <template is="dom-if" if="{{!isPaper}}">
+                <paper-item class$="{{listItem.type_code}}"  on-tap="_changeSelectedItem">
+                    <paper-item-body three-line>
+                        <div secondary>
+                            <span class="session-time">{{listItem.session_time_start}} - {{listItem.session_time_end}} &bull; {{listItem.session_location}}<span>
+                            <span style="float:right" class$="{{listItem.type_code}} sessiontype">{{listItem.type}}</span><!--<br/>-->
+                        </div>
+                        <div class="wtf session-title">
+                            {{listItem.session}}
+                            <div secondary>
+                                <span id="authorsString" class="session-chair">{{authorsString}}</span>
+                            </div>
+                            <template is="dom-if" if="{{isBookmarked}}">
+                                <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
+                            </template>
+                        </div>
+                        <div secondary class="session-chair"> <!--Chair: {{listItem.session_chair}}-->
+                        </div>
+                    </paper-item-body>
+                </paper-item>
             </template>
-          </div>
-          <div secondary class="session-chair"> <!--Chair: {{listItem.session_chair}}-->
-          </div>
-        </paper-item-body>
-      </paper-item>
+        </template>
     </template>
-  </template>
   <script>
     Polymer({
       is: 'ml4u-list-item',
@@ -221,6 +246,14 @@
         isPaper: {
           type: Boolean,
           value: false
+        },
+        isEvent: {
+            type:Boolean,
+            value: false
+        },
+        authorsString: {
+            type: String,
+            computed: 'computeAuthorsString(listItem)'
         },
         encompassingSessionType: {
           type: String,
@@ -264,25 +297,68 @@
           console.log("2");
           console.log(this.selectedItem);
         }
+        else if(this.isEvent) {
+            this.selectedItem = this.listItem;
+        }
         else {
-          if(this.listItem.type_code != "talk" && this.listItem.type_code != "poster" && this.listItem.type_code != "invited_talk")
-            return;
+            console.log("List Item type: ", this.listItem.type_code);
+            // if(this.listItem.type_code != "oral" && this.listItem.type_code != "spotlight" && this.listItem.type_code != "poster" && this.listItem.type_code != "invited_talk") {
+            //     // breakfast
+            //     // demonstration
+            //     // symposium
+            //     // tutorial
+            //     // workshop
+            //     return;
+            // }
+            if((this.listItem.type_code == 'break') || (this.listItem.type_code == 'talk')) {
+                return;
+            }
 
           console.log("_changeSelectedItem called");
           console.log(this.listItem.type_code);
 
-          if(this.listItem.type_code == "invited_talk") {
-            this.popupDisplaySession = 0;
-            this.selectedItem = this.listItem.paper_id;
-          }
-          else {
-            this.popupDisplaySession = 1;
-            this.selectedItem = this.listItem.session_id;
-          }
-
+            switch(this.listItem.type_code) {
+                case "invited_talk":
+                    this.popupDisplaySession = 0;
+                    this.selectedItem = this.listItem.paper_id;
+                    break;
+                case "oral":
+                    if(this.listItem.content.length > 0) {
+                        this.popupDisplaySession = 0;
+                        this.selectedItem = this.listItem.content[0].paper_id;
+                    }
+                    break;
+                case "tutorial":
+                case "workshop":
+                case "symposium":
+                case "demonstration":
+                    if(this.listItem.content.length > 0) {
+                        this.popupDisplaySession = 2;
+                        this.selectedItem = this.listItem.session_id;
+                    }
+                    break;
+                default:
+                    this.popupDisplaySession = 1;
+                    this.selectedItem = this.listItem.session_id;
+            }
 
           console.log("3");
           console.log(this.selectedItem);
+        }
+      },
+      computeAuthorsString: function(listItem) {
+        if(listItem && listItem.authors) {
+            return listItem.authors.map(function(author) {
+                return author.author;
+            }).join(', ');
+        }
+        else if(listItem && listItem.content && (listItem.content.length > 0) && listItem.content[0].authors) {
+            return listItem.content[0].authors.map(function(author) {
+                return author.author;
+            }).join(', ');
+        }
+        else {
+            return "";
         }
       },
       ready: function() {

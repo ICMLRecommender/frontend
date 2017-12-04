@@ -193,7 +193,7 @@
           this.deleteError = err;
         });
 
-        xhr.open("POST", "http://localhost:8000/icml/delete_comment/", true);
+        xhr.open("POST", "http://localhost:8000/nips/delete_comment/", true);
         xhr.send(newCommentData);
       },
       ready: function() {

@@ -101,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div class="logo">
-      ICML<br/>2017
+      NIPS<br/>2017
     </div>
     <div>
       <form is="iron-form" id="requestPRForm">
@@ -213,7 +213,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           prFormElements.button_requestreset.disabled = false;
           prFormElements.button_changePass.disabled = false;
         }.bind(this));
-        xhr.open("POST", "http://localhost:8000/icml/reset_password/", true);
+        xhr.open("POST", window.global.backendBaseUrl + "/reset_password/", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.send(uriEncodedPostData);
       },
@@ -263,7 +263,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           prFormElements.button_requestreset.disabled = false;
           prFormElements.button_changePass.disabled = false;
         }.bind(this));
-        xhr.open("POST", "http://localhost:8000/icml/request_reset_password/", true);
+        xhr.open("POST", window.global.backendBaseUrl + "/request_reset_password/", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.send(uriEncodedPostData);
 
