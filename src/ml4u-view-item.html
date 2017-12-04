@@ -187,6 +187,18 @@
     </div>
   </section>
 </template>
+<template is="dom-if" if="[[itemObject.has_links]]">
+  <section class="cardBlock">
+    <div class="sectionTitleContainer">
+      <span class="sectiontitle">Links</span><span class="sectionInfo">
+<template is="dom-if" if="[[itemObject.paper_url]]"><a target="_blank" href="[[itemObject.paper_url]]" class="authorlink">Paper</a></template>
+<template is="dom-if" if="[[itemObject.poster_url]]"><a target="_blank" href="[[itemObject.poster_url]]" class="authorlink">Poster</a></template>
+<template is="dom-if" if="[[itemObject.code_url]]"><a target="_blank" href="[[itemObject.code_url]]" class="authorlink">Code</a></template>
+<template is="dom-if" if="[[itemObject.video_url]]"><a target="_blank" href="[[itemObject.video_url]]" class="authorlink">Video</a></template>
+</span>
+    </div>
+  </section>
+</template>
   <template is="dom-if" if="[[itemObject.has_oral]]">
     <section class="cardBlock">
       <div class="sectionTitleContainer">
