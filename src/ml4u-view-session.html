@@ -173,7 +173,7 @@ span.loc {
             console.log(papers[paperIndex].id);
           }
 
-          if(hasLikes)
+          if(hasLikes & papers[paperIndex] != undefined)
             isLiked = this.userLikes.likes[papers[paperIndex].id] != undefined ? 1 : 0;
 
 
