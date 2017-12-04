@@ -172,7 +172,12 @@
             <paper-item class="event demonstration"  on-tap="_changeSelectedItem">
                 <paper-item-body three-line>
                     <div secondary>
-                        <span class="session-time">{{listItem.time_start}} - {{listItem.time_end}} &bull; {{listItem.location}}<span>
+                    <template is="dom-if" if="{{isDemo}}">
+                        <span class="session-time">{{listItem.location}}<span>
+                    </template>
+                        <template is="dom-if" if="{{!isDemo}}">
+                            <span class="session-time">{{listItem.time_start}} - {{listItem.time_end}} &bull; {{listItem.location}}<span>
+                    </template>
                     </div>
                     <div class="session-title">{{listItem.title}}</div>
                     <div secondary>
@@ -226,7 +231,7 @@
                     <paper-item-body three-line>
                         <div secondary>
                             <span class="session-time">{{listItem.session_time_start}} - {{listItem.session_time_end}} &bull; {{listItem.session_location}}<span>
-                            <span style="float:right" class$="{{listItem.type_code}} sessiontype">{{listItem.type}}</span><!--<br/>-->
+                                <span style="float:right" class$="{{listItem.type_code}} sessiontype">{{listItem.type}}</span><!--<br/>-->
                         </div>
                         <div class="wtf session-title">
                             {{listItem.session}}
@@ -239,8 +244,8 @@
                                 <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
                             </template>
                         </div>
-                        <div secondary class="session-chair"> <!--Chair: {{listItem.session_chair}}-->
-                        </div>
+                        <!--<div secondary class="session-chair"> Chair: {{listItem.session_chair}}
+                        </div>-->
                     </paper-item-body>
                 </paper-item>
             </template>
@@ -282,6 +287,10 @@
           type: Boolean,
           computed: 'computeIsPoster(encompassingSessionType)'
         },
+        isDemo: {
+          type: Boolean,
+          computed: 'computeIsDemo(encompassingSessionType)'
+        },
         selectedItem: {
           type: String,
           notify: true
@@ -318,6 +327,9 @@
       },
       computeIsPoster: function() {
         return this.encompassingSessionType == "poster";
+      },
+      computeIsDemo: function() {
+        return this.encompassingSessionType == "demonstration";
       },
       computeBookmarkDisplayString: function(isBookmarked) {
         val = isBookmarked ? "inline" : "none";
