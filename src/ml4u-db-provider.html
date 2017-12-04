@@ -138,22 +138,38 @@
           return {};
 
         var item = orgItem;
-        if(item.talk_session != undefined) {
-          item.has_talk = true;
+        if(item.oral_session != undefined) {
+          item.has_oral = true;
 
-          var sessionId = item.talk_session.session_id;
+          var sessionId = item.oral_session.session_id;
           mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
           session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
 
           dayString= session.day.substring(0, 3);
           start_time = session. session_time_start;
-          locationString = session.location;
-          item.talk_string = dayString + " " + start_time + ", " + locationString;
-          //item.talk_string = "hello?!";
+          locationString = session.session_location;
+          item.oral_string = dayString + " " + start_time + ", " + locationString;
+          //item.oral_string = "hello?!";
         }
         else {
-          item.has_talk = false;
+          item.has_oral = false;
         }
+
+                        if(item.spotlight_session != undefined) {
+                          item.has_spotlight = true;
+
+                          var sessionId = item.spotlight_session.session_id;
+                          mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
+                          session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+
+                          dayString= session.day.substring(0, 3);
+                          start_time = item.spotlight_session.time_start;
+                          locationString = item.spotlight_session.location;
+                          item.spotlight_string = dayString + " " + start_time + ", " + locationString;
+                        }
+                        else {
+                          item.has_spotlight = false;
+                        }
 
         if(item.poster_session != undefined) {
           item.has_poster = true;
@@ -164,13 +180,13 @@
 
           dayString= session.day.substring(0, 3);
           start_time = item.poster_session.time_start;
-          locationString = item.poster_session.poster_location;
+          locationString = item.poster_session.location;
           item.poster_string = dayString + " " + start_time + ", " + locationString;
-          //item.talk_string = "hello?!";
         }
         else {
           item.has_poster = false;
         }
+
         item.authors = orgItem.authors;
         /*
         item.authors = new Array();

@@ -30,7 +30,7 @@
 
         logged-in=[[loggedIn]]
         tags=[[item.session_labels]]
-        authors-string='[[item.authorsString]]'
+        authors-string='[[getAuthorsString(item)]]'
         is-bookmarked="{{_isBookmarked(profileData.bookmarks, item.id)}}"
         profile-data={{profileData}}>
       </ml4u-research-paper-card>
@@ -120,6 +120,16 @@
       },
       _isBookmarked: function(bookmarks, itemId) {
         return bookmarks.hasOwnProperty(String(itemId));
+      },
+      getAuthorsString: function(item) {
+          if(item && item.authors) {
+            return item.authors.map(function(author) {
+                return author.author;
+            }).join(', ');
+          }
+          else {
+              return "";
+          }
       },
       ready: function() {
        console.log('librarys userlikes', this.userLikes);
