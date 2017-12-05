@@ -331,7 +331,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-dialog>
 
     <paper-dialog id="wrongBrowser" modal>
-      <p>The browser you are using is not supported. Please use the newest version of either Google Chrome or Safari.</p>
+      <!-- <p>The browser you are using is not supported. Please use the newest version of either Google Chrome or Safari.</p> -->
+        <p>The browser you are using is not supported. Please use the newest version Google Chrome.</p>
       <div class="buttons">
         <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
       </div>
@@ -547,7 +548,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //var isChrome = !!window.chrome && !!window.chrome.webstore;
         //var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
         const UA = window.navigator.userAgent.toLowerCase();
-        if (UA.includes('chrome') || UA.includes('safari') && !UA.includes('firefox')) {
+        // if (UA.includes('chrome') || UA.includes('safari') && !UA.includes('firefox')) {
+        if (UA.includes('chrome') && !UA.includes('safari') && !UA.includes('firefox')) {
         } else {
           this.$.wrongBrowser.open();
         }
