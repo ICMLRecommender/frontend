@@ -5,7 +5,7 @@
 <link rel="import" href="ml4u-components/ml4u-research-paper-card.html">
 <link rel="import" href="ml4u-db-provider.html">
 
-<dom-module id="ml4u-page-feed">
+<dom-module id="ml4u-page-explore">
   <template>
     <style include="shared-styles">
       :host {
@@ -84,7 +84,7 @@
 
   <script>
     Polymer({
-      is: 'ml4u-page-feed',
+      is: 'ml4u-page-explore',
       properties: {
         loggedIn: {
           type: Number,
@@ -323,7 +323,7 @@
             console.log(item_t);
             //if (object.hasOwnProperty(property)) {
             if(    (item_t.title && item_t.title.toLowerCase().includes(searchString))
-                || (item_t.description && item_t.description.toLowerCase().includes(searchString)) 
+                || (item_t.description && item_t.description.toLowerCase().includes(searchString))
                 || (this.findInAuthors(item_t, searchString))
                 || (this.findInLabels(item_t, searchString))
             ) {
@@ -391,7 +391,7 @@
       },
       ready: function() {
         console.log('user likes', this.userLikes);
-        console.log('secret from page feed', this.profileSecret);
+        console.log('secret from page explore', this.profileSecret);
       }
     });
   </script>

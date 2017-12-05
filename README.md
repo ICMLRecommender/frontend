@@ -21,7 +21,7 @@ The difference between bookmarks and likes is that liked papers are fed
 into the recommendation engine.
 
 ## Recommendations.
-Recommendations are available through the "Feed" page and are updated
+Recommendations are available through the "Explore" page and are updated
 every two minutes. On that page recommended papers are preceded by
 trending papers which shows some of the most popular papers.
 
