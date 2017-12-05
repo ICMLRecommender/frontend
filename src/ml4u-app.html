@@ -254,7 +254,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="userdiv">[[username]]</div>
         </div>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="feed" href="/feed"><iron-icon icon="icons:list"></iron-icon><span class="menu-category-keyword">Feed</span></a>
+          <a name="explore" href="/explore"><iron-icon icon="icons:list"></iron-icon><span class="menu-category-keyword">Explore</span></a>
           <a name="schedule" href="/schedule"><iron-icon icon="icons:today"></iron-icon><span class="menu-category-keyword">Schedule</span></a>
           <template is="dom-if" if="{{loggedIn}}">
             <a name="library" href="/library"><iron-icon icon="icons:book"></iron-icon><span class="menu-category-keyword">Library</span></a>
@@ -291,10 +291,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="view404"
             role="main">
 
-          <ml4u-page-feed trending-object={{trending}} name="feed" selected-item={{selectedItem}}
+          <ml4u-page-explore trending-object={{trending}} name="explore" selected-item={{selectedItem}}
                           profile-secret=[[profileSecret]] username="{{username}}" user-likes="[[userLikes]]"
                           profile-data="{{profileData}}" logged-in=[[loggedIn]]
-                          profile-recommendations={{profileRecommendations}}></ml4u-page-feed>
+                          profile-recommendations={{profileRecommendations}}></ml4u-page-explore>
 
           <ml4u-page-schedule route=[[subroute]] iron-route-hash="[[ironRouteHash]]"
             selected-item={{selectedItem}} popup-display-session={{popupDisplaySession}}
@@ -424,11 +424,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         currentLoggedIn = this.loggedIn;
         if(currentLoggedIn) {
           if (currentPage == "login" || currentPage == "register" || currentPage == "reset")
-            this.page = "feed";
+            this.page = "explore";
         }
         else {
           if (currentPage == "library")
-            this.page = "feed";
+            this.page = "explore";
         }
       },
 
@@ -496,7 +496,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _routePageChanged: function(page) {
-        this.page = page || 'feed';
+        this.page = page || 'explore';
 
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
