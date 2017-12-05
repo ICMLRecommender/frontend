@@ -1,13 +1,13 @@
 # frontend
 
-ICML 2017 website Frontend project repository
+NIPS 2017 Recommendations App Frontend project repository
 
 ## Note
-This app is in pre-release mode for ICML 2017. Please send feedback
-and bug reports to icml17app@gmail.com or file an issue on our github project page.
+This app is in pre-release mode for NIPS 2017. Please send feedback
+and bug reports to recsysapp@gmail.com or file an issue on our github project page.
 
 ## What is this app?
-This app helps navigate the rich program of ICML 2017. The app provides an easily
+This app helps navigate the rich program of NIPS 2017. The app provides an easily
 navigable schedule, enables users to quickly find interesting papers, publicly
 comment them, register their interest using 'like' and 'bookmark', and browse what
 others are interested in. In addition, users' preferences feed a personalized paper
@@ -36,19 +36,20 @@ Moreover, we built this app as a service to the community, we will open source t
 The app was designed and built by a team of machine learning students and
 researchers spread across England, France, and Canada.
 
-1. Adrien Todeschini, Scorelab.io
-2. Hoai Phuoc Truong, McGill University
-3. James Ravenscroft, University of Warwick
-4. Laurent Charlin, Université de Montréal (HEC)
-5. Lazar Valkov, University of Edinburgh
-6. Maria Liakata, University of Warwick, Alan Turing Institute
-7. Taimur Abdaal, University of Oxford
-8. Valerio Perrone, University of Warwick
-9. Yee Whye Teh, University of Oxford, DeepMind, Alan Turing Institute
+- Adrien Todeschini, Scorelab.io
+- Hoai Phuoc Truong, McGill University
+- James Ravenscroft, University of Warwick
+- Laurent Charlin, Université de Montréal (HEC)
+- Lazar Valkov, University of Edinburgh
+- Maria Liakata, University of Warwick, Alan Turing Institute
+- Sébastien Doncker, SnarkFactory.fr
+- Taimur Abdaal, University of Oxford
+- Valerio Perrone, University of Warwick
+- Yee Whye Teh, University of Oxford, DeepMind, Alan Turing Institute
 
 # Technical contents section below (for internal development use only):
 
-## Website, detailing the app design: 
+## Website, detailing the app design:
 http://icml2017spec.s3-website-us-west-2.amazonaws.com
 
 Start the server
@@ -58,22 +59,22 @@ Start the server
   ```
   ssh -L 8000:localhost:8000 username@icml.papro.org.uk
   ```
- 
+
 2. Modify settings
   ```
   cd /home/icmlapp/backend/server/icml/icml
   cp settings.py.no_https settings.py
   ```
- 
+
 3. Launch server
   ```
   cd /home/icmlapp/backend/server/icml
   /home/icmlapp/env/bin/python manage.py runserver
   ```
-  
+
 Setup the frontend
 -----------------
- 
+
 - [Install nodejs and npm](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
 
 - Install Polymer v1 (not v2)
@@ -81,7 +82,7 @@ Setup the frontend
   ```
   sudo npm install -g polymer-cli
   ```
-  
+
 - Download the code for the frontend from github
 - Open terminal and enter
     ```
@@ -90,7 +91,7 @@ Setup the frontend
     ```
   which would install the needed bower components
 
-- Serve the frontend 
+- Serve the frontend
 
   ```
   polymer serve
