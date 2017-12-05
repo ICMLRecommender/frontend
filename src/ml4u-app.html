@@ -549,7 +549,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
         const UA = window.navigator.userAgent.toLowerCase();
         // if (UA.includes('chrome') || UA.includes('safari') && !UA.includes('firefox')) {
-        if (UA.includes('chrome') && !UA.includes('safari') && !UA.includes('firefox')) {
+        if (UA.includes('chrome') && !UA.includes('firefox')) {
         } else {
           this.$.wrongBrowser.open();
         }
