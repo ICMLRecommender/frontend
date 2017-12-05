@@ -252,7 +252,7 @@
       }
       var session = window.ml4u.sharedElements.scheduleDataProvider.getSession(this.eventId);
       //check if item is empty
-      console.log("SESSION: ", session);
+      //console.log("SESSION: ", session);
       isItemEmpty = true;
       for(var prop in session) {
           console.log("test prop: ", prop);
@@ -265,10 +265,10 @@
         this.needsReload = 1;
         return;
       }
-      console.log("computed the following session for sessionId " + this.eventId);
-      console.log(session);
+      //console.log("computed the following session for sessionId " + this.eventId);
+      //console.log(session);
       this.session = session;
-      //this.itemTitle = this._getItemTitle();      
+      //this.itemTitle = this._getItemTitle();
       //window.ml4u.sharedElements.scheduleDataProvider.getItemLikes(itemId).then(likes => {
       //    item.likes = likes;
       //    this.hasUserLiked = likes.hasOwnProperty(this.username);
@@ -400,7 +400,7 @@
           return '';
         }
     },
-    
+
     ready: function() {
       //this.getComments();
     }

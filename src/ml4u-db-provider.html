@@ -251,8 +251,8 @@
         console.log("retrieved mapping:");
         console.log(mapping);
         session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
-        console.log("retrieved session:");
-        console.log(session);
+        //console.log("retrieved session:");
+        //console.log(session);
         papers_ids = session.content;
         items = [];
         for (var i=0; i<papers_ids.length; ++i) {
@@ -260,8 +260,8 @@
           item = this.scheduleData.items[itemid];
           items.push(item);
         }
-        console.log("returning the following items:");
-        console.log(items);
+        //console.log("returning the following items:");
+        //console.log(items);
         return items;
       },
       getSessionsDaysArray: function() {
