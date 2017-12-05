@@ -235,11 +235,9 @@
                         </div>
                         <div class="wtf session-title">
                             {{listItem.session}}
-                            <template is="dom-if" if="{{displayAuthors}}">
                             <div secondary>
                                 <span id="authorsString" class="session-chair">{{authorsString}}</span>
                             </div>
-                            </template>
                             <template is="dom-if" if="{{isBookmarked}}">
                                 <iron-icon icon="icons:bookmark" class="bookmarked"></iron-icon>
                             </template>
@@ -267,10 +265,6 @@
         authorsString: {
             type: String,
             computed: 'computeAuthorsString(listItem)'
-        },
-        displayAuthors: {
-            type: String,
-            computed: 'computeDisplayAuthors(listItem)'
         },
         encompassingSessionType: {
           type: String,
@@ -306,18 +300,6 @@
           type: Number,
           notify: true
         }
-      },
-      computeDisplayAuthors: function(listItem) {
-        if (listItem.type_code == "spotlight") {
-          return false;
-        }
-        if (listItem.type_code == "poster") {
-          return false;
-        }
-        if (listItem.type_code == "demonstration") {
-          return false;
-        }
-        return true;
       },
       computeIsOral: function() {
         return this.encompassingSessionType == "oral";
@@ -402,7 +384,7 @@
                 return author.author;
             }).join(', ');
         }
-        else if(listItem && listItem.content && (listItem.content.length > 0) && listItem.content[0].authors) {
+        else if(listItem && listItem.content && (listItem.content.length==1) && listItem.content[0].authors) {
             return listItem.content[0].authors.map(function(author) {
                 return author.author;
             }).join(', ');
