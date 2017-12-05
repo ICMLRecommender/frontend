@@ -284,7 +284,7 @@
           if(!this.isReady) {
             this.isReady = 1;
           }
-          //fire from two different places, to make sure we update the feed, whichever ones executes first.
+          //fire from two different places, to make sure we update the feed (explore), whichever ones executes first.
           this.fire('iron-signal', {name: 'schedule', data: null});
           this.scheduleDataDownloaded = 1;
           window.ml4u.schedDB_local.close();
