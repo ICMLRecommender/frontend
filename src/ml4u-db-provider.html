@@ -271,8 +271,8 @@
       },
       created: function() {
         window.ml4u = window.ml4u || {};
-        window.ml4u.schedDB_local = new PouchDB('schedule', {size: 10});
-        window.ml4u.schedDB_remote = new PouchDB(window.global.serverBaseUrl + window.global.url.schedule, {size: 10});
+        window.ml4u.schedDB_local = new PouchDB('schedule', {auto_compaction: true});
+        window.ml4u.schedDB_remote = new PouchDB(window.global.serverBaseUrl + window.global.url.schedule);
 
         window.ml4u.schedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};
@@ -290,7 +290,7 @@
           window.ml4u.schedDB_local.close();
           window.ml4u.schedDB_remote.close();
         }.bind(this)).on('error', function (err) {
-          // boo, something went wrong!
+          console.log("boo, something went wrong!")
         });
       }
     });

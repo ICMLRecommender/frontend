@@ -241,7 +241,7 @@
         if(this.recommendedItems == null || this.recommendedItems == undefined) {
           console.log("setting dispalyed items to treding items");
           this.displayedItems = this.trendingItems;
-          console.log(this.displayedItems);
+          //console.log(this.displayedItems);
         }
         else {
           this.displayedItems = this.trendingItems.concat(this.recommendedItems);
@@ -270,8 +270,8 @@
           newTrendingItemsArray.push(t_item);
         }
         this.trendingItems = newTrendingItemsArray;
-        console.log("LOGGING TRENDING ITEMS");
-        console.log(this.trendingItems);
+        //console.log("LOGGING TRENDING ITEMS");
+        //console.log(this.trendingItems);
         if(!this.showingSearchResults) {
           this.setDisplayedItems();
         }
