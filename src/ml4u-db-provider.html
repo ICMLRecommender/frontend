@@ -108,12 +108,12 @@
 
         personObject = {};
         schedule_personObject = this.scheduleData.people[personId];
-        personObject.name = schedule_personObject.name;
-        personObject.institution = schedule_personObject.institution;
-        personObject.bio = schedule_personObject.bio;
+        personObject.name = schedule_personObject.nm;
+        personObject.institution = schedule_personObject.ins;
+        // personObject.bio = schedule_personObject.bio;
         personObject.papers = [];
 
-        schedule_personObject_paper_ids = schedule_personObject.paper_ids;
+        schedule_personObject_paper_ids = schedule_personObject.pids;
         if(schedule_personObject_paper_ids == undefined
           || schedule_personObject_paper_ids == null) {
           return personObject;
@@ -143,11 +143,11 @@
 
           var sessionId = item.oral_session.session_id;
           mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
-          session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+          session = this.scheduleData.sessions[mapping.d][mapping.t][mapping.st][mapping.s];
 
           dayString= session.day.substring(0, 3);
-          start_time = session. session_time_start;
-          locationString = session.session_location;
+          start_time = session.session_time_start;
+          locationString = session.loc;
           item.oral_string = dayString + " " + start_time + ", " + locationString;
           //item.oral_string = "hello?!";
         }
@@ -160,7 +160,7 @@
 
                           var sessionId = item.spotlight_session.session_id;
                           mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
-                          session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+                          session = this.scheduleData.sessions[mapping.d][mapping.t][mapping.st][mapping.s];
 
                           dayString= session.day.substring(0, 3);
                           start_time = item.spotlight_session.time_start;
@@ -176,7 +176,7 @@
 
           var sessionId = item.poster_session.session_id;
           mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
-          session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+          session = this.scheduleData.sessions[mapping.d][mapping.t][mapping.st][mapping.s];
 
           dayString= session.day.substring(0, 3);
           start_time = item.poster_session.time_start;
@@ -241,7 +241,7 @@
         mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
         if(mapping == undefined)
           return {};
-        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+        session = this.scheduleData.sessions[mapping.d][mapping.t][mapping.st][mapping.s];
         return session;
       },
       getSessionItems: function(sessionId) {
@@ -250,7 +250,7 @@
         mapping = this.scheduleData.sessionIdToIndexMapping[sessionId];
         console.log("retrieved mapping:");
         console.log(mapping);
-        session = this.scheduleData.sessions[mapping.dayIndex][mapping.timeslotIndex][mapping.subtimeslotIndex][mapping.sub_index];
+        session = this.scheduleData.sessions[mapping.d][mapping.t][mapping.st][mapping.s];
         //console.log("retrieved session:");
         //console.log(session);
         papers_ids = session.content;
@@ -271,10 +271,10 @@
       },
       created: function() {
         window.ml4u = window.ml4u || {};
-        window.ml4u.schedDB_local = new PouchDB('schedule');
-        window.ml4u.shedDB_remote = new PouchDB(window.global.serverBaseUrl + window.global.url.schedule);
+        window.ml4u.schedDB_local = new PouchDB('schedule', {auto_compaction: true});
+        window.ml4u.schedDB_remote = new PouchDB(window.global.serverBaseUrl + window.global.url.schedule);
 
-        window.ml4u.shedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
+        window.ml4u.schedDB_remote.replicate.to(window.ml4u.schedDB_local).on('complete', function () {
           window.ml4u.helpervars = window.ml4u.helpervars || {};
           window.ml4u.helpervars.dbsynced = true;
           if(window.ml4u.helpervars.ml4uappcreated) {
@@ -288,9 +288,9 @@
           this.fire('iron-signal', {name: 'schedule', data: null});
           this.scheduleDataDownloaded = 1;
           window.ml4u.schedDB_local.close();
-          window.ml4u.shedDB_remote.close();
+          window.ml4u.schedDB_remote.close();
         }.bind(this)).on('error', function (err) {
-          // boo, something went wrong!
+          console.log("boo, something went wrong!")
         });
       }
     });
